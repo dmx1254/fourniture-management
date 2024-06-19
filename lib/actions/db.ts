@@ -15,14 +15,14 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       maxlength: 1024,
     },
-    code: {
-      type: String,
-      required: true,
-    },
 
     isAdmin: {
       type: Boolean,
-      default: true,
+      default: false,
+    },
+    code: {
+      type: String,
+      required: true,
     },
 
     profil: {

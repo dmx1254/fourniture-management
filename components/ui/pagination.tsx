@@ -60,7 +60,7 @@ export const Pagination = ({
           "flex items-center gap-1 text-sm border border-[#111b21] bg-[#111b21] text-gray-500 rounded p-2 cursor-pointer outline-none",
 
           {
-            "pointer-events-none opacity-15": currentPage === totalPages,
+            "pointer-events-none opacity-90": currentPage === totalPages,
           }
         )}
         onClick={() => handlePageParams(currentPage + 1)}

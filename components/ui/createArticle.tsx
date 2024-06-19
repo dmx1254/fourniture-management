@@ -20,13 +20,12 @@ import { toast } from "sonner";
 const CreateArticle = () => {
   const initialState = { errors: {}, message: "" };
   const [state, formAction] = useFormState(createArticle, initialState);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   // console.log(state);
   state.message && toast.success(state.message, {
     style: { color: "green" },
     
-  });
+  })
 
   return (
     <AlertDialog>
@@ -71,7 +70,7 @@ const CreateArticle = () => {
             </div>
             <div className="w-full flex flex-col items-start gap-1">
               <label htmlFor="quantity" className="text-gray-600 text-sm">
-                Quantite
+                Quantité
               </label>
               <input
                 className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus:ring-1 focus:ring-gray-400"
@@ -105,7 +104,7 @@ const CreateArticle = () => {
                 variant="outline"
                 className="bg-transparent border border-gray-600 text-white hover:bg-transparent hover:text-white hover:opacity-90"
               >
-                Continue
+                Créer
               </Button>
             </AlertDialogFooter>
           </form>

@@ -1,8 +1,7 @@
 import { getArticlesAndTotalPages } from "@/lib/actions/api";
 import { Product } from "@/lib/types";
 import React from "react";
-import { CiEdit } from "react-icons/ci";
-import { PiTrashThin } from "react-icons/pi";
+import ArticleUpdate from "../updates-comp/ArticleUpdate";
 
 const Table = async ({
   query,
@@ -44,14 +43,7 @@ const Table = async ({
                 {product.consome}
               </td>
               <td className="p-4 font-bold">{product.restant}</td>
-              <td className="flex items-center gap-2 p-4">
-                <button className="flex items-center justify-center p-0.5 rounded border border-orange-500 text-orange-500">
-                  <CiEdit size={16} />
-                </button>
-                <button className="flex items-center justify-center p-0.5 rounded border border-red-500 text-red-500">
-                  <PiTrashThin size={16} />
-                </button>
-              </td>
+              <ArticleUpdate article={product} />
             </tr>
           ))}
         </tbody>

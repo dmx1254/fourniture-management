@@ -30,6 +30,5 @@ const articleSchema = new mongoose.Schema(
 );
 
 // export const UserModel = mongoose.model("user", userSchema);
-const ArticleModel =
-  mongoose.models.article || mongoose.model("article", articleSchema);
+const ArticleModel = mongoose.models.article || mongoose.model("article", articleSchema);
 export default ArticleModel;

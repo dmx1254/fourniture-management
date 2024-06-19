@@ -26,7 +26,7 @@ const Fourniture = async ({
   let { totalPages } =
     (await getArticlesAndTotalPages(query, currentPage, category)) || 1;
   let date: Date = new Date();
-  let formattedDate: string = date.toISOString().split("T")[0];
+  // let formattedDate: string = date.toISOString().split("T")[0];
 
   // console.log(category);
 

@@ -17,13 +17,42 @@ export type TestData = {
   date: string;
 };
 
-export type Product =  {
+export type Product = {
   _id: string;
   title: string;
+  category?: string;
   quantity: number;
   consome: number;
   restant: number;
   createdAt?: string;
   updatedAt?: string;
-}
+};
 
+export type User = {
+  _id: string;
+  email: string;
+  password?: number;
+  isAdmin: boolean;
+  code?: String;
+  profil?: string;
+  phone?: string;
+  lastname: string;
+  firstname: string;
+  address?: string;
+  country?: string;
+  city?: string;
+  clientIp?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type TransArt = {
+  _id: string;
+  title: string;
+  category: string;
+  quantity: number;
+  consome: number;
+  restant: number;
+  createdAt?: string;
+  updatedAt?: string;
+};
