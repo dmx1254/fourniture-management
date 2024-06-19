@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { PiTrashThin } from "react-icons/pi";
-import { deleteArticle } from "@/lib/actions/api";
 import { useFormState } from "react-dom";
 import { toast } from "sonner";
 import { deleteArticlePro } from "@/lib/actions/action";
@@ -9,12 +8,18 @@ const DeleteArticleBtn = ({ articleId }: { articleId: string }) => {
   const initialstate = { message: "" };
   const [state, DeleteAction] = useFormState(deleteArticlePro, initialstate);
 
-// console.log(state);
+  // console.log(state);
 
-  state?.message &&
-    toast.success(state?.message, { 
-      style: { color: "red" },
-    });
+  useEffect(() => {
+    if (state?.message) {
+      toast.success(state?.message, {
+        style: { color: "green" },
+      });
+
+      // Réinitialiser le message après l'affichage de la toast
+      state.message = "";
+    }
+  }, [state?.message, DeleteAction]);
 
   return (
     <form action={DeleteAction}>

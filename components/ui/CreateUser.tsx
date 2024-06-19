@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import {
   AlertDialog,
@@ -21,12 +21,17 @@ const CreateUser = () => {
   const initialState = { errors: {}, message: "" };
   const [state, userAction] = useFormState(createNewUser, initialState);
 
-//   console.log(state);
-  state.message &&
-    toast.success(state.message, {
-      style: { color: "green" },
-    });
+  //   console.log(state);
+  useEffect(() => {
+    if (state?.message) {
+      toast.success(state?.message, {
+        style: { color: "green" },
+      });
 
+      // Réinitialiser le message après l'affichage de la toast
+      state.message = "";
+    }
+  }, [state?.message, userAction]);
 
   return (
     <AlertDialog>
@@ -85,18 +90,18 @@ const CreateUser = () => {
                   name="email"
                 />
                 {state?.errors?.email?.map(
-                (emailError: string, index: number) => {
-                  return (
-                    <p
-                      key={index}
-                      className="flex text-sm text-red-500 line-clamp-1 mt-1"
-                      aria-live="polite"
-                    >
-                      {emailError}
-                    </p>
-                  );
-                }
-              )}
+                  (emailError: string, index: number) => {
+                    return (
+                      <p
+                        key={index}
+                        className="flex text-sm text-red-500 line-clamp-1 mt-1"
+                        aria-live="polite"
+                      >
+                        {emailError}
+                      </p>
+                    );
+                  }
+                )}
               </div>
               <div className="w-full flex flex-col items-start gap-1">
                 <label htmlFor="phone" className="text-gray-600 text-sm">

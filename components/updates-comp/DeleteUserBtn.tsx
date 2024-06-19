@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { PiTrashThin } from "react-icons/pi";
 import { useFormState } from "react-dom";
 import { toast } from "sonner";
@@ -12,10 +12,16 @@ const DeleteUserBtn = ({ userId }: { userId: string }) => {
 
   // console.log(state);
 
-    state?.message &&
+  useEffect(() => {
+    if (state?.message) {
       toast.success(state?.message, {
-        style: { color: "red" },
+        style: { color: "green" },
       });
+
+      // Réinitialiser le message après l'affichage de la toast
+      state.message = "";
+    }
+  }, [state?.message, DeleteAction]);
 
   return (
     <form action={DeleteAction}>

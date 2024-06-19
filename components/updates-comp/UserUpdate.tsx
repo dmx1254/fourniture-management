@@ -1,7 +1,7 @@
 "use client";
 
 import { TransArt, User } from "@/lib/types";
-import React from "react";
+import React, { useEffect } from "react";
 import { CiEdit } from "react-icons/ci";
 import DeleteUserBtn from "./DeleteUserBtn";
 import {
@@ -21,14 +21,26 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import AddUserFourniture from "./AddUserFourniture";
 
-const UserUpdate = ({ user, articles }: { user: User, articles:TransArt[] }) => {
+const UserUpdate = ({
+  user,
+  articles,
+}: {
+  user: User;
+  articles: TransArt[];
+}) => {
   const initialState = { errors: {}, message: "" };
   const [state, upadteUserAction] = useFormState(updateUserPro, initialState);
 
-  state?.message &&
-    toast.success(state?.message, {
-      style: { color: "green" },
-    });
+  useEffect(() => {
+    if (state?.message) {
+      toast.success(state?.message, {
+        style: { color: "green" },
+      });
+
+      // Réinitialiser le message après l'affichage de la toast
+      state.message = "";
+    }
+  }, [state?.message, upadteUserAction]);
 
   return (
     <td className="flex items-center gap-2 p-3.5 font-semibold ">

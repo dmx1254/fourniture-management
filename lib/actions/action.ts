@@ -399,14 +399,14 @@ export async function addUserFournitures(
       const category = isCheckFourniture.data.category;
       const title = isCheckFourniture.data.title;
       const consome = isCheckFourniture.data.consome;
-       const response = await createTransaction(
+      const response = await createTransaction(
         userId,
         articleId,
         category,
         title,
         consome
       );
-      await revalidatePath("/dashboard/historique");
+      await revalidatePath("/dashboard/utilisateurs");
       return response;
     }
   }

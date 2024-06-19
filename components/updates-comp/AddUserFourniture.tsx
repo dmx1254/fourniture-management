@@ -56,10 +56,16 @@ const AddUserFourniture = ({
     setRestant(rest);
   }, [id, articles, restant, title, category]);
 
-  state?.message &&
-    toast.success(state?.message, {
-      style: { color: "green" },
-    });
+  useEffect(() => {
+    if (state?.message) {
+      toast.success(state?.message, {
+        style: { color: "green" },
+      });
+
+      // Réinitialiser le message après l'affichage de la toast
+      state.message = "";
+    }
+  }, [state?.message, addFournitureAction]);
 
   return (
     <AlertDialog>
@@ -84,7 +90,7 @@ const AddUserFourniture = ({
                   </SelectTrigger>
                   <SelectContent className="bg-[#111b21] text-gray-600 border-none">
                     <SelectGroup>
-                      <SelectLabel>Fournitures informatique</SelectLabel>
+                      <SelectLabel>Fournitures informatiques</SelectLabel>
                       {articles.map((article) => (
                         <SelectItem
                           key={article._id}

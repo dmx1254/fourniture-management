@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Plus } from "lucide-react";
 import {
   AlertDialog,
@@ -22,10 +22,16 @@ const CreateArticle = () => {
   const [state, formAction] = useFormState(createArticle, initialState);
 
   // console.log(state);
-  state.message && toast.success(state.message, {
-    style: { color: "green" },
-    
-  })
+  useEffect(() => {
+    if (state?.message) {
+      toast.success(state?.message, {
+        style: { color: "green" },
+      });
+
+      // Réinitialiser le message après l'affichage de la toast
+      state.message = "";
+    }
+  }, [state?.message, formAction]);
 
   return (
     <AlertDialog>

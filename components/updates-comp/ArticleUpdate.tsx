@@ -2,7 +2,7 @@
 
 import { useFormState } from "react-dom";
 import { Product } from "@/lib/types";
-import React from "react";
+import React, { useEffect } from "react";
 import { CiEdit } from "react-icons/ci";
 import { PiTrashThin } from "react-icons/pi";
 import { Button } from "@/components/ui/button";
@@ -25,24 +25,17 @@ const ArticleUpdate = ({ article }: { article: Product }) => {
   const initialstate = { message: "" };
   const [state, updateAction] = useFormState(updateArticle, initialstate);
 
-  state?.message &&
-    toast.success(state?.message, {
-      style: { color: "green" },
-    });
+  useEffect(() => {
+    if (state?.message) {
+      toast.success(state?.message, {
+        style: { color: "green" },
+      });
 
-  //   const handleDelete = async (articleId: string) => {
-  //     "use server";
-  //     const response = await deleteArticle(articleId);
-  //     toast.success(response?.message, {
-  //       style: { color: "green" },
-  //     });
-  //     // const articleId: string = article._id;
-  //     // const response = await DeleteArticle(articleId);
-  //     // toast.error(response?.message, {
-  //     //   style: { color: "red" },
-  //     // });
-  //     // revalidatePath("/dashboard/fournitures-informatiques");
-  //   };
+      // Réinitialiser le message après l'affichage de la toast
+      state.message = "";
+    }
+  }, [state?.message, updateAction]);
+
 
   return (
     <td className="flex items-center gap-2 p-4">
