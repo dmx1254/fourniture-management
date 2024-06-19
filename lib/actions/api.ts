@@ -170,7 +170,9 @@ export async function createTransaction(
   articleId: string,
   category: string,
   title: string,
-  consome: number
+  consome: number,
+  lastname: string,
+  firstname: string
 ) {
   try {
     const articleFind = await ArticleModel.findById(articleId);
@@ -180,12 +182,11 @@ export async function createTransaction(
     const rest = article.restant;
     const totalCons = consome + cons;
     const newRest = qty - totalCons;
-    const totalRest = newRest + rest;
     const updateArticle = await ArticleModel.findByIdAndUpdate(
       articleId,
       {
         consome: totalCons,
-        restant: totalRest,
+        restant: newRest,
       },
       {
         new: true,
@@ -198,9 +199,61 @@ export async function createTransaction(
       title: title,
       category: category,
       consome: consome,
+      lastname: lastname,
+      firstname: firstname,
     });
 
     return { message: "Transacton crée avec success" };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function updateTransaction(
+  transId: string,
+  userId: string,
+  articleId: string,
+  category: string,
+  title: string,
+  consome: number,
+  lastname: string,
+  firstname: string,
+  lastcons: number
+) {
+  try {
+    const articleFind = await ArticleModel.findById(articleId);
+    const article = JSON.parse(JSON.stringify(articleFind));
+    const qty = article.quantity;
+    const cons = article.consome - lastcons;
+    const rest = article.restant;
+    const totalCons = consome + cons;
+    const newRest = qty - totalCons;
+    const updateArticle = await ArticleModel.findByIdAndUpdate(
+      articleId,
+      {
+        consome: totalCons,
+        restant: newRest,
+      },
+      {
+        new: true,
+      }
+    );
+
+    const trasanctionUpdate = await TransactionModel.findByIdAndUpdate(
+      transId,
+      {
+        consome: consome,
+        category: category,
+        title: title,
+        articleId: articleId,
+      },
+      {
+        new: true,
+      }
+    );
+
+    return { message: "Transacton mis à jour avec success" };
   } catch (error) {
     console.log(error);
     throw error;
@@ -233,6 +286,17 @@ export async function deleteUser(userId: string) {
   try {
     const deleteArticle = await UserModel.findByIdAndDelete(userId);
     return { message: "Utilisateur supprimé avec success" };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+
+export async function deleteTransaction(transId: string) {
+  try {
+    const deleteArticle = await TransactionModel.findByIdAndDelete(transId);
+    return { message: "Transaction supprimée avec success" };
   } catch (error) {
     console.log(error);
     throw error;
@@ -289,6 +353,66 @@ export async function getUsersAndTotalPages(
 
     return {
       users: JSON.parse(JSON.stringify(users)),
+      totalPages,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getTransactionsAndTotalPages(
+  query: string,
+  currentPage: number,
+  category: string
+) {
+  noStore();
+  let itemsPerPage = 10;
+  const offset = (currentPage - 1) * itemsPerPage;
+
+  const matchConditions: any = {};
+
+  // Ajouter une condition pour le titre s'il est spécifié
+  if (category === "lastname" && query && query.trim() !== "") {
+    matchConditions.lastname = { $regex: query, $options: "i" };
+  }
+  if (category === "firstname" && query && query.trim() !== "") {
+    matchConditions.firstname = { $regex: query, $options: "i" };
+  }
+  if (category === "email" && query && query.trim() !== "") {
+    matchConditions.email = { $regex: query, $options: "i" };
+  }
+  if (category === "phone" && query && query.trim() !== "") {
+    matchConditions.phone = { $regex: query, $options: "i" };
+  }
+
+  try {
+    // Récupérer le nombre total de documents
+    const totalDocuments = await TransactionModel.countDocuments(
+      matchConditions
+    );
+
+    // Calculer le nombre total de pages
+    const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+
+    // Récupérer les utilisateurs correspondant aux critères de filtrage avec pagination
+    const transactions = await TransactionModel.aggregate([
+      {
+        $match: matchConditions,
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $skip: offset,
+      },
+      {
+        $limit: itemsPerPage,
+      },
+    ]);
+
+    return {
+      transactions: JSON.parse(JSON.stringify(transactions)),
       totalPages,
     };
   } catch (error) {

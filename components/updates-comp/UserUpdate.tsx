@@ -6,10 +6,8 @@ import { CiEdit } from "react-icons/ci";
 import DeleteUserBtn from "./DeleteUserBtn";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,

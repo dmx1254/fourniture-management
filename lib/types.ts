@@ -24,8 +24,8 @@ export type Product = {
   quantity: number;
   consome: number;
   restant: number;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 export type User = {
@@ -42,8 +42,8 @@ export type User = {
   country?: string;
   city?: string;
   clientIp?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 export type TransArt = {
@@ -53,6 +53,19 @@ export type TransArt = {
   quantity: number;
   consome: number;
   restant: number;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type Transaction = {
+  _id: string;
+  userId: string;
+  articleId: string;
+  title: string;
+  category: string;
+  lastname: string;
+  firstname: string;
+  consome: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 };

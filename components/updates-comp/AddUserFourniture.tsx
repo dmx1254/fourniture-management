@@ -46,12 +46,16 @@ const AddUserFourniture = ({
   const [id, setID] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [category, setCategory] = useState<string>("");
+  const [lastname, setLastname] = useState<string>("");
+  const [firstname, setFirstname] = useState<string>("");
   const [restant, setRestant] = useState<number>(0);
 
   useEffect(() => {
     const article = articles.find((article) => article._id === id);
     setTitle(article?.title || "");
     setCategory(article?.category || "");
+    setLastname(user?.lastname);
+    setFirstname(user?.firstname);
     let rest: number = article ? article?.quantity - article?.consome : 0;
     setRestant(rest);
   }, [id, articles, restant, title, category]);
@@ -155,6 +159,8 @@ const AddUserFourniture = ({
                 <input type="hidden" name="articleId" value={id} />
                 <input type="hidden" name="category" value={category} />
                 <input type="hidden" name="title" value={title} />
+                <input type="hidden" name="lastname" value={lastname} />
+                <input type="hidden" name="firstname" value={firstname} />
               </div>
             )}
           </AlertDialogHeader>

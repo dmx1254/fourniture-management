@@ -31,10 +31,10 @@ const UserTable = async ({
       <table className="min-w-full bg-white text-left">
         <thead className="bg-[#111b21] text-gray-500">
           <tr className="border-b border-gray-100 text-sm">
-            <th className="p-4 font-semibold">Prenom</th>
+            <th className="p-4 font-semibold">Prénom</th>
             <th className="p-4 font-semibold">Nom</th>
             <th className="p-4 font-semibold">Email</th>
-            <th className="p-4 font-semibold">Telephone</th>
+            <th className="p-4 font-semibold">Téléphone</th>
             <th className="p-4 font-semibold">Date d&apos;ajout</th>
             <th className="p-4 font-semibold">Actions</th>
           </tr>

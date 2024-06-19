@@ -6,8 +6,10 @@ import {
   createTransaction,
   createUserPro,
   deleteArticle,
+  deleteTransaction,
   deleteUser,
   updateArticlePro,
+  updateTransaction,
   updateUser,
 } from "./api";
 import { revalidatePath } from "next/cache";
@@ -60,6 +62,11 @@ export type ArticleDeleteState = {
 };
 
 export type UserDeleteState = {
+  message?: string | null;
+};
+
+
+export type TransDeleteState = {
   message?: string | null;
 };
 
@@ -123,6 +130,13 @@ const UserSchema = z.object({
 });
 
 const TransactionSchema = z.object({
+  transId: z
+    .string({
+      required_error: "L'identifiant de l'utilisateur est requis",
+      invalid_type_error:
+        "Lidentifiant de l'utilisateur doit être une chaîne de caractères",
+    })
+    .optional(),
   userId: z.string({
     required_error: "L'identifiant de l'utilisateur est requis",
     invalid_type_error:
@@ -148,6 +162,25 @@ const TransactionSchema = z.object({
   consome: z.coerce.number({
     invalid_type_error: "L'adresse doit être une chaîne de caractères",
   }),
+  lastname: z
+    .string({
+      required_error: "Le nom de famille est requis",
+      invalid_type_error:
+        "Le nom de famille doit être une chaîne de caractères",
+    })
+    .optional(),
+  firstname: z
+    .string({
+      required_error: "Le prénom est requis",
+      invalid_type_error: "Le prénom doit être une chaîne de caractères",
+    })
+    .optional(),
+  lastcons: z.coerce
+    .number({
+      required_error: "Le dernier consome est requis",
+      invalid_type_error: "Le  dernier consome doit être un nombre",
+    })
+    .optional(),
 });
 
 const ArticleUpadteSchema = z.object({
@@ -172,6 +205,14 @@ const ArticleDeleteSchema = z.object({
 
 const userDeleteSchema = z.object({
   userId: z.string({
+    required_error: "Le titre est requis",
+    invalid_type_error: "Le titre doit être une chaîne de caractères",
+  }),
+});
+
+
+const TransDeleteSchema = z.object({
+  transId: z.string({
     required_error: "Le titre est requis",
     invalid_type_error: "Le titre doit être une chaîne de caractères",
   }),
@@ -278,6 +319,28 @@ export async function deleteUserPro(
     const userId = isUserIdCorrect.data.userId;
     const response = await deleteUser(userId);
     await revalidatePath("/dashboard/utilisateurs");
+    return response;
+  }
+}
+
+
+export async function deleteTransationPro(
+  prevState: TransDeleteState,
+  formData: FormData
+) {
+  let sessions = {};
+
+  for (const [name, value] of formData.entries()) {
+    sessions[name] = value;
+  }
+
+  const isTransIdCorrect = await TransDeleteSchema.safeParse(sessions);
+  if (!isTransIdCorrect.success) {
+    console.log(isTransIdCorrect.error);
+  } else {
+    const transId = isTransIdCorrect.data.transId;
+    const response = await deleteTransaction(transId);
+    await revalidatePath("/dashboard/historique");
     return response;
   }
 }
@@ -399,15 +462,75 @@ export async function addUserFournitures(
       const category = isCheckFourniture.data.category;
       const title = isCheckFourniture.data.title;
       const consome = isCheckFourniture.data.consome;
+      const lastname = isCheckFourniture.data.lastname;
+      const firstname = isCheckFourniture.data.firstname;
       const response = await createTransaction(
         userId,
         articleId,
         category,
         title,
-        consome
+        consome,
+        lastname,
+        firstname
       );
       await revalidatePath("/dashboard/utilisateurs");
       return response;
+    }
+  }
+}
+
+export async function updateUserFournitures(
+  prevState: TransactionErrorState,
+  formData: FormData
+) {
+  const sessions = {};
+  for (const [name, value] of formData.entries()) {
+    sessions[name] = value;
+  }
+
+  const isCheckFourniture = await TransactionSchema.safeParse(sessions);
+  if (!isCheckFourniture.success) {
+    return {
+      errors: isCheckFourniture.error.errors,
+    };
+  } else {
+    if (
+      isCheckFourniture.data.consome >
+      isCheckFourniture.data.rest + isCheckFourniture.data.lastcons
+    ) {
+      return {
+        errors: {
+          consome: [
+            "La quantité saisie ne doit pas être supérieur à la quantité restante",
+          ],
+        },
+        message: "",
+      };
+    } else {
+      const transId = isCheckFourniture.data.transId;
+      const userId = isCheckFourniture.data.userId;
+      const articleId = isCheckFourniture.data.articleId;
+      const category = isCheckFourniture.data.category;
+      const title = isCheckFourniture.data.title;
+      const consome = isCheckFourniture.data.consome;
+      const lastname = isCheckFourniture.data.lastname;
+      const firstname = isCheckFourniture.data.firstname;
+      const lastcons = isCheckFourniture.data.lastcons;
+      if (transId) {
+        const response = await updateTransaction(
+          transId,
+          userId,
+          articleId,
+          category,
+          title,
+          consome,
+          lastname,
+          firstname,
+          lastcons
+        );
+        await revalidatePath("/dashboard/historique");
+        return response;
+      }
     }
   }
 }

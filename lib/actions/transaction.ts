@@ -22,6 +22,14 @@ const transactionSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    lastname: {
+      type: String,
+      default: "",
+    },
+    firstname: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
