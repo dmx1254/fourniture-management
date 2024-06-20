@@ -38,7 +38,7 @@ const UserUpdate = ({
       // Réinitialiser le message après l'affichage de la toast
       state.message = "";
     }
-  }, [state?.message, upadteUserAction]);
+  }, [state?.message, upadteUserAction, state]);
 
   return (
     <td className="flex items-center gap-2 p-3.5 font-semibold ">

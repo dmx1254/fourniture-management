@@ -84,11 +84,11 @@ const ViewFournitureDetails = ({ trans }: { trans: Transaction }) => {
             <span className="text-gray-300">{trans._id}</span>
           </p>
           <p>
-            <strong>ID de l'Utilisateur:</strong>{" "}
+            <strong>ID de l&apos;Utilisateur:</strong>{" "}
             <span className="text-gray-300">{trans.userId}</span>
           </p>
           <p>
-            <strong>ID de l'Article:</strong>{" "}
+            <strong>ID de l&apos;Article:</strong>{" "}
             <span className="text-gray-300">{trans.articleId}</span>
           </p>
           <p>

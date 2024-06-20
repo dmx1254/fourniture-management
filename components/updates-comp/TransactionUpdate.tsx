@@ -85,7 +85,7 @@ const TransactionUpdate = ({
           <form action={upadteFournituresAction}>
             <AlertDialogHeader>
               <AlertDialogTitle className="text-base line-clamp-1">
-                Mettre à jour l'article
+                Mettre à jour l&apos;article
               </AlertDialogTitle>
 
               <div className="w-full flex items-center gap-6">
