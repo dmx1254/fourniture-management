@@ -49,6 +49,7 @@ const ViewFournitureDetails = ({ trans }: { trans: Transaction }) => {
         ["ID de Transaction", trans._id],
         ["ID de l'Utilisateur", trans.userId],
         ["ID de l'Article", trans.articleId],
+        ["Poste", trans.poste],
         ["Titre", trans.title],
         ["Catégorie", trans.category],
         ["Nom", trans.lastname],
@@ -90,6 +91,10 @@ const ViewFournitureDetails = ({ trans }: { trans: Transaction }) => {
           <p>
             <strong>ID de l&apos;Article:</strong>{" "}
             <span className="text-gray-300">{trans.articleId}</span>
+          </p>
+          <p>
+            <strong>Poste:</strong>{" "}
+            <span className="text-gray-300">{trans.poste}</span>
           </p>
           <p>
             <strong>Titre:</strong>{" "}

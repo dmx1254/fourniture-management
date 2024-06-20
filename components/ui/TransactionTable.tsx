@@ -18,7 +18,7 @@ const TransactionTable = async ({
   category: string;
   articles: TransArt[];
 }) => {
-const session = await getSession()
+  const session = await getSession();
   const { transactions } = await getTransactionsAndTotalPages(
     query,
     currentPage,
@@ -37,6 +37,7 @@ const session = await getSession()
       return convertedDate;
     }
   };
+  // console.log(transact);
 
   //   console.log(transactions);
   return (
@@ -49,10 +50,7 @@ const session = await getSession()
             <th className="p-4 font-semibold">Article</th>
             <th className="p-4 font-semibold">Consommé</th>
             <th className="p-4 font-semibold">Date créée</th>
-            {
-                session.isAdmin && <th className="p-4 font-semibold">Actions</th>
-            }
-            
+            {session.isAdmin && <th className="p-4 font-semibold">Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -79,10 +77,9 @@ const session = await getSession()
                   {convertedDate(trans.createdAt)}
                 </span>
               </td>
-              {
-
-                session.isAdmin && <TransactionUpdate trans={trans} articles={articles} />
-              }
+              {session.isAdmin && (
+                <TransactionUpdate trans={trans} articles={articles} />
+              )}
             </tr>
           ))}
         </tbody>

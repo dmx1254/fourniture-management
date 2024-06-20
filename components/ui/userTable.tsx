@@ -39,6 +39,7 @@ const session = await getSession()
             <th className="p-4 font-semibold">Prénom</th>
             <th className="p-4 font-semibold">Nom</th>
             <th className="p-4 font-semibold">Email</th>
+            <th className="p-4 font-semibold">Poste</th>
             <th className="p-4 font-semibold">Téléphone</th>
             <th className="p-4 font-semibold">Date d&apos;ajout</th>
             {
@@ -63,6 +64,12 @@ const session = await getSession()
                 {" "}
                 <span className="bg-orange-100 rounded p-1 text-black">
                   {user.email}
+                </span>
+              </td>
+              <td className="p-4 font-semibold">
+                {" "}
+                <span className="bg-cyan-100 rounded p-1 text-black">
+                  {user.poste}
                 </span>
               </td>
               <td className="p-4 font-semibold">{user.phone}</td>

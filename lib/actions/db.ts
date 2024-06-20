@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    poste: {
+      type: String,
+      default: "",
+    },
 
     profil: {
       type: String,

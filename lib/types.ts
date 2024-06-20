@@ -39,6 +39,7 @@ export type User = {
   phone?: string;
   lastname: string;
   firstname: string;
+  poste?: string;
   address?: string;
   country?: string;
   city?: string;
@@ -66,7 +67,9 @@ export type Transaction = {
   category: string;
   lastname: string;
   firstname: string;
+  poste: string;
   consome: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
+

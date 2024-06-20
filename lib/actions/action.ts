@@ -148,14 +148,24 @@ const UserSchema = z.object({
       invalid_type_error: "L'adresse doit être une chaîne de caractères",
     })
     .optional(),
+  city: z
+    .string({
+      invalid_type_error: "L'adresse doit être une chaîne de caractères",
+    })
+    .optional(),
   country: z
     .string({
       invalid_type_error: "Le pays doit être une chaîne de caractères",
     })
     .optional(),
-  city: z
+  poste: z
     .string({
-      invalid_type_error: "La ville doit être une chaîne de caractères",
+      invalid_type_error: "La poste doit être une chaîne de caractères",
+    })
+    .optional(),
+  isAdmin: z
+    .boolean({
+      invalid_type_error: "L'admin doit être un boolean",
     })
     .optional(),
 });
@@ -198,6 +208,12 @@ const TransactionSchema = z.object({
       required_error: "Le nom de famille est requis",
       invalid_type_error:
         "Le nom de famille doit être une chaîne de caractères",
+    })
+    .optional(),
+  poste: z
+    .string({
+      required_error: "Le poste est requis",
+      invalid_type_error: "Le poste doit être une chaîne de caractères",
     })
     .optional(),
   firstname: z
@@ -383,11 +399,16 @@ export async function createNewUser(
   let sessions = {};
 
   for (const [name, value] of formData.entries()) {
-    sessions[name] = value;
+    if (name === "isAdmin") {
+      sessions[name] = value === "on" ? true : false;
+    } else {
+      sessions[name] = value;
+    }
   }
 
   const isUserCorrect = await UserSchema.safeParse(sessions);
   if (!isUserCorrect.success) {
+    console.log(isUserCorrect.error);
     return {
       errors: isUserCorrect.error.flatten().fieldErrors,
       message: "",
@@ -400,6 +421,8 @@ export async function createNewUser(
     const country = isUserCorrect.data.country;
     const city = isUserCorrect.data.city;
     const address = isUserCorrect.data.address;
+    const poste = isUserCorrect.data.poste;
+    const isAdmin = isUserCorrect.data.isAdmin;
     const password = "Inviteosf12541;";
     const code = "test";
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -412,10 +435,13 @@ export async function createNewUser(
       city,
       address,
       code,
+      poste,
+      isAdmin,
       hashedPassword
     );
     await revalidatePath("/dashboard/utilisateurs");
     return response;
+    // console.log(isUserCorrect.data);
   }
 }
 
@@ -493,6 +519,7 @@ export async function addUserFournitures(
       const consome = isCheckFourniture.data.consome;
       const lastname = isCheckFourniture.data.lastname;
       const firstname = isCheckFourniture.data.firstname;
+      const poste = isCheckFourniture.data.poste;
       const response = await createTransaction(
         userId,
         articleId,
@@ -500,7 +527,8 @@ export async function addUserFournitures(
         title,
         consome,
         lastname,
-        firstname
+        firstname,
+        poste
       );
       await revalidatePath("/dashboard/utilisateurs");
       return response;

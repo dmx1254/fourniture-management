@@ -32,6 +32,8 @@ export async function createUserPro(
   city: string,
   address: string,
   code: string,
+  poste: string,
+  isAdmin: boolean,
   hashedPassword: string
 ) {
   try {
@@ -44,6 +46,8 @@ export async function createUserPro(
       city,
       address,
       code,
+      poste,
+      isAdmin,
       password: hashedPassword,
     });
     return { message: "Utilisateur Crée avec succès" };
@@ -173,7 +177,8 @@ export async function createTransaction(
   title: string,
   consome: number,
   lastname: string,
-  firstname: string
+  firstname: string,
+  poste: string
 ) {
   try {
     const articleFind = await ArticleModel.findById(articleId);
@@ -202,6 +207,7 @@ export async function createTransaction(
       consome: consome,
       lastname: lastname,
       firstname: firstname,
+      poste: poste,
     });
 
     return { message: "Transacton crée avec success" };

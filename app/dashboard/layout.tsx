@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { Toaster } from "sonner";
 
@@ -12,7 +13,7 @@ export default function RootLayout({
       <div className="sticky left-0 top-0 bottom-0">
         <Sidebar />
       </div>
-      <div className="flex-1 w-full h-full">{children}</div>
+      <div className="flex-1 flex flex-col w-full h-full"><Header />{children}</div>
     </main>
   );
 }

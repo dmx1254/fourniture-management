@@ -2,13 +2,13 @@ import React from "react";
 import { LogOut } from "lucide-react";
 import MyLinks from "./ui/MyLinks";
 import { logout } from "@/lib/actions/action";
-import { redirect } from "next/navigation"
+import { redirect } from "next/navigation";
 import { getSession } from "@/lib/actions/action";
 
-const Sidebar = async() => {
-  const session = await getSession()
-  if(!session.userId){
-    redirect("/")
+const Sidebar = async () => {
+  const session = await getSession();
+  if (!session.userId) {
+    redirect("/");
   }
   return (
     <div
@@ -20,21 +20,11 @@ const Sidebar = async() => {
       <div className="w-full flex flex-col items-start gap-6">
         <div className="flex items-center gap-2 p-2">
           <img
-            src="/avatar.jpg"
-            alt="profil"
-            className="flex items-center justify-center w-9 h-9 object-cover object-center rounded-full"
+            src="/pmn.jpeg"
+            alt="logo"
+            className="flex items-center justify-center w-12 h-12 object-cover object-center rounded-full"
           />
-          <div className="flex flex-col items-start gap-1">
-            <span className="text-xs text-gray-300 font-semibold">
-              {
-              `${session.lastname} ${session.firstname}`}
-            </span>
-            <span className="flex items-center justify-center px-1 py-0.5 bg-orange-600 rounded-full text-xs text-gray-300 font-semibold">
-              {
-                session.isAdmin ? "Admin" : "Invite"
-              }
-            </span>
-          </div>
+          <span className="text-2xl text-white font-extrabold">PMN</span>
         </div>
         <MyLinks />
       </div>
