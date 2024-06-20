@@ -1,13 +1,15 @@
-"use client";
-
 import React from "react";
 import { LogOut } from "lucide-react";
-import { navMenus } from "@/lib/data";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import MyLinks from "./ui/MyLinks";
+import { logout } from "@/lib/actions/action";
+import { redirect } from "next/navigation"
+import { getSession } from "@/lib/actions/action";
 
-const Sidebar = () => {
-  const pathname: string = usePathname();
+const Sidebar = async() => {
+  const session = await getSession()
+  if(!session.userId){
+    redirect("/")
+  }
   return (
     <div
       className="h-screen w-[250px] bg-[#111b21] p-2 flex flex-col items-start justify-between"
@@ -24,36 +26,24 @@ const Sidebar = () => {
           />
           <div className="flex flex-col items-start gap-1">
             <span className="text-xs text-gray-300 font-semibold">
-              Harouna Sylla
+              {
+              `${session.lastname} ${session.firstname}`}
             </span>
             <span className="flex items-center justify-center px-1 py-0.5 bg-orange-600 rounded-full text-xs text-gray-300 font-semibold">
-              Admin
+              {
+                session.isAdmin ? "Admin" : "Invite"
+              }
             </span>
           </div>
         </div>
-        <div className="w-full flex flex-col items-start gap-6">
-          {navMenus.map(({ id, title, icon: Icon, path }) => (
-            <Link
-              className={`w-full flex items-center text-sm gap-2 p-2 rounded transition duration-300 ease-in-out hover:bg-[#2C3A42] hover:text-gray-400 ${
-                path === pathname
-                  ? "bg-[#2C3A42] text-gray-400"
-                  : "text-gray-600"
-              }`}
-              key={id}
-              href={path}
-            >
-              <Icon size={18} />
-              <span>{title}</span>
-            </Link>
-          ))}
-        </div>
-        <div></div>
-        <div></div>
+        <MyLinks />
       </div>
-      <button className="flex items-center gap-2 p-2">
-        <LogOut size={20} className="text-gray-600" />
-        <span className="text-gray-600">Se deconnecter</span>
-      </button>
+      <form action={logout}>
+        <button type="submit" className="flex items-center gap-2 p-2">
+          <LogOut size={20} className="text-gray-600" />
+          <span className="text-gray-600">Se deconnecter</span>
+        </button>
+      </form>
     </div>
   );
 };

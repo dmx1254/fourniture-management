@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { deleteUserPro } from "@/lib/actions/action";
 
 const DeleteUserBtn = ({ userId }: { userId: string }) => {
-  const initialstate = { message: "" };
+    const initialstate = {errors: {}, message: "" };
   const [state, DeleteAction] = useFormState(deleteUserPro, initialstate);
 
   // console.log(state);

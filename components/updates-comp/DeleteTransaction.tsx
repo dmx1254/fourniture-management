@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { deleteTransationPro } from "@/lib/actions/action";
 
 const DeleteTransaction = ({ transId }: { transId: string }) => {
-  const initialstate = { message: "" };
+    const initialstate = {errors: {}, message: "" };
   const [state, DeleteAction] = useFormState(deleteTransationPro, initialstate);
 
   // console.log(state);

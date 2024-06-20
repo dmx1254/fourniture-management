@@ -4,8 +4,8 @@ import {
 } from "@/lib/actions/api";
 import { TransArt, Transaction } from "@/lib/types";
 import React from "react";
-import UserUpdate from "../updates-comp/UserUpdate";
 import TransactionUpdate from "../updates-comp/TransactionUpdate";
+import { getSession } from "@/lib/actions/action";
 
 const TransactionTable = async ({
   query,
@@ -18,6 +18,7 @@ const TransactionTable = async ({
   category: string;
   articles: TransArt[];
 }) => {
+const session = await getSession()
   const { transactions } = await getTransactionsAndTotalPages(
     query,
     currentPage,
@@ -25,17 +26,19 @@ const TransactionTable = async ({
   );
   const transact: Transaction[] = transactions;
   //   console.log(allusers);
-  const convertedDate = (date: Date) => {
-    const convertedDate = new Date(date).toLocaleDateString("fr-FR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const convertedDate = (date: Date | undefined) => {
+    if (date) {
+      const convertedDate = new Date(date).toLocaleDateString("fr-FR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
 
-    return convertedDate;
+      return convertedDate;
+    }
   };
 
-//   console.log(transactions);
+  //   console.log(transactions);
   return (
     <div className="w-full mt-6">
       <table className="min-w-full bg-white text-left">
@@ -46,7 +49,10 @@ const TransactionTable = async ({
             <th className="p-4 font-semibold">Article</th>
             <th className="p-4 font-semibold">Consommé</th>
             <th className="p-4 font-semibold">Date créée</th>
-            <th className="p-4 font-semibold">Actions</th>
+            {
+                session.isAdmin && <th className="p-4 font-semibold">Actions</th>
+            }
+            
           </tr>
         </thead>
         <tbody>
@@ -73,7 +79,10 @@ const TransactionTable = async ({
                   {convertedDate(trans.createdAt)}
                 </span>
               </td>
-              <TransactionUpdate trans={trans} articles={articles} />
+              {
+
+                session.isAdmin && <TransactionUpdate trans={trans} articles={articles} />
+              }
             </tr>
           ))}
         </tbody>

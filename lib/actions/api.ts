@@ -2,6 +2,7 @@ import ArticleModel from "./article";
 import { unstable_noStore as noStore } from "next/cache";
 import UserModel, { connectDB } from "./db";
 import TransactionModel from "./transaction";
+import bcrypt from "bcrypt";
 
 connectDB();
 
@@ -292,7 +293,6 @@ export async function deleteUser(userId: string) {
   }
 }
 
-
 export async function deleteTransaction(transId: string) {
   try {
     const deleteArticle = await TransactionModel.findByIdAndDelete(transId);
@@ -519,3 +519,91 @@ export async function getTransactionsAndTotalPages(
 //   let articles = JSON.parse(JSON.stringify(allArticles));
 //   return articles;
 // }
+
+export async function getFournituresLength() {
+  try {
+    const fournituresLength = await ArticleModel.countDocuments({});
+    return fournituresLength;
+  } catch (error) {
+    console.error("Error fetching the number of articles:", error);
+    throw error;
+  }
+}
+
+export async function getUsersLength() {
+  try {
+    const fournituresLength = await UserModel.countDocuments({});
+    return fournituresLength;
+  } catch (error) {
+    console.error("Error fetching the number of articles:", error);
+    throw error;
+  }
+}
+
+export async function getTransactionssLength() {
+  try {
+    const fournituresLength = await TransactionModel.countDocuments({});
+    return fournituresLength;
+  } catch (error) {
+    console.error("Error fetching the number of articles:", error);
+    throw error;
+  }
+}
+
+export async function getLastFiveTransactions() {
+  try {
+    const transactionsFind = await TransactionModel.find()
+      .sort({ createdAt: -1 })
+      .limit(5);
+    const transactions = JSON.parse(JSON.stringify(transactionsFind));
+    return transactions;
+  } catch (error) {
+    console.error("Error fetching the last five transactions:", error);
+    throw error;
+  }
+}
+
+export async function getLastTenArticles() {
+  try {
+    const articlesFind = await TransactionModel.find()
+      .sort({ createdAt: -1 })
+      .limit(10);
+    const articles = JSON.parse(JSON.stringify(articlesFind));
+    return articles;
+  } catch (error) {
+    console.error("Error fetching the last five transactions:", error);
+    throw error;
+  }
+}
+
+export async function loginUser(email: string, password: string) {
+  try {
+    const isExistingUser = await UserModel.findOne({ email: email });
+    if (!isExistingUser)
+      return {
+        errors: {
+          email: ["L'adresse email que vous avez saisie n'existe pas"],
+        },
+      };
+
+    // Utilisez 'await' pour la comparaison du mot de passe
+    const isCorrectPassword = await bcrypt.compare(
+      password,
+      isExistingUser.password
+    );
+    if (!isCorrectPassword) {
+      return {
+        errors: {
+          password: ["Mot de passe incorrect"],
+        },
+      };
+    } else {
+      const data = JSON.parse(JSON.stringify(isExistingUser));
+
+      return { verif: true, user: data };
+    }
+  } catch (error) {
+    console.error("Something went wrong", error);
+    throw error;
+  }
+}

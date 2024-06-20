@@ -1,5 +1,9 @@
 "use server";
 import bcrypt from "bcrypt";
+import { sessionOptions, SessionData } from "@/lib/lib";
+import type { User } from "../types";
+import { getIronSession } from "iron-session";
+import { cookies } from "next/headers";
 import { z } from "zod";
 import {
   createProduct,
@@ -8,11 +12,13 @@ import {
   deleteArticle,
   deleteTransaction,
   deleteUser,
+  loginUser,
   updateArticlePro,
   updateTransaction,
   updateUser,
 } from "./api";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export type ArticleErrorState = {
   errors?: {
@@ -28,6 +34,14 @@ export type UserErrorState = {
     lastname?: string[];
     firtsname?: string[];
     email?: string[];
+  };
+  message?: string | null;
+};
+
+export type LoginErrorState = {
+  errors?: {
+    email?: string[];
+    password?: string[];
   };
   message?: string | null;
 };
@@ -65,10 +79,27 @@ export type UserDeleteState = {
   message?: string | null;
 };
 
-
 export type TransDeleteState = {
   message?: string | null;
 };
+
+const LoginSchema = z.object({
+  email: z
+    .string({
+      required_error: "L'email est requis",
+      invalid_type_error: "L'email doit être une chaîne de caractères",
+    })
+    .email("L'email doit être une adresse email valide"),
+
+  password: z
+    .string({
+      required_error: "Le mot de passe est requis",
+      invalid_type_error: "Le mot de passe doit être une chaîne de caractères",
+    })
+    .min(8, {
+      message: "Le mot de passe doit avoir minimum 8 caracteres",
+    }),
+});
 
 const ArticleSchema = z.object({
   title: z.string({
@@ -210,7 +241,6 @@ const userDeleteSchema = z.object({
   }),
 });
 
-
 const TransDeleteSchema = z.object({
   transId: z.string({
     required_error: "Le titre est requis",
@@ -323,7 +353,6 @@ export async function deleteUserPro(
   }
 }
 
-
 export async function deleteTransationPro(
   prevState: TransDeleteState,
   formData: FormData
@@ -371,7 +400,7 @@ export async function createNewUser(
     const country = isUserCorrect.data.country;
     const city = isUserCorrect.data.city;
     const address = isUserCorrect.data.address;
-    const password = "12345678dmxosf";
+    const password = "Inviteosf12541;";
     const code = "test";
     const hashedPassword = await bcrypt.hash(password, 10);
     const response = await createUserPro(
@@ -533,4 +562,48 @@ export async function updateUserFournitures(
       }
     }
   }
+}
+
+export async function getSession() {
+  const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+  return session;
+}
+
+export async function login(prevState: LoginErrorState, formData: FormData) {
+  const sessions = {};
+  for (const [name, value] of formData.entries()) {
+    sessions[name] = value;
+  }
+
+  const isCheckLogin = LoginSchema.safeParse(sessions);
+  if (!isCheckLogin.success) {
+    return {
+      errors: isCheckLogin.error.flatten().fieldErrors,
+    };
+  } else {
+    const email = isCheckLogin.data.email;
+    const password = isCheckLogin.data.password;
+    const response = await loginUser(email, password);
+    if (response.errors) {
+      return response;
+    } else {
+      if (response.verif) {
+        const session = await getSession();
+        session.userId = response.user._id;
+        session.email = response.user.email;
+        session.isAdmin = response.user.isAdmin;
+        session.lastname = response.user.lastname;
+        session.firstname = response.user.firstname;
+        session.phone = response.user.phone;
+        await session.save();
+        redirect("/dashboard");
+      }
+    }
+  }
+}
+
+export async function logout() {
+  const session = await getSession();
+  session.destroy();
+  redirect("/");
 }

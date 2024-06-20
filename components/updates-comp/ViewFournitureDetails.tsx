@@ -17,16 +17,18 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const ViewFournitureDetails = ({ trans }: { trans: Transaction }) => {
-  const convertedDate = (date: Date) => {
-    const convertedDate = new Date(date).toLocaleDateString("fr-FR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-    });
+  const convertedDate = (date: Date | undefined) => {
+    if (date) {
+      const convertedDate = new Date(date).toLocaleDateString("fr-FR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      });
 
-    return convertedDate;
+      return convertedDate;
+    }
   };
   const downloadPDF = () => {
     const doc = new jsPDF();

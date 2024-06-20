@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { deleteArticlePro } from "@/lib/actions/action";
 
 const DeleteArticleBtn = ({ articleId }: { articleId: string }) => {
-  const initialstate = { message: "" };
+    const initialstate = {errors: {}, message: "" };
   const [state, DeleteAction] = useFormState(deleteArticlePro, initialstate);
 
   // console.log(state);

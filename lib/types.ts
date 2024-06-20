@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import { IconType } from "react-icons/lib";
 
 export type NavTypes = {
   id: string;
@@ -12,7 +13,7 @@ export type TestData = {
   price?: number;
   item?: number | string;
   title: string;
-  icon?: any;
+  icon?: IconType;
   colorType: string;
   date: string;
 };

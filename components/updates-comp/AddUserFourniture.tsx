@@ -37,7 +37,7 @@ const AddUserFourniture = ({
   user: User;
   articles: TransArt[];
 }) => {
-  const initialstate = { message: "" };
+  const initialstate = {errors: {}, message: "" };
   const [state, addFournitureAction] = useFormState(
     addUserFournitures,
     initialstate

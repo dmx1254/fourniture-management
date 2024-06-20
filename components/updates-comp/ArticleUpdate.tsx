@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import DeleteArticleBtn from "./DeleteArticleBtn";
 
 const ArticleUpdate = ({ article }: { article: Product }) => {
-  const initialstate = { message: "" };
+    const initialstate = {errors: {}, message: "" };
   const [state, updateAction] = useFormState(updateArticle, initialstate);
 
   useEffect(() => {

@@ -32,10 +32,6 @@ const HistoricPage = async ({
   let { totalPages } =
     (await getUsersAndTotalPages(query, currentPage, category)) || 1;
   let articles: TransArt[] = await getIdCatAndTitleArticle();
-  let date: Date = new Date();
-  // let formattedDate: string = date.toISOString().split("T")[0];
-
-  // console.log(category);
 
   return (
     <div className="w-full flex flex-col items-center p-4 bg-gray-100">
@@ -45,15 +41,7 @@ const HistoricPage = async ({
       <div className="flex items-center justify-between w-full mt-2">
         <div className="w-full max-w-md flex items-center gap-4">
           <Search placeholder="Rechercher l'utilisateur que vous voulez..." />
-          {/* <div className="relative flex">
-            <input
-              type="date"
-              name="date"
-              id="date"
-              value={formattedDate}
-              className="text-sm bg-transparent w-[240px] py-2 rounded-[10px] text-[#111b21] border border-[#111b21] outline-none px-6"
-            />
-          </div> */}
+         
         </div>
         <div className="flex items-center gap-4">
           <MoreUserFilter />
@@ -72,7 +60,7 @@ const HistoricPage = async ({
         />
       </Suspense>
       <Pagination currentPage={currentPage} totalPages={totalPages} />
-      {/* <div></div> */}
+      
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { getArticlesAndTotalPages } from "@/lib/actions/api";
 import { Product } from "@/lib/types";
 import React from "react";
 import ArticleUpdate from "../updates-comp/ArticleUpdate";
+import { getSession } from "@/lib/actions/action";
 
 const Table = async ({
   query,
@@ -12,6 +13,8 @@ const Table = async ({
   currentPage: number;
   category: string;
 }) => {
+    
+const session = await getSession()
   const { articles } = await getArticlesAndTotalPages(
     query,
     currentPage,
@@ -28,7 +31,7 @@ const Table = async ({
             <th className="p-4 font-semibold">Stockage initial</th>
             <th className="p-4 font-semibold">consommé</th>
             <th className="p-4 font-semibold">réstant</th>
-            <th className="p-4 font-semibold">Actions</th>
+            {session.isAdmin && <th className="p-4 font-semibold">Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -43,7 +46,10 @@ const Table = async ({
                 {product.consome}
               </td>
               <td className="p-4 font-bold">{product.restant}</td>
-              <ArticleUpdate article={product} />
+              {
+                session.isAdmin && <ArticleUpdate article={product} />
+              }
+              
             </tr>
           ))}
         </tbody>
