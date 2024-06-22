@@ -45,11 +45,11 @@ const TransactionTable = async ({
       <table className="min-w-full bg-white text-left">
         <thead className="bg-[#111b21] text-gray-500">
           <tr className="border-b border-gray-100 text-sm">
-            <th className="p-4 font-semibold">Prénom</th>
-            <th className="p-4 font-semibold">Nom</th>
-            <th className="p-4 font-semibold">Article</th>
-            <th className="p-4 font-semibold">Consommé</th>
-            <th className="p-4 font-semibold">Date créée</th>
+            <th className="p-1 md:p-4 font-semibold">Prénom</th>
+            <th className="p-1 md:p-4 font-semibold">Nom</th>
+            <th className="p-1 md:p-4 font-semibold">Article</th>
+            <th className="max-x2s:hidden p-1 md:p-4 font-semibold">Consommé</th>
+            <th className="max-md:hidden p-1 md:p-4 font-semibold">Date créée</th>
             {session.isAdmin && <th className="p-4 font-semibold">Actions</th>}
           </tr>
         </thead>
@@ -59,20 +59,20 @@ const TransactionTable = async ({
               key={trans._id}
               className="border-b border-gray-200 text-xs text-[#111b21]"
             >
-              <td className="p-4 font-semibold">
+              <td className="p-1 md:p-4 font-semibold">
                 <span className="bg-violet-100 rounded p-1 text-black">
                   {trans.lastname}
                 </span>
               </td>
-              <td className="p-4 font-semibold">{trans.firstname}</td>
-              <td className="p-4 font-semibold">
+              <td className="p-1 md:p-4 font-semibold">{trans.firstname}</td>
+              <td className="p-1 md:p-4 font-semibold">
                 {" "}
                 <span className="bg-orange-100 rounded p-1 text-black">
                   {trans.title}
                 </span>
               </td>
-              <td className="p-4 font-semibold">{trans.consome}</td>
-              <td className="p-4 font-semibold">
+              <td className="max-x2s:hidden p-1 md:p-4 font-semibold">{trans.consome}</td>
+              <td className="max-md:hidden p-1 md:p-4 font-semibold">
                 <span className="bg-green-100 rounded p-1 text-black">
                   {convertedDate(trans.createdAt)}
                 </span>

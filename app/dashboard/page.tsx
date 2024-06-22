@@ -40,7 +40,7 @@ const DashboardPage = async () => {
   const articles: TransArt[] = await getLastTenArticles();
 
   return (
-    <section className="flex flex-col items-start w-full h-full gap-20 p-4">
+    <section className="w-full h-full flex flex-col items-start gap-20 p-4">
       <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <Suspense key={fournituresLength} fallback={<CardSkeleton />}>
           <Card
@@ -72,7 +72,7 @@ const DashboardPage = async () => {
       </div>
       <div className="w-full flex flex-col md:flex-row items-start gap-8 mt-10">
         <div
-          className="flex flex-col items-start gap-4 bg-white p-4"
+          className="max-md:w-full flex flex-col items-start gap-4 bg-white p-4"
           style={{
             boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
           }}
@@ -123,7 +123,6 @@ const DashboardPage = async () => {
         <Chart articles={articles} />
         </Suspense>
       </div>
-      <div></div>
     </section>
   );
 };

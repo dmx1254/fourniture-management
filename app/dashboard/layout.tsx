@@ -13,7 +13,10 @@ export default function RootLayout({
       <div className="sticky left-0 top-0 bottom-0">
         <Sidebar />
       </div>
-      <div className="flex-1 flex flex-col w-full h-full"><Header />{children}</div>
+      <div className="flex-1 flex flex-col w-full h-full">
+        <Header />
+        <div className="w-full mx-auto self-center">{children}</div>
+      </div>
     </main>
   );
 }

@@ -13,8 +13,7 @@ const Table = async ({
   currentPage: number;
   category: string;
 }) => {
-    
-const session = await getSession()
+  const session = await getSession();
   const { articles } = await getArticlesAndTotalPages(
     query,
     currentPage,
@@ -27,10 +26,18 @@ const session = await getSession()
       <table className="min-w-full bg-white text-left">
         <thead className="bg-[#111b21] text-gray-500">
           <tr className="border-b border-gray-100 text-sm">
-            <th className="p-4 font-semibold">Articles</th>
-            <th className="p-4 font-semibold">Stockage initial</th>
-            <th className="p-4 font-semibold">consommé</th>
-            <th className="p-4 font-semibold">réstant</th>
+            <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
+              Articles
+            </th>
+            <th className="hidden x2s:flex p-1 xs:p-2 md:p-4 font-semibold">
+              Stockage Initial
+            </th>
+            <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
+              consommé
+            </th>
+            <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
+              réstant
+            </th>
             {session.isAdmin && <th className="p-4 font-semibold">Actions</th>}
           </tr>
         </thead>
@@ -40,16 +47,19 @@ const session = await getSession()
               key={product._id}
               className="border-b border-gray-200 text-xs text-[#111b21]"
             >
-              <td className="p-4 font-semibold">{product.title}</td>
-              <td className="p-4 font-semibold">{product.quantity}</td>
-              <td className="p-4 font-semibold line-through">
+              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
+                {product.title}
+              </td>
+              <td className="hidden x2s:flex p-1 xs:p-2 md:p-4 font-semibold">
+                {product.quantity}
+              </td>
+              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold line-through">
                 {product.consome}
               </td>
-              <td className="p-4 font-bold">{product.restant}</td>
-              {
-                session.isAdmin && <ArticleUpdate article={product} />
-              }
-              
+              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-bold">
+                {product.restant}
+              </td>
+              {session.isAdmin && <ArticleUpdate article={product} />}
             </tr>
           ))}
         </tbody>

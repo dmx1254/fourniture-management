@@ -30,7 +30,7 @@ export default function RootLayout({
         className={cn(
           inter.className,
           mulish.variable,
-          "bg-background text-foreground"
+          "bg-background text-foreground mx-auto"
         )}
       >
         

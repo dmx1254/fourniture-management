@@ -36,12 +36,12 @@ const session = await getSession()
       <table className="min-w-full bg-white text-left">
         <thead className="bg-[#111b21] text-gray-500">
           <tr className="border-b border-gray-100 text-sm">
-            <th className="p-4 font-semibold">Prénom</th>
-            <th className="p-4 font-semibold">Nom</th>
-            <th className="p-4 font-semibold">Email</th>
-            <th className="p-4 font-semibold">Poste</th>
-            <th className="p-4 font-semibold">Téléphone</th>
-            <th className="p-4 font-semibold">Date d&apos;ajout</th>
+            <th className="p-2 x2s:p-4 font-semibold">Prénom</th>
+            <th className="p-2 x2s:p-4 font-semibold">Nom</th>
+            <th className="max-md:hidden p-4 font-semibold">Email</th>
+            <th className="max-md:hidden p-4 font-semibold">Poste</th>
+            <th className="max-md:hidden p-4 font-semibold">Téléphone</th>
+            <th className="max-md:hidden p-4 font-semibold">Date d&apos;ajout</th>
             {
                 session.isAdmin && <th className="p-4 font-semibold">Actions</th>
             }
@@ -54,26 +54,26 @@ const session = await getSession()
               key={user._id}
               className="border-b border-gray-200 text-xs text-[#111b21]"
             >
-              <td className="p-4 font-semibold">
+              <td className="p-2 x2s:p-4 font-semibold">
                 <span className="bg-violet-100 rounded p-1 text-black">
                   {user.lastname}
                 </span>
               </td>
-              <td className="p-4 font-semibold">{user.firstname}</td>
-              <td className="p-4 font-semibold">
+              <td className="p-2 x2s:p-4 font-semibold">{user.firstname}</td>
+              <td className="max-md:hidden p-4 font-semibold">
                 {" "}
                 <span className="bg-orange-100 rounded p-1 text-black">
                   {user.email}
                 </span>
               </td>
-              <td className="p-4 font-semibold">
+              <td className="max-md:hidden p-4 font-semibold">
                 {" "}
                 <span className="bg-cyan-100 rounded p-1 text-black">
                   {user.poste}
                 </span>
               </td>
-              <td className="p-4 font-semibold">{user.phone}</td>
-              <td className="p-4 font-semibold">
+              <td className="max-md:hidden p-4 font-semibold">{user.phone}</td>
+              <td className="max-md:hidden p-4 font-semibold">
                 <span className="bg-green-100 rounded p-1 text-black">
                   {convertedDate(user.createdAt)}
                 </span>

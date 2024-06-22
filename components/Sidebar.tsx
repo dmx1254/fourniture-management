@@ -12,7 +12,7 @@ const Sidebar = async () => {
   }
   return (
     <div
-      className="h-screen w-[250px] bg-[#111b21] p-2 flex flex-col items-start justify-between"
+      className="h-screen w-[60px] md:w-[250px] bg-[#111b21] p-2 flex flex-col items-start justify-between"
       style={{
         boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
       }}
@@ -22,16 +22,16 @@ const Sidebar = async () => {
           <img
             src="/pmn.jpeg"
             alt="logo"
-            className="flex items-center justify-center w-12 h-12 object-cover object-center rounded-full"
+            className="flex items-center justify-center w-8.5 h-8.5 md:w-12 md:h-12 object-cover object-center rounded-full"
           />
-          <span className="text-2xl text-white font-extrabold">PMN</span>
+          <span className="hidden md:flex text-2xl text-white font-extrabold">PMN</span>
         </div>
         <MyLinks />
       </div>
       <form action={logout}>
         <button type="submit" className="flex items-center gap-2 p-2">
-          <LogOut size={20} className="text-gray-600" />
-          <span className="text-gray-600">Se deconnecter</span>
+          <LogOut size={20} className="text-gray-600 text-[24px] md:text-[20px]" />
+          <span className="hidden md:flex text-gray-600">Se deconnecter</span>
         </button>
       </form>
     </div>
