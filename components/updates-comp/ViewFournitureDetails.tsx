@@ -60,6 +60,12 @@ const ViewFournitureDetails = ({ trans }: { trans: Transaction }) => {
       ],
     });
 
+    doc.setFontSize(12);
+    doc.text(
+      `Signature de ${trans.lastname} ${trans.firstname}`,
+      14,
+      doc.internal.pageSize.height - 20
+    );
     doc.save(`transaction_${trans._id}.pdf`);
   };
 

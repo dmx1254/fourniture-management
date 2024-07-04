@@ -16,7 +16,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const MoreFilter = () => {
   const [catSelected, setCatSelected] = useState<string>("");
-  console.log(catSelected);
+  // console.log(catSelected);
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const pathname = usePathname();
@@ -47,17 +47,29 @@ const MoreFilter = () => {
           />
         </SelectTrigger>
         <SelectContent className="bg-[#111b21] text-gray-600">
-          <SelectGroup>
-            <SelectLabel>Categories</SelectLabel>
-            <SelectItem value="cle-usb">Cle usb</SelectItem>
-            <SelectItem value="disque-dur">Disque dur</SelectItem>
-            <SelectItem value="imprimante">Imprimante</SelectItem>
-            <SelectItem value="pc-bureau">Pc bureau</SelectItem>
-            <SelectItem value="ordinateur-portable">
-              Ordinateur portable
-            </SelectItem>
-            <SelectItem value="encre-et-autres">Encre et autres</SelectItem>
-          </SelectGroup>
+          {pathname === "/dashboard/fournitures-informatiques" ? (
+            <SelectGroup>
+              <SelectLabel>Categories</SelectLabel>
+              <SelectItem value="cle-usb">Cle usb</SelectItem>
+              <SelectItem value="disque-dur">Disque dur</SelectItem>
+              <SelectItem value="imprimante">Imprimante</SelectItem>
+              <SelectItem value="pc-bureau">Pc bureau</SelectItem>
+              <SelectItem value="ordinateur-portable">
+                Ordinateur portable
+              </SelectItem>
+              <SelectItem value="encre-et-autres">Encre et autres</SelectItem>
+            </SelectGroup>
+          ) : pathname === "/dashboard/papier-et-autres" ? (
+            <SelectGroup>
+              <SelectLabel>Categories</SelectLabel>
+              <SelectItem value="papier-et-autres">Papier et autres</SelectItem>
+            </SelectGroup>
+          ) : (
+            <SelectGroup>
+              <SelectLabel>Categories</SelectLabel>
+              <SelectItem value="none">Undefined</SelectItem>
+            </SelectGroup>
+          )}
         </SelectContent>
       </Select>
     </div>

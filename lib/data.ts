@@ -1,5 +1,5 @@
 import { NavTypes } from "./types";
-import { Home, UserRound, Computer, FileClock } from "lucide-react";
+import { Home, UserRound, Computer, FileClock, Paperclip } from "lucide-react";
 
 export const navMenus: NavTypes[] = [
   {
@@ -14,6 +14,12 @@ export const navMenus: NavTypes[] = [
     title: "Fournitures informatique",
     icon: Computer,
     path: "/dashboard/fournitures-informatiques",
+  },
+  {
+    id: "maw74",
+    title: "Papier et Autres",
+    icon: Paperclip,
+    path: "/dashboard/papier-et-autres",
   },
   {
     id: "zop92",

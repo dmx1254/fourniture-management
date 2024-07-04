@@ -15,8 +15,7 @@ const UserTable = async ({
   category: string;
   articles: TransArt[];
 }) => {
-    
-const session = await getSession()
+  const session = await getSession();
   const { users } = await getUsersAndTotalPages(query, currentPage, category);
   const allusers: User[] = users;
   //   console.log(allusers);
@@ -41,11 +40,10 @@ const session = await getSession()
             <th className="max-md:hidden p-4 font-semibold">Email</th>
             <th className="max-md:hidden p-4 font-semibold">Poste</th>
             <th className="max-md:hidden p-4 font-semibold">Téléphone</th>
-            <th className="max-md:hidden p-4 font-semibold">Date d&apos;ajout</th>
-            {
-                session.isAdmin && <th className="p-4 font-semibold">Actions</th>
-            }
-            
+            <th className="max-md:hidden p-4 font-semibold">
+              Date d&apos;ajout
+            </th>
+            <th className="p-4 font-semibold">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -78,10 +76,8 @@ const session = await getSession()
                   {convertedDate(user.createdAt)}
                 </span>
               </td>
-              {
-                session.isAdmin && <UserUpdate user={user} articles={articles} />
-              }
-              
+
+              <UserUpdate user={user} articles={articles} isAdmin={session.isAdmin} email={session.email} />
             </tr>
           ))}
         </tbody>

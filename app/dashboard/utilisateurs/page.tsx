@@ -7,7 +7,10 @@ import { MdOutlineSettings } from "react-icons/md";
 import Search from "@/components/ui/search";
 
 import LatestInvoicesSkeleton from "@/components/skelettons/skeletons";
-import { getIdCatAndTitleArticle, getUsersAndTotalPages } from "@/lib/actions/api";
+import {
+  getIdCatAndTitleArticle,
+  getUsersAndTotalPages,
+} from "@/lib/actions/api";
 import UserTable from "@/components/ui/userTable";
 import CreateUser from "@/components/ui/CreateUser";
 import MoreUserFilter from "@/components/ui/MoreUserFilter";
@@ -23,14 +26,14 @@ const UserPage = async ({
     page?: string;
   };
 }) => {
-  
-const session = await getSession()
+  const session = await getSession();
+  // console.log(session);
   let query = searchParams?.query || "";
   let category = searchParams?.category || "";
   let currentPage = Number(searchParams?.page) || 1;
   let { totalPages } =
     (await getUsersAndTotalPages(query, currentPage, category)) || 1;
-    let articles: TransArt[] = await getIdCatAndTitleArticle();
+  let articles: TransArt[] = await getIdCatAndTitleArticle();
 
   return (
     <div className="w-full flex flex-col items-center p-4 bg-gray-100">

@@ -9,7 +9,7 @@ export default function Home() {
   const [state, loginAction] = useFormState(login, initialState);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+    <main className="flex min-h-screen flex-col items-center justify-center p-6">
       <form
         action={loginAction}
         className="w-full max-w-80 flex flex-col items-center gap-4 rounded-[10px] bg-[#111b21] p-4"

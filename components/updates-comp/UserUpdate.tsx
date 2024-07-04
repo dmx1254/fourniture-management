@@ -1,6 +1,7 @@
 "use client";
 
 import { TransArt, User } from "@/lib/types";
+import { SessionData } from "@/lib/lib";
 import React, { useEffect } from "react";
 import { CiEdit } from "react-icons/ci";
 import DeleteUserBtn from "./DeleteUserBtn";
@@ -22,9 +23,13 @@ import AddUserFourniture from "./AddUserFourniture";
 const UserUpdate = ({
   user,
   articles,
+  isAdmin,
+  email,
 }: {
   user: User;
   articles: TransArt[];
+  isAdmin: boolean;
+  email: string;
 }) => {
   const initialState = { errors: {}, message: "" };
   const [state, upadteUserAction] = useFormState(updateUserPro, initialState);
@@ -44,9 +49,11 @@ const UserUpdate = ({
     <td className="flex items-center gap-2 p-3.5 font-semibold ">
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <button className="flex items-center justify-center p-0.5 rounded border border-orange-600 text-orange-600">
-            <CiEdit size={16} />
-          </button>
+          {isAdmin && (
+            <button className="flex items-center justify-center p-0.5 rounded border border-orange-600 text-orange-600">
+              <CiEdit size={16} />
+            </button>
+          )}
         </AlertDialogTrigger>
         <AlertDialogContent className="bg-[#111b21] border-[#111b21] text-white">
           <AlertDialogHeader>
@@ -187,9 +194,14 @@ const UserUpdate = ({
           </AlertDialogHeader>
         </AlertDialogContent>
       </AlertDialog>
+      {isAdmin && <DeleteUserBtn userId={user._id} />}
 
-      <DeleteUserBtn userId={user._id} />
-      <AddUserFourniture user={user} articles={articles} />
+      <AddUserFourniture
+        user={user}
+        articles={articles}
+        isAdmin={isAdmin}
+        email={email}
+      />
     </td>
   );
 };

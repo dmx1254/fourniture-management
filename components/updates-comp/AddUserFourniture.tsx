@@ -33,11 +33,15 @@ import { toast } from "sonner";
 const AddUserFourniture = ({
   user,
   articles,
+  isAdmin,
+  email,
 }: {
   user: User;
   articles: TransArt[];
+  isAdmin: boolean;
+  email: string;
 }) => {
-  const initialstate = {errors: {}, message: "" };
+  const initialstate = { errors: {}, message: "" };
   const [state, addFournitureAction] = useFormState(
     addUserFournitures,
     initialstate
@@ -76,9 +80,17 @@ const AddUserFourniture = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button className="flex items-center justify-center p-0.5 rounded border border-violet-600 text-violet-600">
-          <PiAddressBook size={16} />
-        </button>
+        {!isAdmin && email === user.email ? (
+          <button className="flex items-center justify-center p-0.5 rounded border border-violet-600 text-violet-600">
+            <PiAddressBook size={16} />
+          </button>
+        ) : isAdmin ? (
+          <button className="flex items-center justify-center p-0.5 rounded border border-violet-600 text-violet-600">
+            <PiAddressBook size={16} />
+          </button>
+        ) : (
+          ""
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-[#111b21] text-gray-600 border-none">
         <form action={addFournitureAction}>
