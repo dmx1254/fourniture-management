@@ -239,7 +239,9 @@ const ArticleUpadteSchema = z.object({
     required_error: "Le titre est requis",
     invalid_type_error: "Le titre doit être une chaîne de caractères",
   }),
-  quantity: z.coerce.number({ required_error: "La quantité est requise" }),
+  quantity: z.coerce
+    .number({ required_error: "La quantité est requise" })
+    .min(1, { message: "La quantite minimum est 1" }),
   consome: z.coerce.number({ required_error: "La quantité est requise" }),
 });
 
@@ -310,7 +312,7 @@ export async function updateArticle(
 
   const isValueCorrectUpdate = await ArticleUpadteSchema.safeParse(sessions);
   if (!isValueCorrectUpdate.success) {
-    console.log(isValueCorrectUpdate.error);
+    // console.log(isValueCorrectUpdate.error);
   } else {
     const articleId = isValueCorrectUpdate.data.articleId;
     const title = isValueCorrectUpdate.data.title;
