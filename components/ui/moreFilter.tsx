@@ -57,7 +57,24 @@ const MoreFilter = () => {
               <SelectItem value="ordinateur-portable">
                 Ordinateur portable
               </SelectItem>
-              <SelectItem value="encre-et-autres">Encre et autres</SelectItem>
+              <SelectItem value="convertisseur">Convertisseur</SelectItem>
+              <SelectItem value="cables-vga-hdmi-type-c">
+                Cables vga hdmi type-c
+              </SelectItem>
+              <SelectItem value="clavier-souris-tapis-ecran">
+                Clavier souris tapis ecran
+              </SelectItem>
+              <SelectItem value="rallonge-electrique-multiprise">
+                Rallonge electrique multiprise
+              </SelectItem>
+              <SelectItem value="cable-reseaux-wifi-tp-link-serveur">
+                Cable reseaux wifi tp-link serveur
+              </SelectItem>
+              <SelectItem value="lecteur-dvd">Lecteur DVD</SelectItem>
+              <SelectItem value="encre-cartouche-toner">
+                Encre cartouche toner
+              </SelectItem>
+              <SelectItem value="telephone-ip">Telephone ip</SelectItem>
             </SelectGroup>
           ) : pathname === "/dashboard/papier-et-autres" ? (
             <SelectGroup>

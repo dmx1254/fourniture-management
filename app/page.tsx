@@ -49,7 +49,7 @@ export default function Home() {
             id="password"
             name="password"
             autoComplete="off"
-            placeholder="Votre adresse email"
+            placeholder="Votre mot de passe"
             className="w-full bg-transparent text-gray-600 outline-none border border-gray-600 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 focus:ring-offset-0"
           />
           <div className="flex flex-col items-start gap-2">
