@@ -6,6 +6,7 @@ export type NavTypes = {
   title: string;
   icon: LucideIcon;
   path: string;
+  emailTest: string;
 };
 
 export type TestData = {
@@ -72,4 +73,3 @@ export type Transaction = {
   createdAt?: Date;
   updatedAt?: Date;
 };
-

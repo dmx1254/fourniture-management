@@ -5,14 +5,19 @@ import { navMenus } from "@/lib/data";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const MyLinks = () => {
+const MyLinks = ({ userEmail }: { userEmail: string }) => {
   const pathname: string = usePathname();
   return (
     <div className="w-full flex flex-col items-center md:items-start gap-6">
-      {navMenus.map(({ id, title, icon: Icon, path }) => (
+      {navMenus.map(({ id, title, icon: Icon, path, emailTest }) => (
         <Link
-          className={`w-full flex items-center text-center text-sm gap-2 p-2 rounded transition duration-300 ease-in-out hover:bg-[#2C3A42] hover:text-gray-400 ${
-            path === pathname ? "md:bg-[#2C3A42] text-[#195175] md:text-gray-400" : "text-gray-600"
+          style={{
+            display: emailTest === userEmail ? "none" : "flex",
+          }}
+          className={`w-full items-center text-center text-sm gap-2 p-2 rounded transition duration-300 ease-in-out hover:bg-[#2C3A42] hover:text-gray-400 ${
+            path === pathname
+              ? "md:bg-[#2C3A42] text-[#195175] md:text-gray-400"
+              : "text-gray-600"
           }`}
           key={id}
           href={path}

@@ -7,6 +7,7 @@ export const navMenus: NavTypes[] = [
     title: "Home",
     icon: Home,
     path: "/dashboard",
+    emailTest: "",
   },
 
   {
@@ -14,23 +15,27 @@ export const navMenus: NavTypes[] = [
     title: "Fournitures informatique",
     icon: Computer,
     path: "/dashboard/fournitures-informatiques",
+    emailTest: "daffekhadidiatou@gmail.com",
   },
   {
     id: "maw74",
     title: "Papier et Autres",
     icon: Paperclip,
     path: "/dashboard/papier-et-autres",
+    emailTest: "",
   },
   {
     id: "zop92",
     title: "Utilisateurs",
     icon: UserRound,
     path: "/dashboard/utilisateurs",
+    emailTest: "",
   },
   {
     id: "xha51",
     title: "Historique",
     icon: FileClock,
     path: "/dashboard/historique",
+    emailTest: "",
   },
 ];

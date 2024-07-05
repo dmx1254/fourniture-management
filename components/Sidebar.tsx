@@ -10,6 +10,7 @@ const Sidebar = async () => {
   if (!session.userId) {
     redirect("/");
   }
+  console.log(session)
   return (
     <div
       className="h-screen w-[60px] md:w-[250px] bg-[#111b21] p-2 flex flex-col items-start justify-between"
@@ -26,7 +27,7 @@ const Sidebar = async () => {
           />
           <span className="hidden md:flex text-2xl text-white font-extrabold">PMN</span>
         </div>
-        <MyLinks />
+        <MyLinks userEmail={session.email} />
       </div>
       <form action={logout}>
         <button type="submit" className="flex items-center gap-2 p-2">
