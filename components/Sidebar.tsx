@@ -10,7 +10,7 @@ const Sidebar = async () => {
   if (!session.userId) {
     redirect("/");
   }
-  console.log(session)
+  // console.log(session)
   return (
     <div
       className="h-screen w-[60px] md:w-[250px] bg-[#111b21] p-2 flex flex-col items-start justify-between"
