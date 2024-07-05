@@ -201,8 +201,8 @@ const TransactionSchema = z.object({
     invalid_type_error: "Le titre doit être une chaîne de caractères",
   }),
   consome: z.coerce.number({
-    invalid_type_error: "L'adresse doit être une chaîne de caractères",
-  }),
+    invalid_type_error: "Consome doit etre un nombre",
+  }).min(1, {message: "Minimum 1"}),
   lastname: z
     .string({
       required_error: "Le nom de famille est requis",

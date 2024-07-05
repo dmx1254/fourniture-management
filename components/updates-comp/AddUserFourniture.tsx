@@ -96,7 +96,7 @@ const AddUserFourniture = ({
         <form action={addFournitureAction}>
           <AlertDialogHeader>
             <AlertDialogTitle className="text-base line-clamp-1">
-              Ajouter un article pour un utilisateur
+              Ajouter un article pour un article
             </AlertDialogTitle>
 
             <div className="w-full flex items-center gap-6">
@@ -150,7 +150,7 @@ const AddUserFourniture = ({
                     className="bg-transparent text-gray-600 border-gray-600 placeholder:text-gray-600"
                     name="consome"
                     type="number"
-                    defaultValue={0}
+                    defaultValue={1}
                     placeholder="Saisir la quantite"
                   />
                   <div className="absolute top-16">

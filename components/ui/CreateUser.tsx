@@ -38,13 +38,13 @@ const CreateUser = () => {
       <AlertDialogTrigger asChild>
         <button className="flex items-center text-xs outline-none border-none p-2 rounded bg-[#111b21] shadow-md text-gray-500 mr-5">
           <Plus size={16} />
-          Ajouter un utilisateur
+          Ajouter un article
         </button>
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-[#111b21] border-[#111b21] text-white">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-gray-600 text-base">
-            Ajouter un Utilisateur
+            Ajouter un article
           </AlertDialogTitle>
           <form
             action={userAction}
