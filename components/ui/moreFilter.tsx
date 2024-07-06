@@ -76,10 +76,10 @@ const MoreFilter = () => {
               </SelectItem>
               <SelectItem value="telephone-ip">Telephone ip</SelectItem>
             </SelectGroup>
-          ) : pathname === "/dashboard/papier-et-autres" ? (
+          ) : pathname === "/dashboard/fournitures-de-bureau" ? (
             <SelectGroup>
               <SelectLabel>Categories</SelectLabel>
-              <SelectItem value="papier-et-autres">Papier et autres</SelectItem>
+              <SelectItem value="fournitures-de-bureau">Fournitures de bureau</SelectItem>
             </SelectGroup>
           ) : (
             <SelectGroup>

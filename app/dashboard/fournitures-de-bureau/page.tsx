@@ -24,7 +24,7 @@ const PapierPage = async ({
   const session = await getSession();
   let query = searchParams?.query || "";
   //   let category = searchParams?.category || "";
-  let category = "papier-et-autres";
+  let category = "fournitures-de-bureau";
   let currentPage = Number(searchParams?.page) || 1;
   let { totalPages } =
     (await getArticlesAndTotalPages(query, currentPage, category)) || 1;

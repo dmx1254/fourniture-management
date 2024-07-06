@@ -19,9 +19,9 @@ export const navMenus: NavTypes[] = [
   },
   {
     id: "maw74",
-    title: "Papier et Autres",
+    title: "Fournitures de bureau",
     icon: Paperclip,
-    path: "/dashboard/papier-et-autres",
+    path: "/dashboard/fournitures-de-bureau",
     emailTest: "",
   },
   {
