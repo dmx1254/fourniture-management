@@ -18,7 +18,7 @@ export const navMenus: NavTypes[] = [
     emailTest: "daffekhadidiatou@gmail.com",
   },
   {
-    id: "maw74",
+    id: "maw87",
     title: "Fournitures de bureau",
     icon: Paperclip,
     path: "/dashboard/fournitures-de-bureau",

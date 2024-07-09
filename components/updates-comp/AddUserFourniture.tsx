@@ -77,7 +77,7 @@ const AddUserFourniture = ({
     }
   }, [state?.message, addFournitureAction]);
 
-  // console.log(articles)
+  console.log(articles);
 
   return (
     <AlertDialog>
@@ -111,15 +111,22 @@ const AddUserFourniture = ({
                   <SelectContent className="bg-[#111b21] text-gray-600 border-none">
                     <SelectGroup>
                       <SelectLabel>Tous les articles</SelectLabel>
-                      {articles.reverse()?.map((article) => (
-                        <SelectItem
-                          key={article._id}
-                          value={article._id}
-                          className="focus-visible:ring-0 focus-visible:ring-offset-0"
-                        >
-                          {article.title}
-                        </SelectItem>
-                      ))}
+
+                      {articles
+                        .sort(
+                          (a, b) =>
+                            //@ts-ignores
+                            new Date(b.createdAt) - new Date(a.createdAt)
+                        )
+                        .map((article) => (
+                          <SelectItem
+                            key={article._id}
+                            value={article._id}
+                            className="focus-visible:ring-0 focus-visible:ring-offset-0"
+                          >
+                            {article.title}
+                          </SelectItem>
+                        ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
