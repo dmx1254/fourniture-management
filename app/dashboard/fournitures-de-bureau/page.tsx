@@ -11,6 +11,7 @@ import LatestInvoicesSkeleton from "@/components/skelettons/skeletons";
 import { getArticlesAndTotalPages } from "@/lib/actions/api";
 import MoreFilter from "@/components/ui/moreFilter";
 import { getSession } from "@/lib/actions/action";
+import TableBureau from "@/components/ui/tablebureau";
 
 const PapierPage = async ({
   searchParams,
@@ -50,7 +51,7 @@ const PapierPage = async ({
         key={currentPage + query + category}
         fallback={<LatestInvoicesSkeleton />}
       >
-        <Table query={query} currentPage={currentPage} category={category} />
+        <TableBureau query={query} currentPage={currentPage} category={category} />
       </Suspense>
       <Pagination currentPage={currentPage} totalPages={totalPages} />
     </div>
