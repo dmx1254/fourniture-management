@@ -77,6 +77,8 @@ const AddUserFourniture = ({
     }
   }, [state?.message, addFournitureAction]);
 
+  // console.log(articles)
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -108,8 +110,8 @@ const AddUserFourniture = ({
                   </SelectTrigger>
                   <SelectContent className="bg-[#111b21] text-gray-600 border-none">
                     <SelectGroup>
-                      <SelectLabel>Fournitures informatiques</SelectLabel>
-                      {articles.map((article) => (
+                      <SelectLabel>Tous les articles</SelectLabel>
+                      {articles.reverse()?.map((article) => (
                         <SelectItem
                           key={article._id}
                           value={article._id}
