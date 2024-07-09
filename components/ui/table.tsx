@@ -42,26 +42,28 @@ const Table = async ({
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => (
-            <tr
-              key={product._id}
-              className="border-b border-gray-200 text-xs text-[#111b21]"
-            >
-              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
-                {product.title}
-              </td>
-              <td className="hidden x2s:flex p-1 xs:p-2 md:p-4 font-semibold">
-                {product.quantity}
-              </td>
-              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold line-through">
-                {product.consome}
-              </td>
-              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-bold">
-                {product.restant}
-              </td>
-              {session.isAdmin && <ArticleUpdate article={product} />}
-            </tr>
-          ))}
+          {products
+            .filter((article) => article.category !== "fournitures-de-bureau")
+            .map((product) => (
+              <tr
+                key={product._id}
+                className="border-b border-gray-200 text-xs text-[#111b21]"
+              >
+                <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
+                  {product.title}
+                </td>
+                <td className="hidden x2s:flex p-1 xs:p-2 md:p-4 font-semibold">
+                  {product.quantity}
+                </td>
+                <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold line-through">
+                  {product.consome}
+                </td>
+                <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-bold">
+                  {product.restant}
+                </td>
+                {session.isAdmin && <ArticleUpdate article={product} />}
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
