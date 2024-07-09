@@ -1,4 +1,5 @@
 "use client";
+import LoginButton from "@/components/LoginButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/lib/actions/action";
@@ -69,12 +70,7 @@ export default function Home() {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="w-full outline-none bg-white/75 text-gray-800 rounded py-2 px-4 text-center transition duration-300 ease-in-out hover:opacity-80"
-        >
-          Se connecter
-        </button>
+        <LoginButton />
       </form>
     </main>
   );

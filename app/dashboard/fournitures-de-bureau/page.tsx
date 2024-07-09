@@ -33,7 +33,7 @@ const PapierPage = async ({
     <div className="w-full flex flex-col items-center p-4 bg-gray-100">
       <div className="w-full flex items-center justify-between">
         <span className="p-2 font-bold text-gray-600">
-          Fournitures informatiques
+          Fournitures de bureau
         </span>
         {session.isAdmin && <CreateArticle />}
       </div>
