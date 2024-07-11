@@ -163,6 +163,7 @@ const UserUpdate = ({
                   />
                 </div>
               </div>
+              <div className="w-full flex items-center justify-between gap-4">
               <div className="w-full flex flex-col items-start gap-1">
                 <label htmlFor="address" className="text-gray-600 text-sm">
                   Address
@@ -176,6 +177,21 @@ const UserUpdate = ({
                   defaultValue={user.address}
                 />
               </div>
+                <div className="w-full flex flex-col items-start gap-1">
+                  <label htmlFor="city" className="text-gray-600 text-sm">
+                    Poste
+                  </label>
+                  <input
+                    placeholder="Poste"
+                    className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    type="text"
+                    id="poste"
+                    name="poste"
+                    defaultValue={user.poste}
+                  />
+                </div>
+              </div>
+              
               {/* <div></div>
       <div></div> */}
               <AlertDialogFooter className="self-end mt-2">

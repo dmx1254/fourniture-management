@@ -148,6 +148,7 @@ const UserSchema = z.object({
       invalid_type_error: "L'adresse doit être une chaîne de caractères",
     })
     .optional(),
+
   city: z
     .string({
       invalid_type_error: "L'adresse doit être une chaîne de caractères",
@@ -200,9 +201,11 @@ const TransactionSchema = z.object({
     required_error: "Le titre est requis",
     invalid_type_error: "Le titre doit être une chaîne de caractères",
   }),
-  consome: z.coerce.number({
-    invalid_type_error: "Consome doit etre un nombre",
-  }).min(1, {message: "Minimum 1"}),
+  consome: z.coerce
+    .number({
+      invalid_type_error: "Consome doit etre un nombre",
+    })
+    .min(1, { message: "Minimum 1" }),
   lastname: z
     .string({
       required_error: "Le nom de famille est requis",
@@ -472,6 +475,7 @@ export async function updateUserPro(
     const country = isUserCorrect.data.country;
     const city = isUserCorrect.data.city;
     const address = isUserCorrect.data.address;
+    const poste = isUserCorrect.data.poste;
     if (userId !== undefined) {
       const response = await updateUser(
         userId,
@@ -481,7 +485,8 @@ export async function updateUserPro(
         phone,
         country,
         city,
-        address
+        address,
+        poste
       );
       await revalidatePath("/dashboard/utilisateurs");
       return response;

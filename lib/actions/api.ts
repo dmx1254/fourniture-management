@@ -145,7 +145,8 @@ export async function updateUser(
   phone: string,
   country: string,
   city: string,
-  address: string
+  address: string,
+  poste: string
 ) {
   try {
     const updateUser = await UserModel.findByIdAndUpdate(
@@ -158,6 +159,7 @@ export async function updateUser(
         country,
         city,
         address,
+        poste,
       },
       {
         new: true,
