@@ -32,7 +32,9 @@ const Chart = ({ articles }: { articles: TransArt[] }) => {
   }));
 
   const data = {
-    labels: articleData.map((article) => article.title),
+    labels: articleData.map(
+      (article) => article.title.substring(0, 8) + "..."
+    ),
     datasets: [
       {
         label: "Consome",

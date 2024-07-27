@@ -1,8 +1,13 @@
+// /pmn.jpeg
+
+import React from "react";
 import { getArticlesAndTotalPages } from "@/lib/actions/api";
 import { Product } from "@/lib/types";
-import React from "react";
 import ArticleUpdate from "../updates-comp/ArticleUpdate";
 import { getSession } from "@/lib/actions/action";
+import { CloudUpload } from "lucide-react";
+import generatePDF from "@/lib/utils";
+import DownloadInventaire from "../DownloadInventaire";
 
 const Table = async ({
   query,
@@ -22,7 +27,7 @@ const Table = async ({
   const products: Product[] = articles;
   // console.log(products);
   return (
-    <div className="w-full mt-6">
+    <div className="relative w-full mt-6">
       <table className="min-w-full bg-white text-left">
         <thead className="bg-[#111b21] text-gray-500">
           <tr className="border-b border-gray-100 text-sm">
@@ -66,6 +71,7 @@ const Table = async ({
             ))}
         </tbody>
       </table>
+      {session.isAdmin && <DownloadInventaire products={products} />}
     </div>
   );
 };

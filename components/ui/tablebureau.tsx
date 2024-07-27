@@ -3,6 +3,7 @@ import { Product } from "@/lib/types";
 import React from "react";
 import ArticleUpdate from "../updates-comp/ArticleUpdate";
 import { getSession } from "@/lib/actions/action";
+import DownloadInventaire from "../DownloadInventaire";
 
 const TableBureau = async ({
   query,
@@ -64,6 +65,10 @@ const TableBureau = async ({
           ))}
         </tbody>
       </table>
+
+      {session.isAdmin && products.length > 0 && (
+        <DownloadInventaire products={products} />
+      )}
     </div>
   );
 };
