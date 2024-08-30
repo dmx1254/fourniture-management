@@ -2,7 +2,9 @@ import ArticleModel from "./article";
 import { unstable_noStore as noStore } from "next/cache";
 import UserModel, { connectDB } from "./db";
 import TransactionModel from "./transaction";
+import EntrepriseModel from "./entreprise";
 import bcrypt from "bcrypt";
+import { Entreprise } from "../types";
 
 connectDB();
 
@@ -613,5 +615,28 @@ export async function loginUser(email: string, password: string) {
   } catch (error) {
     console.error("Something went wrong", error);
     throw error;
+  }
+}
+
+// INSCRIPTION POUR LES ENTREPRISES
+
+export async function businessRegister(user: Entreprise) {
+  try {
+    const entrepriseBusinessCreated = await EntrepriseModel.create(user);
+    return entrepriseBusinessCreated;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function getBusinessRegister() {
+  try {
+    const businessUsers = await EntrepriseModel.find().sort({
+      createdAt: -1,
+    });
+    const users = JSON.parse(JSON.stringify(businessUsers));
+    return users;
+  } catch (error: any) {
+    throw new Error(error);
   }
 }

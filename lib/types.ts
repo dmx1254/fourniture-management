@@ -73,3 +73,48 @@ export type Transaction = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+export type Entreprise = {
+  lastname: string;
+  firstname: string;
+  phone: string;
+  email?: string;
+  departement: string;
+  commune?: string;
+  village?: string;
+  quartier?: string;
+  region: string;
+  corpsdemetiers: string;
+  entreprise: string;
+  statusEntreprise: string;
+  formel: string;
+  formation: string;
+  besoinFormation: string;
+  financementEtat: string;
+  accesZonesExpositions: string;
+  siteExposition: string;
+};
+
+export type BusinessUser = {
+  _id: string;
+  lastname: string;
+  firstname: string;
+  phone: string;
+  email: string;
+  departement: string;
+  commune?: string;
+  village?: string;
+  quartier?: string;
+  region: string;
+  corpsdemetiers: string;
+  entreprise: string;
+  statusEntreprise: string;
+  formel: string;
+  formation: string;
+  besoinFormation: string;
+  financementEtat: string;
+  accesZonesExpositions: string;
+  siteExposition: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+};

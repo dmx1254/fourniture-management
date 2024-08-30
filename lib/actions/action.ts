@@ -1,11 +1,12 @@
 "use server";
 import bcrypt from "bcrypt";
 import { sessionOptions, SessionData } from "@/lib/lib";
-import type { User } from "../types";
+import type { Entreprise, User } from "../types";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import {
+  businessRegister,
   createProduct,
   createTransaction,
   createUserPro,
@@ -634,6 +635,16 @@ export async function login(prevState: LoginErrorState, formData: FormData) {
         redirect("/dashboard");
       }
     }
+  }
+}
+
+export async function inscriptionForEntreprise(user: Entreprise) {
+  try {
+    const entrepriseCreated = await businessRegister(user);
+    return JSON.parse(JSON.stringify(entrepriseCreated));
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error);
   }
 }
 

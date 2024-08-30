@@ -12,7 +12,7 @@ import {
 const Header = async () => {
   const session = await getSession();
   return (
-    <div className="sticky bg-white z-20 p-2 top-0 right-0 left-[250px] w-full flex items-end justify-end">
+    <div className="sticky bg-white border-b border-[#F4F4F4] z-20 p-2 top-0 right-0 left-[250px] w-full flex items-end justify-end">
       <Sheet>
         <SheetTrigger>
           <div className="flex items-center gap-2 p-2">

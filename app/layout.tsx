@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Mulish } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,6 +34,7 @@ export default function RootLayout({
           "bg-background text-foreground mx-auto"
         )}
       >
+        <Toaster />
         
         {children}
       </body>

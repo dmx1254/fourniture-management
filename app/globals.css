@@ -57,6 +57,18 @@
   body {
     @apply bg-background text-foreground;
   }
+
+}
+
+@layer utilities{
+  .scroll-business::-webkit-scrollbar {
+    width: 6px; /* Largeur de la scrollbar */
+}
+
+.scroll-business::-webkit-scrollbar-thumb {
+    background-color: #1f2937;
+    border-radius: 10px;
+}
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
