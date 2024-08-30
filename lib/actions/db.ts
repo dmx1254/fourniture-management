@@ -67,14 +67,43 @@ const userSchema = new mongoose.Schema(
 const UserModel = mongoose.models.user || mongoose.model("user", userSchema);
 export default UserModel;
 
-export const connectDB = async () => {
-  await mongoose
-    .connect(process.env.DB_CONNECT, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
-    .then(() => console.log("connected to database with success"))
-    .catch((err: Error) =>
-      console.log("failled to connected to database", err)
-    );
+// export const connectDB = async () => {
+//   await mongoose
+//     .connect(process.env.DB_CONNECT, {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//     })
+//     .then(() => console.log("connected to database with success"))
+//     .catch((err: Error) =>
+//       console.log("failled to connected to database", err)
+//     );
+// };
+
+const globalWithMongoose = global as typeof global & {
+  mongoose: {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+  };
+};
+
+let cached = globalWithMongoose.mongoose;
+
+if (!cached) {
+  cached = globalWithMongoose.mongoose = { conn: null, promise: null };
+}
+
+export const connectDB = async (): Promise<string> => {
+  if (cached.conn) {
+    return "Already connected to database";
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose
+      .connect(process.env.DB_CONNECT)
+      .then((mongoose: string) => {
+        return mongoose;
+      });
+  }
+  cached.conn = await cached.promise;
+  return "Connected to database with success";
 };

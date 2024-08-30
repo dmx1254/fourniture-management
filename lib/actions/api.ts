@@ -640,3 +640,123 @@ export async function getBusinessRegister() {
     throw new Error(error);
   }
 }
+
+
+
+
+export async function getEntreprisesAndTotalPages(
+  query: string,
+  currentPage: number,
+  category: string
+) {
+  noStore();
+  let itemsPerPage = 10;
+  const offset = (currentPage - 1) * itemsPerPage;
+
+  const matchConditions: any = {};
+
+  // Ajouter une condition pour le titre s'il est spécifié
+  if (category === "lastname" && query && query.trim() !== "") {
+    matchConditions.lastname = { $regex: query, $options: "i" };
+  }
+  if (category === "firstname" && query && query.trim() !== "") {
+    matchConditions.firstname = { $regex: query, $options: "i" };
+  }
+  if (category === "entreprise" && query && query.trim() !== "") {
+    matchConditions.entreprise = { $regex: query, $options: "i" };
+  }
+  if (category === "phone" && query && query.trim() !== "") {
+    matchConditions.phone = { $regex: query, $options: "i" };
+  }
+
+  try {
+    // Récupérer le nombre total de documents
+    const totalDocuments = await EntrepriseModel.countDocuments(matchConditions);
+
+    // Calculer le nombre total de pages
+    const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+
+    // Récupérer les utilisateurs correspondant aux critères de filtrage avec pagination
+    const users = await EntrepriseModel.aggregate([
+      {
+        $match: matchConditions,
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $skip: offset,
+      },
+      {
+        $limit: itemsPerPage,
+      },
+    ]);
+
+    return {
+      users: JSON.parse(JSON.stringify(users)),
+      totalPages,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+
+export async function getEntreprises(
+  query: string,
+  currentPage: number,
+  category: string
+) {
+  noStore();
+  let itemsPerPage = 10;
+  const offset = (currentPage - 1) * itemsPerPage;
+
+  const matchConditions: any = {};
+
+  // Ajouter une condition pour le titre s'il est spécifié
+  if (category === "lastname" && query && query.trim() !== "") {
+    matchConditions.lastname = { $regex: query, $options: "i" };
+  }
+  if (category === "firstname" && query && query.trim() !== "") {
+    matchConditions.firstname = { $regex: query, $options: "i" };
+  }
+  if (category === "entreprise" && query && query.trim() !== "") {
+    matchConditions.entreprise = { $regex: query, $options: "i" };
+  }
+  if (category === "phone" && query && query.trim() !== "") {
+    matchConditions.phone = { $regex: query, $options: "i" };
+  }
+
+  try {
+    // Récupérer le nombre total de documents
+    const totalDocuments = await EntrepriseModel.countDocuments(matchConditions);
+
+    // Calculer le nombre total de pages
+    const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+
+    // Récupérer les utilisateurs correspondant aux critères de filtrage avec pagination
+    const users = await EntrepriseModel.aggregate([
+      {
+        $match: matchConditions,
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $skip: offset,
+      },
+      {
+        $limit: itemsPerPage,
+      },
+    ]);
+
+    return {
+      entreprises: JSON.parse(JSON.stringify(users)),
+      totalPages,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

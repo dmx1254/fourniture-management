@@ -1,33 +1,49 @@
-import React from "react";
-import { getSession } from "@/lib/actions/action";
-import { getBusinessRegister } from "@/lib/actions/api";
+import React, { Suspense } from "react";
+import {
+  getBusinessRegister,
+  getEntreprisesAndTotalPages,
+} from "@/lib/actions/api";
 import { BusinessUser } from "@/lib/types";
 
 import ViewBusinessUser from "@/components/ViewBusinessUser";
+import Search from "@/components/ui/search";
+import MoreEntrepriseFilter from "@/components/ui/MoreEntrepriseFilter";
+import { Pagination } from "@/components/ui/pagination";
+import LatestInvoicesSkeleton from "@/components/skelettons/skeletons";
+import EntrepriseTable from "@/components/ui/entrepriseTable";
 
-const BussinesPage = async () => {
-  const session = await getSession();
-  const businessUsers: BusinessUser[] = await getBusinessRegister();
-//   console.log(businessUsers)
-
-  const convertedDate = (date: Date | undefined) => {
-    if (date) {
-      const convertedDate = new Date(date).toLocaleDateString("fr-FR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-
-      return convertedDate;
-    }
+const BussinesPage = async ({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    category?: string;
+    page?: string;
   };
+}) => {
+  let query = searchParams?.query || "";
+  let category = searchParams?.category || "";
+  let currentPage = Number(searchParams?.page) || 1;
+  //   const businessUsers: BusinessUser[] = await getBusinessRegister();
+  let { totalPages } =
+    (await getEntreprisesAndTotalPages(query, currentPage, category)) || 1;
+  //
+
   return (
     <div className="w-full flex flex-col items-center p-4 bg-gray-100 min-h-screen">
-      <div className="w-full flex items-center justify-between">
+      {/* <div className="w-full flex items-center justify-between ">
         <span className="p-2 font-bold text-gray-600 text-lg">Entreprises</span>
+      </div> */}
+
+      <div className="flex items-center justify-between w-full mt-2">
+        <div className="w-full max-w-md flex items-center gap-4">
+          <Search placeholder="Rechercher l'utilisateur que vous voulez..." />
+        </div>
+        <div className="flex items-center gap-4">
+          <MoreEntrepriseFilter />
+        </div>
       </div>
-      <div className="overflow-x-auto w-full mt-6">
-        <table className="min-w-full table bg-white text-left">
+      {/* <table className="min-w-full table bg-white text-left">
           <thead className="bg-[#111b21] text-gray-500">
             <tr className="border-b border-gray-100 text-sm">
               <th className="p-1 md:p-4 font-semibold">Prénom et nom</th>
@@ -39,9 +55,7 @@ const BussinesPage = async () => {
               <th className="max-md:hidden p-1 md:p-4 font-semibold">
                 Téléphone
               </th>
-              <th className="max-md:hidden p-1 md:p-4 font-semibold">
-                Date
-              </th>
+              <th className="max-md:hidden p-1 md:p-4 font-semibold">Date</th>
               {session.isAdmin && (
                 <th className="p-4 font-semibold">Actions</th>
               )}
@@ -67,12 +81,27 @@ const BussinesPage = async () => {
                     {convertedDate(user.createdAt)}
                   </span>
                 </td>
-                <td>{session.isAdmin && <ViewBusinessUser userId={user._id} users={businessUsers} />}</td>
+                <td>
+                  {session.isAdmin && (
+                    <ViewBusinessUser userId={user._id} users={businessUsers} />
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+        </table> */}
+
+      <Suspense
+        key={currentPage + query + category}
+        fallback={<LatestInvoicesSkeleton />}
+      >
+        <EntrepriseTable
+          query={query}
+          currentPage={currentPage}
+          category={category}
+        />
+      </Suspense>
+      <Pagination currentPage={currentPage} totalPages={totalPages} />
     </div>
   );
 };

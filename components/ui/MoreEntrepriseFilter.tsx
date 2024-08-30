@@ -14,9 +14,9 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const MoreUserFilter = () => {
+const MoreEntrepriseFilter = () => {
   const [catSelected, setCatSelected] = useState<string>("");
-  // console.log(catSelected);
+//   console.log(catSelected);
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const pathname = usePathname();
@@ -51,7 +51,7 @@ const MoreUserFilter = () => {
             <SelectLabel>Categories</SelectLabel>
             <SelectItem value="lastname">Prenom</SelectItem>
             <SelectItem value="firstname">Nom</SelectItem>
-            <SelectItem value="email">Email</SelectItem>
+            <SelectItem value="entreprise">entreprise</SelectItem>
             <SelectItem value="phone">Telephone</SelectItem>
           </SelectGroup>
         </SelectContent>
@@ -60,4 +60,4 @@ const MoreUserFilter = () => {
   );
 };
 
-export default MoreUserFilter;
+export default MoreEntrepriseFilter;
