@@ -1,10 +1,11 @@
+import React from "react";
+
 import { getSession } from "@/lib/actions/action";
 import { getEntreprises } from "@/lib/actions/api";
 import { BusinessUser } from "@/lib/types";
-import React from "react";
 import ViewBusinessUser from "../ViewBusinessUser";
 
-const EntrepriseTable = async ({
+const BusinessTable = async ({
   query,
   currentPage,
   category,
@@ -58,15 +59,21 @@ const EntrepriseTable = async ({
               key={user._id}
               className="border-b text-sm border-gray-200 text-[#111b21]"
             >
-              <td className="p-4 font-semibold max-md:hidden">{addANId(index + 1)}</td>
+              <td className="p-4 font-semibold max-md:hidden">
+                {addANId(index + 1)}
+              </td>
               <td className="p-4 font-semibold">
                 <span className="bg-violet-100 rounded p-1 text-black">
                   {`${user.lastname} ${user.firstname}`}
                 </span>
               </td>
               <td className="p-4 font-semibold">{user.region}</td>
-              <td className="p-4 font-semibold max-lg:hidden">{user.departement}</td>
-              <td className="p-4 font-semibold max-md:hidden">{user.entreprise}</td>
+              <td className="p-4 font-semibold max-lg:hidden">
+                {user.departement}
+              </td>
+              <td className="p-4 font-semibold max-md:hidden">
+                {user.entreprise}
+              </td>
               <td className="p-4 font-semibold max-lg:hidden">{user.phone}</td>
               <td className="max-md:hidden p-1 md:p-4 font-semibold max-lg:hidden">
                 <span className="bg-green-100 rounded p-1 text-black">
@@ -86,4 +93,4 @@ const EntrepriseTable = async ({
   );
 };
 
-export default EntrepriseTable;
+export default BusinessTable;

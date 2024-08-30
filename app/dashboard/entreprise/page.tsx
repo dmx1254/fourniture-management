@@ -1,16 +1,10 @@
 import React, { Suspense } from "react";
-import {
-  getBusinessRegister,
-  getEntreprisesAndTotalPages,
-} from "@/lib/actions/api";
-import { BusinessUser } from "@/lib/types";
-
-import ViewBusinessUser from "@/components/ViewBusinessUser";
+import { getEntreprisesAndTotalPages } from "@/lib/actions/api";
 import Search from "@/components/ui/search";
 import MoreEntrepriseFilter from "@/components/ui/MoreEntrepriseFilter";
 import { Pagination } from "@/components/ui/pagination";
 import LatestInvoicesSkeleton from "@/components/skelettons/skeletons";
-import EntrepriseTable from "@/components/ui/entrepriseTable";
+import BusinessTable from "@/components/ui/BusinessTable";
 
 const BussinesPage = async ({
   searchParams,
@@ -43,59 +37,12 @@ const BussinesPage = async ({
           <MoreEntrepriseFilter />
         </div>
       </div>
-      {/* <table className="min-w-full table bg-white text-left">
-          <thead className="bg-[#111b21] text-gray-500">
-            <tr className="border-b border-gray-100 text-sm">
-              <th className="p-1 md:p-4 font-semibold">Prénom et nom</th>
-              <th className="p-1 md:p-4 font-semibold">Région</th>
-              <th className="p-1 md:p-4 font-semibold">Département</th>
-              <th className="max-x2s:hidden p-1 md:p-4 font-semibold">
-                Entrepise
-              </th>
-              <th className="max-md:hidden p-1 md:p-4 font-semibold">
-                Téléphone
-              </th>
-              <th className="max-md:hidden p-1 md:p-4 font-semibold">Date</th>
-              {session.isAdmin && (
-                <th className="p-4 font-semibold">Actions</th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {businessUsers.map((user) => (
-              <tr
-                key={user._id}
-                className="border-b text-sm border-gray-200 text-[#111b21]"
-              >
-                <td className="p-4 font-semibold">
-                  <span className="bg-violet-100 rounded p-1 text-black">
-                    {`${user.lastname} ${user.firstname}`}
-                  </span>
-                </td>
-                <td className="p-4 font-semibold">{user.region}</td>
-                <td className="p-4 font-semibold">{user.departement}</td>
-                <td className="p-4 font-semibold">{user.entreprise}</td>
-                <td className="p-4 font-semibold">{user.phone}</td>
-                <td className="max-md:hidden p-1 md:p-4 font-semibold">
-                  <span className="bg-green-100 rounded p-1 text-black">
-                    {convertedDate(user.createdAt)}
-                  </span>
-                </td>
-                <td>
-                  {session.isAdmin && (
-                    <ViewBusinessUser userId={user._id} users={businessUsers} />
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table> */}
 
       <Suspense
         key={currentPage + query + category}
         fallback={<LatestInvoicesSkeleton />}
       >
-        <EntrepriseTable
+        <BusinessTable
           query={query}
           currentPage={currentPage}
           category={category}
