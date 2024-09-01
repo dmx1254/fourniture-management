@@ -14,7 +14,7 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const MoreFilterFiliere = () => {
+const MoreFilterFiliere = ({ categories }: { categories: string[] }) => {
   const [catSelected, setCatSelected] = useState<string>("");
   //   console.log(catSelected);
   const searchParams = useSearchParams();
@@ -49,16 +49,11 @@ const MoreFilterFiliere = () => {
         <SelectContent className="bg-[#052e16] text-white/80">
           <SelectGroup>
             <SelectLabel>Corps de métiers</SelectLabel>
-
-            <SelectItem value="filière bois">Filière bois</SelectItem>
-            <SelectItem value="filière textile">Filière textile</SelectItem>
-            <SelectItem value="filière peaux et cuirs">
-              Filière peaux et cuirs
-            </SelectItem>
-            <SelectItem value="filière métallique">
-              Filière métallique
-            </SelectItem>
-            <SelectItem value="filière mécanique">Filière mécanique</SelectItem>
+            {categories.map((cat) => (
+              <SelectItem key={cat} value={cat.toLowerCase()}>
+                {cat}
+              </SelectItem>
+            ))}
           </SelectGroup>
         </SelectContent>
       </Select>

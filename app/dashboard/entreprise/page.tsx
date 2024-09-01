@@ -1,5 +1,8 @@
 import React, { Suspense } from "react";
-import { getEntreprisesAndTotalPages } from "@/lib/actions/api";
+import {
+  getAllCatFilter,
+  getEntreprisesAndTotalPages,
+} from "@/lib/actions/api";
 import Search from "@/components/ui/search";
 import MoreEntrepriseFilter from "@/components/ui/MoreEntrepriseFilter";
 import { Pagination } from "@/components/ui/pagination";
@@ -36,6 +39,9 @@ const BussinesPage = async ({
     )) || 1;
   //
 
+  const categories = await getAllCatFilter();
+  // console.log(categories);
+
   // console.log(type)
 
   return (
@@ -49,13 +55,16 @@ const BussinesPage = async ({
           <Search placeholder="Rechercher par prénom et nom..." />
         </div>
         <div className="flex flex-col items-end -mb-2">
-          <Link href="/dashboard/nouveau-entreprise" className="flex items-center text-sm outline-none border-none p-2 rounded bg-[#052e16] shadow-md text-white/80 mr-5 mb-2">
+          <Link
+            href="/dashboard/nouveau-entreprise"
+            className="flex items-center text-sm outline-none border-none p-2 rounded bg-[#052e16] shadow-md text-white/80 mr-5 mb-2"
+          >
             <Plus size={16} />
             Ajouter une entreprise
           </Link>
 
           <div className="flex max-xl:flex-col max-xl:items-start items-center gap-4 max-xl:gap-2">
-            <MoreFilterFiliere />
+            <MoreFilterFiliere categories={categories} />
             <MoreEntrepriseFilter />
           </div>
         </div>

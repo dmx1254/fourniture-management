@@ -282,7 +282,9 @@ export async function deleteArticle(articleId: string) {
 }
 export async function deleteEntreprise(entrepriseId: string) {
   try {
-    const deleteEntreprise = await EntrepriseModel.findByIdAndDelete(entrepriseId);
+    const deleteEntreprise = await EntrepriseModel.findByIdAndDelete(
+      entrepriseId
+    );
     return { message: "Entrepise supprimé avec success" };
   } catch (error) {
     console.log(error);
@@ -679,9 +681,11 @@ export async function getEntreprisesAndTotalPages(
   }
   if (type === "region") {
     matchConditions.region = { $regex: category, $options: "i" };
+    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
   }
   if (type === "filiere") {
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
+    matchConditions.region = { $regex: category, $options: "i" };
   }
 
   try {
@@ -751,9 +755,11 @@ export async function getEntreprises(
   }
   if (type === "region") {
     matchConditions.region = { $regex: category, $options: "i" };
+    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
   }
   if (type === "filiere") {
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
+    matchConditions.region = { $regex: category, $options: "i" };
   }
 
   try {
@@ -785,6 +791,18 @@ export async function getEntreprises(
       entreprises: JSON.parse(JSON.stringify(users)),
       totalPages,
     };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getAllCatFilter() {
+  try {
+    const categories = await EntrepriseModel.distinct("corpsdemetiers");
+
+    const cats = JSON.parse(JSON.stringify(categories));
+    return cats;
   } catch (error) {
     console.log(error);
     throw error;

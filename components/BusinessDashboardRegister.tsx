@@ -31,16 +31,16 @@ const BusinessDashboardRegister = () => {
     useState<string>("");
   const [entreprise, setEntreprise] = useState<string>("");
   const [entrepriseError, setEntrepriseError] = useState<string>("");
-  const [formel, setFormel] = useState<string>("");
+  const [formel, setFormel] = useState<string>("Non");
   const [formelError, setFormelError] = useState<string>("");
-  const [formation, setFormation] = useState<string>("");
+  const [formation, setFormation] = useState<string>("Non");
   const [formationError, setFormationError] = useState<string>("");
-  const [besoinFormation, setBesoinFormation] = useState<string>("");
+  const [besoinFormation, setBesoinFormation] = useState<string>("Non");
   const [besoinFormationError, setBesoinFormationError] = useState<string>("");
-  const [financementEtat, setFinancementEtat] = useState<string>("");
+  const [financementEtat, setFinancementEtat] = useState<string>("Non");
   const [financementEtatError, setFinancementEtatError] = useState<string>("");
   const [accesZonesExpositions, setAccesZonesExpositions] =
-    useState<string>("");
+    useState<string>("Non");
   const [accesZonesExpositionsError, setAccesZonesExpositionsError] =
     useState<string>("");
   const [siteExposition, setSiteExposition] = useState<string>("");
@@ -522,7 +522,7 @@ const BusinessDashboardRegister = () => {
             )}
           </div>
         </div>
-        <div>
+        {/* <div>
           <label className="block text-base font-medium">
             Vous êtes dans le formel
           </label>
@@ -551,8 +551,8 @@ const BusinessDashboardRegister = () => {
           {formelError && (
             <p className="mt-1 text-sm text-red-600">{formelError}</p>
           )}
-        </div>
-        <div className="flex flex-col items-start gap-2">
+        </div> */}
+        {/* <div className="flex flex-col items-start gap-2">
           <Label className="block text-base font-medium" htmlFor="formation">
             Avez-vous une formation dans votre secteur d'activité ?
           </Label>
@@ -581,8 +581,8 @@ const BusinessDashboardRegister = () => {
               <p className="mt-1 text-sm text-red-600">{formationError}</p>
             )}
           </div>
-        </div>
-        {formation === "Non" ? (
+        </div> */}
+        {/* {formation === "Non" ? (
           <div className="flex flex-col items-start gap-2">
             <Label className="block text-base font-medium" htmlFor="formation">
               Avez-vous besoin d'une formation ?
@@ -613,8 +613,8 @@ const BusinessDashboardRegister = () => {
               <p className="text-sm text-red-600">{besoinFormationError}</p>
             )}
           </div>
-        ) : null}
-        <div className="flex flex-col items-start gap-2">
+        ) : null} */}
+        {/* <div className="flex flex-col items-start gap-2">
           <Label className="block text-base font-medium" htmlFor="formation">
             Avez-vous bénéficié d'un financement de l'état ?
           </Label>
@@ -645,8 +645,8 @@ const BusinessDashboardRegister = () => {
               </p>
             )}
           </div>
-        </div>
-        <div className="flex flex-col items-start gap-2">
+        </div> */}
+        {/* <div className="flex flex-col items-start gap-2">
           <Label className="block text-base font-medium" htmlFor="formation">
             Avez-vous accès aux zones et sites d'expositions ?
           </Label>
@@ -677,8 +677,8 @@ const BusinessDashboardRegister = () => {
               </p>
             )}
           </div>
-        </div>
-        {accesZonesExpositions === "  Oui" ? (
+        </div> */}
+        {/* {accesZonesExpositions === "  Oui" ? (
           <div className="flex flex-col items-start gap-2">
             <Label className="block text-base font-medium" htmlFor="formation">
               Si oui, laquelle ?
@@ -715,8 +715,8 @@ const BusinessDashboardRegister = () => {
               </p>
             )}
           </div>
-        ) : null}
-        {siteExpositionChecked ? (
+        ) : null} */}
+        {/* {siteExpositionChecked ? (
           <div className="flex flex-col items-start gap-2">
             <Label htmlFor="siteExposition" className="block text-base">
               Site d'exposition
@@ -735,7 +735,7 @@ const BusinessDashboardRegister = () => {
               <p className="text-sm text-red-600">{siteExpositionError}</p>
             )}
           </div>
-        ) : null}
+        ) : null} */}
         <div className="relative flex flex-col items-start gap-2">
           <Label htmlFor="phone" className="block text-base">
             Téléphone
