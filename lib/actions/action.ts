@@ -11,6 +11,7 @@ import {
   createTransaction,
   createUserPro,
   deleteArticle,
+  deleteEntreprise,
   deleteTransaction,
   deleteUser,
   loginUser,
@@ -73,6 +74,9 @@ export type ArticleUpdateState = {
 };
 
 export type ArticleDeleteState = {
+  message?: string | null;
+};
+export type EntrepriseDeleteState = {
   message?: string | null;
 };
 
@@ -251,8 +255,15 @@ const ArticleUpadteSchema = z.object({
 
 const ArticleDeleteSchema = z.object({
   articleId: z.string({
-    required_error: "Le titre est requis",
-    invalid_type_error: "Le titre doit être une chaîne de caractères",
+    required_error: "L'identifiant est requis",
+    invalid_type_error: "L'identifiant doit être une chaîne de caractères",
+  }),
+});
+
+const EntrepriseDeleteSchema = z.object({
+  entrepriseId: z.string({
+    required_error: "L'identifiant est requis",
+    invalid_type_error: "L'identifiant doit être une chaîne de caractères",
   }),
 });
 
@@ -350,6 +361,29 @@ export async function deleteArticlePro(
     const articleId = isArticleIdCorrect.data.articleId;
     const response = await deleteArticle(articleId);
     await revalidatePath("/dashboard/fournitures-informatiques");
+    return response;
+  }
+}
+
+export async function deleteEntreprisePro(
+  prevState: EntrepriseDeleteState,
+  formData: FormData
+) {
+  let sessions = {};
+
+  for (const [name, value] of formData.entries()) {
+    sessions[name] = value;
+  }
+
+  const isEntrepriseIdCorrect = await EntrepriseDeleteSchema.safeParse(
+    sessions
+  );
+  if (!isEntrepriseIdCorrect.success) {
+    console.log(isEntrepriseIdCorrect.error);
+  } else {
+    const entrepriseId = isEntrepriseIdCorrect.data.entrepriseId;
+    const response = await deleteEntreprise(entrepriseId);
+    await revalidatePath("/dashboard/entreprise");
     return response;
   }
 }
@@ -641,6 +675,7 @@ export async function login(prevState: LoginErrorState, formData: FormData) {
 export async function inscriptionForEntreprise(user: Entreprise) {
   try {
     const entrepriseCreated = await businessRegister(user);
+    revalidatePath("/dashboard/entreprise");
     return JSON.parse(JSON.stringify(entrepriseCreated));
   } catch (error: any) {
     console.log(error);

@@ -5,8 +5,6 @@ import { getArticlesAndTotalPages } from "@/lib/actions/api";
 import { Product } from "@/lib/types";
 import ArticleUpdate from "../updates-comp/ArticleUpdate";
 import { getSession } from "@/lib/actions/action";
-import { CloudUpload } from "lucide-react";
-import generatePDF from "@/lib/utils";
 import DownloadInventaire from "../DownloadInventaire";
 
 const Table = async ({
@@ -29,7 +27,7 @@ const Table = async ({
   return (
     <div className="relative w-full mt-6">
       <table className="min-w-full bg-white text-left">
-        <thead className="bg-[#111b21] text-gray-500">
+        <thead className="bg-[#052e16] text-white/80">
           <tr className="border-b border-gray-100 text-sm">
             <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
               Articles

@@ -29,9 +29,9 @@ export default function Search({ placeholder }: { placeholder: string }) {
           handleSearchChange(e.target.value)
         }
         defaultValue={searchParams.get("query")?.toString()}
-        className="w-full text-sm py-2 rounded-[10px] text-gray-600 bg-[#111b21] border-none placeholder:text-gray-500 outline-none px-8"
+        className="w-full text-sm py-2 rounded-[10px] text-white/80 bg-[#052e16] border-none placeholder:text-white/60 outline-none px-8"
       />
-      <CiSearch className="absolute text-gray-500 text-[22px] top-[21%] left-[2%]" />
+      <CiSearch className="absolute text-white/60 text-[22px] top-[21%] left-[2%]" />
     </div>
   );
 }

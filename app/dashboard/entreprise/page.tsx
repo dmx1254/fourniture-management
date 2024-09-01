@@ -5,23 +5,38 @@ import MoreEntrepriseFilter from "@/components/ui/MoreEntrepriseFilter";
 import { Pagination } from "@/components/ui/pagination";
 import LatestInvoicesSkeleton from "@/components/skelettons/skeletons";
 import BusinessTable from "@/components/ui/BusinessTable";
+import MoreFilterFiliere from "@/components/ui/MoreFilterFiliere";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 
 const BussinesPage = async ({
   searchParams,
 }: {
   searchParams?: {
     query?: string;
-    category?: string;
+    region?: string;
+    filiere?: string;
     page?: string;
   };
 }) => {
   let query = searchParams?.query || "";
-  let category = searchParams?.category || "";
+  let region = searchParams?.region || "";
+  let filiere = searchParams?.filiere || "";
   let currentPage = Number(searchParams?.page) || 1;
+  const alltypes: string[] = Object.keys(searchParams);
+  const type: string = alltypes[1] || "";
   //   const businessUsers: BusinessUser[] = await getBusinessRegister();
   let { totalPages } =
-    (await getEntreprisesAndTotalPages(query, currentPage, category)) || 1;
+    (await getEntreprisesAndTotalPages(
+      query,
+      currentPage,
+      region,
+      type,
+      filiere
+    )) || 1;
   //
+
+  // console.log(type)
 
   return (
     <div className="w-full flex flex-col items-center p-4 bg-gray-100 min-h-screen">
@@ -29,23 +44,33 @@ const BussinesPage = async ({
         <span className="p-2 font-bold text-gray-600 text-lg">Entreprises</span>
       </div> */}
 
-      <div className="flex items-center justify-between w-full mt-2">
-        <div className="w-full max-w-md flex items-center gap-4">
-          <Search placeholder="Rechercher l'utilisateur que vous voulez..." />
+      <div className="flex items-end max-xl:items-start justify-between w-full mt-2">
+        <div className="w-full max-w-md flex items-center max-xl:items-start gap-4">
+          <Search placeholder="Rechercher par prénom et nom..." />
         </div>
-        <div className="flex items-center gap-4">
-          <MoreEntrepriseFilter />
+        <div className="flex flex-col items-end -mb-2">
+          <Link href="/dashboard/nouveau-entreprise" className="flex items-center text-sm outline-none border-none p-2 rounded bg-[#052e16] shadow-md text-white/80 mr-5 mb-2">
+            <Plus size={16} />
+            Ajouter une entreprise
+          </Link>
+
+          <div className="flex max-xl:flex-col max-xl:items-start items-center gap-4 max-xl:gap-2">
+            <MoreFilterFiliere />
+            <MoreEntrepriseFilter />
+          </div>
         </div>
       </div>
 
       <Suspense
-        key={currentPage + query + category}
+        key={currentPage + query + region + type + filiere}
         fallback={<LatestInvoicesSkeleton />}
       >
         <BusinessTable
           query={query}
           currentPage={currentPage}
-          category={category}
+          category={region}
+          type={type}
+          filiere={filiere}
         />
       </Suspense>
       <Pagination currentPage={currentPage} totalPages={totalPages} />

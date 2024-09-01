@@ -13,7 +13,7 @@ const Sidebar = async () => {
   // console.log(session)
   return (
     <div
-      className="h-screen w-[60px] md:w-[250px] bg-[#111b21] p-2 flex flex-col items-start justify-between"
+      className="h-screen w-[60px] md:w-[250px] bg-[#052e16] p-2 flex flex-col items-start justify-between"
       style={{
         boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
       }}
@@ -31,8 +31,8 @@ const Sidebar = async () => {
       </div>
       <form action={logout}>
         <button type="submit" className="flex items-center gap-2 p-2">
-          <LogOut size={20} className="text-gray-600 text-[24px] md:text-[20px]" />
-          <span className="hidden md:flex text-gray-600">Se deconnecter</span>
+          <LogOut size={20} className="text-white text-[24px] md:text-[20px]" />
+          <span className="hidden md:flex text-white">Se deconnecter</span>
         </button>
       </form>
     </div>

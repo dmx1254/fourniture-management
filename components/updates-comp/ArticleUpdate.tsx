@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import DeleteArticleBtn from "./DeleteArticleBtn";
 
 const ArticleUpdate = ({ article }: { article: Product }) => {
-    const initialstate = {errors: {}, message: "" };
+  const initialstate = { errors: {}, message: "" };
   const [state, updateAction] = useFormState(updateArticle, initialstate);
 
   useEffect(() => {
@@ -36,7 +36,6 @@ const ArticleUpdate = ({ article }: { article: Product }) => {
     }
   }, [state?.message, updateAction]);
 
-
   return (
     <td className="flex items-center gap-2 p-4">
       <Dialog>
@@ -45,11 +44,11 @@ const ArticleUpdate = ({ article }: { article: Product }) => {
             <CiEdit size={16} />
           </button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px] bg-[#111b21] border-none">
+        <DialogContent className="sm:max-w-[425px] bg-[#022c22] border-none">
           <DialogHeader>
-            <DialogTitle className="text-sm text-gray-600 line-clamp-1">
+            <DialogTitle className="text-sm text-white/80 line-clamp-1">
               Mettre à jour{" "}
-              <span className="text-xs font-bold text-gray-500 line-through">
+              <span className="text-xs font-bold text-white/70 line-through">
                 {article.title}
               </span>
             </DialogTitle>
@@ -57,7 +56,7 @@ const ArticleUpdate = ({ article }: { article: Product }) => {
           <form action={updateAction}>
             <div className="grid gap-4 py-4">
               <div className="flex flex-col items-start gap-2">
-                <Label htmlFor="title" className="text-right text-gray-600">
+                <Label htmlFor="title" className="text-right text-white/80">
                   Titre
                 </Label>
                 <Input
@@ -65,11 +64,11 @@ const ArticleUpdate = ({ article }: { article: Product }) => {
                   name="title"
                   placeholder="Titre"
                   defaultValue={article.title}
-                  className="col-span-3 bg-transparent placeholder:text-gray-600 border-gray-600 text-gray-600 focus:ring-0 focus:ring-offset-0"
+                  className="col-span-3 bg-transparent placeholder:text-white/80 border-white/80 text-white/80 focus:ring-0 focus:ring-offset-0"
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
-                <Label htmlFor="quantity" className="text-right text-gray-600">
+                <Label htmlFor="quantity" className="text-right text-white/80">
                   Quantite
                 </Label>
                 <Input
@@ -78,11 +77,11 @@ const ArticleUpdate = ({ article }: { article: Product }) => {
                   placeholder="Quantite"
                   type="number"
                   defaultValue={article.quantity}
-                  className="col-span-3 bg-transparent placeholder:text-gray-600 border-gray-600 text-gray-600"
+                  className="col-span-3 bg-transparent placeholder:text-white/80 border-white/80 text-white/80"
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
-                <Label htmlFor="consome" className="text-right text-gray-600">
+                <Label htmlFor="consome" className="text-right text-white/80">
                   Consomme
                 </Label>
                 <Input
@@ -91,7 +90,7 @@ const ArticleUpdate = ({ article }: { article: Product }) => {
                   placeholder="Consomme"
                   type="number"
                   defaultValue={article.consome}
-                  className="col-span-3 bg-transparent placeholder:text-gray-600 border-gray-600 text-gray-600"
+                  className="col-span-3 bg-transparent placeholder:text-white/80 border-white/80 text-white/80"
                 />
               </div>
               <Input
@@ -100,14 +99,14 @@ const ArticleUpdate = ({ article }: { article: Product }) => {
                 placeholder="articleId"
                 type="hidden"
                 value={article._id}
-                className="col-span-3 bg-transparent placeholder:text-gray-600 border-gray-600 text-gray-600"
+                className="col-span-3 bg-transparent placeholder:text-white/80 border-white/80 text-white/80"
               />
             </div>
             <DialogFooter>
               <Button
                 type="submit"
                 variant="outline"
-                className="bg-transparent text-gray-600 border-gray-600 hover:bg-transparent hover:text-gray-600"
+                className="bg-transparent text-white/80 border-white/80 hover:bg-transparent hover:text-white/80"
               >
                 Mettre à jour
               </Button>

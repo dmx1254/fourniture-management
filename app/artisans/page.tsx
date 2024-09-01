@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
-import React, { useEffect } from "react";
 
 const EntreprisePage = () => {
-  redirect("/entreprise/inscription");
+  redirect("/artisans/inscription");
 
   return <div></div>;
 };

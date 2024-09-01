@@ -36,14 +36,14 @@ const CreateArticle = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button className="flex items-center text-xs outline-none border-none p-2 rounded bg-[#111b21] shadow-md text-gray-500 mr-5">
+        <button className="flex items-center text-sm outline-none border-none p-2 rounded bg-[#052e16] shadow-md text-white/80 mr-5 min-w-[175px]">
           <Plus size={16} />
-          Create
+          Ajouter un produit
         </button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-[#111b21] border-[#111b21] text-white">
+      <AlertDialogContent className="bg-[#022c22] border-[#111b21] text-white">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-gray-600 text-base">
+          <AlertDialogTitle className="text-white/80 text-base">
             Ajouter un produit
           </AlertDialogTitle>
           <form
@@ -51,23 +51,23 @@ const CreateArticle = () => {
             className="w-full flex flex-col items-start gap-2"
           >
             <div className="w-full flex flex-col items-start gap-1">
-              <label htmlFor="title" className="text-gray-600 text-sm">
+              <label htmlFor="title" className="text-white/80 text-sm">
                 Titre
               </label>
               <input
                 placeholder="titre"
-                className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus:ring-1 focus:ring-gray-400"
+                className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus:ring-1 focus:ring-gray-400"
                 type="text"
                 id="title"
                 name="title"
               />
             </div>
             <div className="w-full flex flex-col items-start gap-1">
-              <label htmlFor="category" className="text-gray-600 text-sm">
+              <label htmlFor="category" className="text-white/80 text-sm">
                 Categorie
               </label>
               <input
-                className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus:ring-1 focus:ring-gray-400"
+                className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus:ring-1 focus:ring-gray-400"
                 type="text"
                 id="category"
                 name="category"
@@ -75,11 +75,11 @@ const CreateArticle = () => {
               />
             </div>
             <div className="w-full flex flex-col items-start gap-1">
-              <label htmlFor="quantity" className="text-gray-600 text-sm">
+              <label htmlFor="quantity" className="text-white/80 text-sm">
                 Quantité
               </label>
               <input
-                className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus:ring-1 focus:ring-gray-400"
+                className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus:ring-1 focus:ring-gray-400"
                 type="number"
                 id="quantity"
                 name="quantity"
@@ -108,7 +108,7 @@ const CreateArticle = () => {
               <Button
                 type="submit"
                 variant="outline"
-                className="bg-transparent border border-gray-600 text-white hover:bg-transparent hover:text-white hover:opacity-90"
+                className="bg-transparent border border-white/80 text-white hover:bg-transparent hover:text-white hover:opacity-90"
               >
                 Créer
               </Button>

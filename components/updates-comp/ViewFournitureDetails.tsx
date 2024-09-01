@@ -79,58 +79,58 @@ const ViewFournitureDetails = ({ trans }: { trans: Transaction }) => {
           <AiOutlineFundView size={16} />
         </button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-[#111b21] border-none text-gray-600">
+      <AlertDialogContent className="bg-[#022c22] border-none text-white/80">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-sm text-gray-500 font-bold">
+          <AlertDialogTitle className="text-sm text-white/80 font-bold">
             Details de la transaction
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogDescription>
           <p>
             <strong>ID de Transaction:</strong>{" "}
-            <span className="text-gray-300">{trans._id}</span>
+            <span className="text-white/80">{trans._id}</span>
           </p>
           <p>
             <strong>ID de l&apos;Utilisateur:</strong>{" "}
-            <span className="text-gray-300">{trans.userId}</span>
+            <span className="text-white/80">{trans.userId}</span>
           </p>
           <p>
             <strong>ID de l&apos;Article:</strong>{" "}
-            <span className="text-gray-300">{trans.articleId}</span>
+            <span className="text-white/80">{trans.articleId}</span>
           </p>
           <p>
             <strong>Poste:</strong>{" "}
-            <span className="text-gray-300">{trans.poste}</span>
+            <span className="text-white/80">{trans.poste}</span>
           </p>
           <p>
             <strong>Titre:</strong>{" "}
-            <span className="text-gray-300">{trans.title}</span>
+            <span className="text-white/80">{trans.title}</span>
           </p>
           <p>
             <strong>Catégorie:</strong>{" "}
-            <span className="text-gray-300">{trans.category}</span>
+            <span className="text-white/80">{trans.category}</span>
           </p>
           <p>
             <strong>Nom:</strong>{" "}
-            <span className="text-gray-300">{trans.lastname}</span>
+            <span className="text-white/80">{trans.lastname}</span>
           </p>
           <p>
             <strong>Prénom:</strong>{" "}
-            <span className="text-gray-300">{trans.firstname}</span>
+            <span className="text-white/80">{trans.firstname}</span>
           </p>
           <p>
             <strong>Consommé:</strong>{" "}
-            <span className="text-gray-300">{trans.consome}</span>
+            <span className="text-white/80">{trans.consome}</span>
           </p>
           <p>
             <strong>Date de Création:</strong>{" "}
-            <span className="text-gray-300">
+            <span className="text-white/80">
               {convertedDate(trans.createdAt)}
             </span>
           </p>
           <p>
             <strong>Date de Mise à Jour:</strong>{" "}
-            <span className="text-gray-300">
+            <span className="text-white/80">
               {convertedDate(trans.updatedAt)}
             </span>
           </p>
@@ -141,7 +141,7 @@ const ViewFournitureDetails = ({ trans }: { trans: Transaction }) => {
           </AlertDialogCancel>
           <Button
             variant="outline"
-            className="bg-transparent text-gray-500 border-gray-600 hover:bg-transparent hover:text-gray-600"
+            className="bg-transparent text-white/80 border-white/80 hover:bg-transparent hover:text-white/80"
             onClick={downloadPDF}
           >
             Télécharger

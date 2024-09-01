@@ -280,6 +280,15 @@ export async function deleteArticle(articleId: string) {
     throw error;
   }
 }
+export async function deleteEntreprise(entrepriseId: string) {
+  try {
+    const deleteEntreprise = await EntrepriseModel.findByIdAndDelete(entrepriseId);
+    return { message: "Entrepise supprimé avec success" };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
 export async function getIdCatAndTitleArticle() {
   const articlesFind = await ArticleModel.find();
@@ -641,14 +650,14 @@ export async function getBusinessRegister() {
   }
 }
 
-
-
-
 export async function getEntreprisesAndTotalPages(
   query: string,
   currentPage: number,
-  category: string
+  category: string,
+  type: string,
+  filiere: string
 ) {
+  // console.log("category: " + category, "corps de metiers :" + filiere);
   noStore();
   let itemsPerPage = 10;
   const offset = (currentPage - 1) * itemsPerPage;
@@ -656,22 +665,30 @@ export async function getEntreprisesAndTotalPages(
   const matchConditions: any = {};
 
   // Ajouter une condition pour le titre s'il est spécifié
-  if (category === "lastname" && query && query.trim() !== "") {
+  // if (category === "lastname" && query && query.trim() !== "") {
+  //   matchConditions.lastname = { $regex: query, $options: "i" };
+  // }
+  // if (category === "firstname" && query && query.trim() !== "") {
+  //   matchConditions.firstname = { $regex: query, $options: "i" };
+  // }
+  // if (category === "entreprise" && query && query.trim() !== "") {
+  //   matchConditions.entreprise = { $regex: query, $options: "i" };
+  // }
+  if (query && query.trim() !== "") {
     matchConditions.lastname = { $regex: query, $options: "i" };
   }
-  if (category === "firstname" && query && query.trim() !== "") {
-    matchConditions.firstname = { $regex: query, $options: "i" };
+  if (type === "region") {
+    matchConditions.region = { $regex: category, $options: "i" };
   }
-  if (category === "entreprise" && query && query.trim() !== "") {
-    matchConditions.entreprise = { $regex: query, $options: "i" };
-  }
-  if (category === "phone" && query && query.trim() !== "") {
-    matchConditions.phone = { $regex: query, $options: "i" };
+  if (type === "filiere") {
+    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
   }
 
   try {
     // Récupérer le nombre total de documents
-    const totalDocuments = await EntrepriseModel.countDocuments(matchConditions);
+    const totalDocuments = await EntrepriseModel.countDocuments(
+      matchConditions
+    );
 
     // Calculer le nombre total de pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);
@@ -702,11 +719,12 @@ export async function getEntreprisesAndTotalPages(
   }
 }
 
-
 export async function getEntreprises(
   query: string,
   currentPage: number,
-  category: string
+  category: string,
+  type: string,
+  filiere: string
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -715,22 +733,34 @@ export async function getEntreprises(
   const matchConditions: any = {};
 
   // Ajouter une condition pour le titre s'il est spécifié
-  if (category === "lastname" && query && query.trim() !== "") {
+  // if (category === "lastname" && query && query.trim() !== "") {
+  //   matchConditions.lastname = { $regex: query, $options: "i" };
+  // }
+  // if (category === "firstname" && query && query.trim() !== "") {
+  //   matchConditions.firstname = { $regex: query, $options: "i" };
+  // }
+  // if (category === "entreprise" && query && query.trim() !== "") {
+  //   matchConditions.entreprise = { $regex: query, $options: "i" };
+  // }
+  // if (category === "phone" && query && query.trim() !== "") {
+  //   matchConditions.phone = { $regex: query, $options: "i" };
+  // }
+
+  if (query && query.trim() !== "") {
     matchConditions.lastname = { $regex: query, $options: "i" };
   }
-  if (category === "firstname" && query && query.trim() !== "") {
-    matchConditions.firstname = { $regex: query, $options: "i" };
+  if (type === "region") {
+    matchConditions.region = { $regex: category, $options: "i" };
   }
-  if (category === "entreprise" && query && query.trim() !== "") {
-    matchConditions.entreprise = { $regex: query, $options: "i" };
-  }
-  if (category === "phone" && query && query.trim() !== "") {
-    matchConditions.phone = { $regex: query, $options: "i" };
+  if (type === "filiere") {
+    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
   }
 
   try {
     // Récupérer le nombre total de documents
-    const totalDocuments = await EntrepriseModel.countDocuments(matchConditions);
+    const totalDocuments = await EntrepriseModel.countDocuments(
+      matchConditions
+    );
 
     // Calculer le nombre total de pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);

@@ -14,7 +14,7 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const MoreEntrepriseFilter = () => {
+const MoreFilterFiliere = () => {
   const [catSelected, setCatSelected] = useState<string>("");
   //   console.log(catSelected);
   const searchParams = useSearchParams();
@@ -24,9 +24,9 @@ const MoreEntrepriseFilter = () => {
     const params = new URLSearchParams(searchParams);
     params.set("page", "1");
     if (catSelected) {
-      params.set("region", catSelected);
+      params.set("filiere", catSelected);
     } else {
-      params.delete("region");
+      params.delete("filiere");
     }
     replace(`${pathname}?${params.toString()}`);
   }, 600);
@@ -41,28 +41,24 @@ const MoreEntrepriseFilter = () => {
             placeholder={
               <span className="flex items-center gap-2 text-white/80">
                 <GoFilter />
-                Filtrer par région
+                Filtrer par métiers
               </span>
             }
           />
         </SelectTrigger>
         <SelectContent className="bg-[#052e16] text-white/80">
           <SelectGroup>
-            <SelectLabel>Régions</SelectLabel>
+            <SelectLabel>Corps de métiers</SelectLabel>
 
-            <SelectItem value="dakar">Dakar</SelectItem>
-            <SelectItem value="diourbel">Diourbel</SelectItem>
-            <SelectItem value="fatick">Fatick</SelectItem>
-            <SelectItem value="kaolack">Kaolack</SelectItem>
-            <SelectItem value="kolda">Kolda</SelectItem>
-            <SelectItem value="louga">Louga</SelectItem>
-            <SelectItem value="st louis">St Louis</SelectItem>
-            <SelectItem value="tambacounda">Tambacounda</SelectItem>
-            <SelectItem value="thiès">Thiès</SelectItem>
-            <SelectItem value="ziguinchor">Ziguinchor</SelectItem>
-            <SelectItem value="kaffrine">Kaffrine</SelectItem>
-            <SelectItem value="kédougou">Kédougou</SelectItem>
-            <SelectItem value="sédhiou">Sédhiou</SelectItem>
+            <SelectItem value="filière bois">Filière bois</SelectItem>
+            <SelectItem value="filière textile">Filière textile</SelectItem>
+            <SelectItem value="filière peaux et cuirs">
+              Filière peaux et cuirs
+            </SelectItem>
+            <SelectItem value="filière métallique">
+              Filière métallique
+            </SelectItem>
+            <SelectItem value="filière mécanique">Filière mécanique</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>
@@ -70,4 +66,4 @@ const MoreEntrepriseFilter = () => {
   );
 };
 
-export default MoreEntrepriseFilter;
+export default MoreFilterFiliere;

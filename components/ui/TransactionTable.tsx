@@ -43,7 +43,7 @@ const TransactionTable = async ({
   return (
     <div className="w-full mt-6">
       <table className="min-w-full bg-white text-left">
-        <thead className="bg-[#111b21] text-gray-500">
+        <thead className="bg-[#052e16] text-white/80">
           <tr className="border-b border-gray-100 text-sm">
             <th className="p-1 md:p-4 font-semibold">Prénom</th>
             <th className="p-1 md:p-4 font-semibold">Nom</th>

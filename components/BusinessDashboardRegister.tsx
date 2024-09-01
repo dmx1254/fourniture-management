@@ -8,7 +8,7 @@ import { inscriptionForEntreprise } from "@/lib/actions/action";
 import { toast } from "sonner";
 import Image from "next/image";
 
-const BusinessRegister = () => {
+const BusinessDashboardRegister = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const [lastname, setLastname] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
@@ -83,7 +83,6 @@ const BusinessRegister = () => {
       !firstname ||
       !phone ||
       !region ||
-      !departement ||
       !corpsdemetiers ||
       !statusEntreprise ||
       !entreprise ||
@@ -221,12 +220,9 @@ const BusinessRegister = () => {
         const response = await inscriptionForEntreprise(user);
         setIsloading(false);
         if (response) {
-          toast.success(
-            "Merci pour votre inscription ! Nous vous contacterons sous peu.",
-            {
-              style: { color: "#16a34a" },
-            }
-          );
+          toast.success("Inscription effectuée avec succès.", {
+            style: { color: "#16a34a" },
+          });
           formRef.current?.reset();
         }
       } catch (error) {
@@ -245,14 +241,14 @@ const BusinessRegister = () => {
 
   return (
     <div
-      className="w-full overflow-hidden mx-auto py-3 max-md:px-4 px-6 bg-white rounded-lg"
+      className="w-full overflow-hidden max-w-6xl mx-auto py-3 max-md:px-4 px-6 bg-white rounded-lg"
       style={{
         boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
       }}
     >
       <div className="w-full flex items-start justify-between mb-6">
         <div className="flex flex-col gap-2 items-start">
-          <h1 className="text-2xl font-semibold">Formulaire d'Inscription</h1>
+          <h1 className="text-2xl font-bold">Formulaire d'Inscription</h1>
           <p className="flex max-w-[300px] text-sm">
             Le coordonnateur du Projet Mobilier National, M. Ibrahima Tall,
             lance sa campagne de recensement. Cette initiative vise à identifier
@@ -755,7 +751,7 @@ const BusinessRegister = () => {
             className="w-full pl-10 text-primary-600 border-gray-300 focus:ring-primary-500"
           />
           <Phone
-            className="absolute text-gray-400 top-[60%] left-[2%]"
+            className="absolute text-gray-400 top-[60%] left-[1%]"
             size={20}
           />
         </div>
@@ -775,7 +771,7 @@ const BusinessRegister = () => {
             className="w-full pl-10 text-primary-600 border-gray-300 focus:ring-primary-500"
           />
           <Mail
-            className="absolute text-gray-400 top-[60%] left-[2%]"
+            className="absolute text-gray-400 top-[60%] left-[1%]"
             size={20}
           />
         </div>
@@ -792,4 +788,4 @@ const BusinessRegister = () => {
   );
 };
 
-export default BusinessRegister;
+export default BusinessDashboardRegister;

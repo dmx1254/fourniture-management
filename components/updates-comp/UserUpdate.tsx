@@ -55,9 +55,9 @@ const UserUpdate = ({
             </button>
           )}
         </AlertDialogTrigger>
-        <AlertDialogContent className="bg-[#111b21] border-[#111b21] text-white">
+        <AlertDialogContent className="bg-[#022c22] border-[#111b21] text-white">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-gray-600 text-base">
+            <AlertDialogTitle className="text-white/80 text-base">
               Mettre à jour un utilisateur
             </AlertDialogTitle>
             <form
@@ -67,12 +67,12 @@ const UserUpdate = ({
               <input type="hidden" name="userId" value={user._id} />
               <div className="w-full flex items-center justify-between gap-4">
                 <div className="w-full flex flex-col items-start gap-1">
-                  <label htmlFor="lastname" className="text-gray-600 text-sm">
+                  <label htmlFor="lastname" className="text-white/80 text-sm">
                     Prenom
                   </label>
                   <input
                     placeholder="Prenom"
-                    className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                     type="text"
                     id="lastname"
                     name="lastname"
@@ -80,12 +80,12 @@ const UserUpdate = ({
                   />
                 </div>
                 <div className="w-full flex flex-col items-start gap-1">
-                  <label htmlFor="firstname" className="text-gray-600 text-sm">
+                  <label htmlFor="firstname" className="text-white/80 text-sm">
                     Nom
                   </label>
                   <input
                     placeholder="Nom"
-                    className="w-full focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus:ring-gray-400"
+                    className="w-full focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus:ring-gray-400"
                     type="text"
                     id="firstname"
                     name="firstname"
@@ -96,12 +96,12 @@ const UserUpdate = ({
 
               <div className="w-full flex items-center justify-between gap-4">
                 <div className="w-full flex flex-col items-start gap-1">
-                  <label htmlFor="email" className="text-gray-600 text-sm">
+                  <label htmlFor="email" className="text-white/80 text-sm">
                     Email
                   </label>
                   <input
                     placeholder="Email"
-                    className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                     type="email"
                     id="email"
                     name="email"
@@ -122,12 +122,12 @@ const UserUpdate = ({
               )} */}
                 </div>
                 <div className="w-full flex flex-col items-start gap-1">
-                  <label htmlFor="phone" className="text-gray-600 text-sm">
+                  <label htmlFor="phone" className="text-white/80 text-sm">
                     Telephone
                   </label>
                   <input
                     placeholder="Telephone"
-                    className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                     type="text"
                     id="phone"
                     name="phone"
@@ -137,12 +137,12 @@ const UserUpdate = ({
               </div>
               <div className="w-full flex items-center justify-between gap-4">
                 <div className="w-full flex flex-col items-start gap-1">
-                  <label htmlFor="country" className="text-gray-600 text-sm">
+                  <label htmlFor="country" className="text-white/80 text-sm">
                     Pays
                   </label>
                   <input
                     placeholder="Pays"
-                    className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                     type="text"
                     id="country"
                     name="country"
@@ -150,12 +150,12 @@ const UserUpdate = ({
                   />
                 </div>
                 <div className="w-full flex flex-col items-start gap-1">
-                  <label htmlFor="city" className="text-gray-600 text-sm">
+                  <label htmlFor="city" className="text-white/80 text-sm">
                     Ville
                   </label>
                   <input
                     placeholder="Ville"
-                    className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                     type="text"
                     id="city"
                     name="city"
@@ -165,11 +165,11 @@ const UserUpdate = ({
               </div>
               <div className="w-full flex items-center justify-between gap-4">
               <div className="w-full flex flex-col items-start gap-1">
-                <label htmlFor="address" className="text-gray-600 text-sm">
+                <label htmlFor="address" className="text-white/80 text-sm">
                   Address
                 </label>
                 <input
-                  className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                   type="text"
                   id="address"
                   name="address"
@@ -178,12 +178,12 @@ const UserUpdate = ({
                 />
               </div>
                 <div className="w-full flex flex-col items-start gap-1">
-                  <label htmlFor="city" className="text-gray-600 text-sm">
+                  <label htmlFor="city" className="text-white/80 text-sm">
                     Poste
                   </label>
                   <input
                     placeholder="Poste"
-                    className="w-full placeholder:text-gray-600 rounded p-2 text-gray-600 bg-transparent text-sm border border-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                     type="text"
                     id="poste"
                     name="poste"
@@ -201,7 +201,7 @@ const UserUpdate = ({
                 <Button
                   type="submit"
                   variant="outline"
-                  className="bg-transparent border border-gray-600 text-white hover:bg-transparent hover:text-white hover:opacity-90"
+                  className="bg-transparent border border-white/80 text-white hover:bg-transparent hover:text-white hover:opacity-90"
                 >
                   Mettre à jour
                 </Button>

@@ -15,9 +15,9 @@ const mulish = Mulish({
 export const metadata: Metadata = {
   title: "PMN",
   description: "Gestion de produits informatiques",
-  icons:{
+  icons: {
     icon: "/pmn.jpeg",
-  }
+  },
 };
 
 export default function RootLayout({
@@ -35,7 +35,7 @@ export default function RootLayout({
         )}
       >
         <Toaster />
-        
+
         {children}
       </body>
     </html>

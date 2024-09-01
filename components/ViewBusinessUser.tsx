@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { BusinessUser } from "@/lib/types";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
 const ViewBusinessUser = ({
@@ -22,7 +21,13 @@ const ViewBusinessUser = ({
 }) => {
   const user = users?.find((user) => user?._id === userId);
 
-  const InfoItem = ({ label, value }: { label: string; value: string | undefined }) => (
+  const InfoItem = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string | undefined;
+  }) => (
     <div className="flex flex-col space-y-1">
       <p className="text-sm font-medium text-gray-400">{label}</p>
       <p className="text-base text-gray-200">{value || "N/A"}</p>
@@ -32,11 +37,11 @@ const ViewBusinessUser = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Eye className="h-4 w-4" />
-        </Button>
+        <button className="flex items-center justify-center text-center p-0.5 rounded border border-green-900 text-green-600">
+          <Eye size={16} />
+        </button>
       </DialogTrigger>
-      <DialogContent className="w-full sm:max-w-[550px] h-full max-h-[525px] bg-[#111b21] text-gray-200 border-gray-700">
+      <DialogContent className="w-full sm:max-w-[550px] h-full max-h-[525px] bg-[#022c22] text-gray-200 border-gray-700">
         <DialogHeader className="border-b border-gray-800 pb-4">
           <DialogTitle className="text-lg font-semibold text-gray-100">
             Information sur l'entreprise

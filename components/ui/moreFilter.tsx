@@ -33,20 +33,20 @@ const MoreFilter = () => {
   return (
     <div className="relative flex items-center gap-1 text-xs bg-transparent rounded py-[7px] px-4 cursor-pointer">
       <Select onValueChange={(value) => handleSearchChange(value)}>
-        <SelectTrigger className="w-[180px] outline-none bg-[#111b21] text-white ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus:border-none">
+        <SelectTrigger className="w-[180px] outline-none bg-[#052e16] text-white ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus:border-none">
           {/* <GoFilter />
           Filter plus */}
 
           <SelectValue
             placeholder={
-              <span className="flex items-center gap-2 text-gray-500">
+              <span className="flex items-center gap-2 text-white/80">
                 <GoFilter />
                 Filtrer plus
               </span>
             }
           />
         </SelectTrigger>
-        <SelectContent className="bg-[#111b21] text-gray-600">
+        <SelectContent className="bg-[#052e16] text-white/80">
           {pathname === "/dashboard/fournitures-informatiques" ? (
             <SelectGroup>
               <SelectLabel>Categories</SelectLabel>

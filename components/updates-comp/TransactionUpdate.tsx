@@ -81,7 +81,7 @@ const TransactionUpdate = ({
             <CiEdit size={16} />
           </button>
         </AlertDialogTrigger>
-        <AlertDialogContent className="bg-[#111b21] text-gray-600 border-none">
+        <AlertDialogContent className="bg-[#022c22] text-white/80 border-none">
           <form action={upadteFournituresAction}>
             <AlertDialogHeader>
               <AlertDialogTitle className="text-base line-clamp-1">
@@ -92,10 +92,10 @@ const TransactionUpdate = ({
                 <div className="flex flex-col items-start gap-2 w-1/2">
                   <Label>Selectionner un article</Label>
                   <Select onValueChange={(value) => setID(value)}>
-                    <SelectTrigger className="w-full bg-[#111b21] text-gray-600 border-gray-600">
+                    <SelectTrigger className="w-full bg-[#022c22] text-white/80 border-white/80">
                       <SelectValue placeholder={trans.title} />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#111b21] text-gray-600 border-none">
+                    <SelectContent className="bg-[#022c22] text-white/80 border-none">
                       <SelectGroup>
                         <SelectLabel>Fournitures informatiques</SelectLabel>
                         {articles.map((article) => (
@@ -115,7 +115,7 @@ const TransactionUpdate = ({
                 <div className="flex flex-col items-start gap-2 w-1/2">
                   <Label>Saisir la categorie</Label>
                   <Input
-                    className="bg-transparent text-gray-600 border-gray-600 placeholder:text-gray-600"
+                    className="bg-transparent text-white/80 border-white/80 placeholder:text-white/80"
                     name="category"
                     placeholder={trans.category}
                     defaultValue={trans.category}
@@ -131,7 +131,7 @@ const TransactionUpdate = ({
                 <div className="flex flex-col items-start gap-2 w-1/2 mt-2">
                   <Label>Quantite restante</Label>
                   <Input
-                    className="bg-transparent text-gray-600 border-gray-600 placeholder:text-gray-600"
+                    className="bg-transparent text-white/80 border-white/80 placeholder:text-white/80"
                     name="rest"
                     type="number"
                     value={restant}
@@ -141,7 +141,7 @@ const TransactionUpdate = ({
                 <div className="relative flex flex-col items-start gap-2 w-1/2 mt-2">
                   <Label>Saisir la quantite</Label>
                   <Input
-                    className="bg-transparent text-gray-600 border-gray-600 placeholder:text-gray-600"
+                    className="bg-transparent text-white/80 border-white/80 placeholder:text-white/80"
                     name="consome"
                     type="number"
                     defaultValue={trans.consome}
@@ -198,7 +198,7 @@ const TransactionUpdate = ({
                 type="submit"
                 disabled={!title || !category}
                 variant="outline"
-                className="bg-transparent border-gray-600 text-gray-600 hover:bg-transparent hover:text-gray-600"
+                className="bg-transparent border-white/80 text-white/80 hover:bg-transparent hover:text-white/80"
               >
                 Créer
               </Button>

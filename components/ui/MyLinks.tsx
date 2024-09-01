@@ -14,15 +14,15 @@ const MyLinks = ({ userEmail }: { userEmail: string }) => {
           style={{
             display: emailTest === userEmail ? "none" : "flex",
           }}
-          className={`w-full items-center text-center text-sm gap-2 p-2 rounded transition duration-300 ease-in-out hover:bg-[#2C3A42] hover:text-gray-400 ${
+          className={`w-full items-center text-center text-sm gap-2 p-2 rounded transition duration-300 ease-in-out ${
             path === pathname
-              ? "md:bg-[#2C3A42] text-[#195175] md:text-gray-400"
-              : "text-gray-600"
+              ? "bg-[#14532d] text-[#f0fdf4]"
+              : "text-white hover:bg-[#14532d] hover:text-white"
           }`}
           key={id}
           href={path}
         >
-          <Icon className="text-[22px] md:text-[18px]" />
+          <Icon className="text-[22px] md:text-[17px]" />
           <span className="hidden md:flex">{title}</span>
         </Link>
       ))}

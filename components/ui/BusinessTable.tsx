@@ -4,19 +4,31 @@ import { getSession } from "@/lib/actions/action";
 import { getEntreprises } from "@/lib/actions/api";
 import { BusinessUser } from "@/lib/types";
 import ViewBusinessUser from "../ViewBusinessUser";
+import DeleteEntrepriseBtn from "./DeleteEntrepriseBtn";
+import DownloadEntreprise from "./DownloadEntreprise";
 
 const BusinessTable = async ({
   query,
   currentPage,
   category,
+  type,
+  filiere,
 }: {
   query: string;
   currentPage: number;
   category: string;
+  type: string;
+  filiere: string;
 }) => {
   const session = await getSession();
 
-  const { entreprises } = await getEntreprises(query, currentPage, category);
+  const { entreprises } = await getEntreprises(
+    query,
+    currentPage,
+    category,
+    type,
+    filiere
+  );
   const businessUsers: BusinessUser[] = entreprises;
 
   //   console.log(entreprises);
@@ -41,7 +53,7 @@ const BusinessTable = async ({
   return (
     <div className="overflow-x-auto w-full mt-6">
       <table className="min-w-full table bg-white text-left">
-        <thead className="bg-[#111b21] text-gray-500">
+        <thead className="bg-[#052e16] text-white/80">
           <tr className="border-b border-gray-100 text-sm">
             <th className="p-4 font-semibold max-md:hidden">ID</th>
             <th className="p-4 font-semibold">Prénom et nom</th>
@@ -80,15 +92,17 @@ const BusinessTable = async ({
                   {convertedDate(user.createdAt)}
                 </span>
               </td>
-              <td>
+              <td className="flex items-center gap-2 p-4">
                 {session.isAdmin && (
                   <ViewBusinessUser userId={user._id} users={businessUsers} />
                 )}
+              <DeleteEntrepriseBtn entrepriseId={user._id} />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <DownloadEntreprise entreprises={businessUsers}  />
     </div>
   );
 };
