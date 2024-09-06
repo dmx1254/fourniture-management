@@ -1,57 +1,45 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Loader, Phone, Mail } from "lucide-react";
+import { Loader } from "lucide-react";
 import { inscriptionForEntreprise } from "@/lib/actions/action";
 import { toast } from "sonner";
 import Image from "next/image";
+import { regions } from "@/lib/data";
+import { Department } from "@/lib/types";
+
+import PhoneInput from "react-phone-number-input";
+import { E164Number } from "libphonenumber-js/core";
+import "react-phone-number-input/style.css";
 
 const BusinessDashboardRegister = () => {
   const formRef = useRef<HTMLFormElement>(null);
+  const [departementTab, setDepartementTab] = useState<Department[] | null>(
+    null
+  );
+  const [communeTab, setCommuneTab] = useState<string[] | null>(null);
   const [lastname, setLastname] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [phoneError, setPhoneError] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
   const [lastnameError, setLastnameError] = useState<string>("");
   const [firstname, setFirstname] = useState<string>("");
   const [firstnameError, setFirstnameError] = useState<string>("");
   const [departement, setDepartement] = useState<string>("");
   const [departementError, setDepartementError] = useState<string>("");
   const [commune, setCommune] = useState<string>("");
-  const [village, setVillage] = useState<string>("");
+  const [communeError, setCommuneError] = useState<string>("");
   const [quartier, setQuartier] = useState<string>("");
   const [region, setRegion] = useState<string>("");
   const [regionError, setRegionError] = useState<string>("");
   const [corpsdemetiers, setCorpsdemetiers] = useState<string>("");
   const [corpsdemetiersError, setCorpsdemetiersError] = useState<string>("");
-  const [statusEntreprise, setStatusEntreprise] = useState<string>("");
-  const [statusEntrepriseError, setStatusEntrepriseError] =
-    useState<string>("");
   const [entreprise, setEntreprise] = useState<string>("");
   const [entrepriseError, setEntrepriseError] = useState<string>("");
-  const [formel, setFormel] = useState<string>("Non");
+  const [formel, setFormel] = useState<string>("");
   const [formelError, setFormelError] = useState<string>("");
-  const [formation, setFormation] = useState<string>("Non");
-  const [formationError, setFormationError] = useState<string>("");
-  const [besoinFormation, setBesoinFormation] = useState<string>("Non");
-  const [besoinFormationError, setBesoinFormationError] = useState<string>("");
-  const [financementEtat, setFinancementEtat] = useState<string>("Non");
-  const [financementEtatError, setFinancementEtatError] = useState<string>("");
-  const [accesZonesExpositions, setAccesZonesExpositions] =
-    useState<string>("Non");
-  const [accesZonesExpositionsError, setAccesZonesExpositionsError] =
-    useState<string>("");
-  const [siteExposition, setSiteExposition] = useState<string>("");
-  const [laquelle, setLaquelle] = useState<string>("");
-  const [siteExpositionError, setSiteExpositionError] = useState<string>("");
-  const [siteExpositionChecked, setSiteExpositionChecked] =
-    useState<boolean>(false);
-  const [siteExpositionCheckedError, setSiteExpositionCheckedError] =
-    useState<string>("");
   const [isLoading, setIsloading] = useState<boolean>(false);
-  const [businessAutreBool, setBusinessAutreBool] = useState<boolean>(false);
   const [businessAutreValue, setBusinessAutreValue] = useState<string>("");
   const [businessAutreValueError, setBusinessAutreValueError] =
     useState<string>("");
@@ -62,37 +50,24 @@ const BusinessDashboardRegister = () => {
       lastname,
       firstname,
       phone,
-      email,
       departement,
       commune,
-      village,
       quartier,
       region,
       corpsdemetiers,
-      statusEntreprise,
       entreprise,
       formel,
-      formation,
-      besoinFormation,
-      financementEtat,
-      accesZonesExpositions,
-      siteExposition,
     };
     if (
       !lastname ||
       !firstname ||
-      !phone ||
+      phone.length !== 13 ||
+      !commune ||
       !region ||
+      !departement ||
       !corpsdemetiers ||
-      !statusEntreprise ||
-      !entreprise ||
       !formel ||
-      !formation ||
-      !financementEtat ||
-      !accesZonesExpositions ||
-      (accesZonesExpositions.trim() === "Oui" && !siteExposition) ||
-      (businessAutreValue === "Autre" && !corpsdemetiers) ||
-      (accesZonesExpositions.trim() === "Oui" && siteExposition === "Autres")
+      (businessAutreValue === "Autre" && !corpsdemetiers)
     ) {
       if (lastname.length < 3) {
         setLastnameError("Le prénom doit avoir 3 caractères minimum");
@@ -109,10 +84,15 @@ const BusinessDashboardRegister = () => {
       } else {
         setRegionError("");
       }
-      if (!phone) {
-        setPhoneError("Veuillez saisir un numéro de téléphone");
+      if (phone.length !== 13) {
+        setPhoneError("Numéro de téléphone incorrect");
       } else {
         setPhoneError("");
+      }
+      if (!commune) {
+        setCommuneError("Veuillez selectionner votre commune");
+      } else {
+        setCommuneError("");
       }
       if (!corpsdemetiers && businessAutreValue !== "Autre") {
         setCorpsdemetiersError("Veuillez choisir votre corps de de métier");
@@ -131,68 +111,10 @@ const BusinessDashboardRegister = () => {
       } else {
         setDepartementError("");
       }
-      if (!entreprise) {
-        setEntrepriseError("Veuillez saisir votre entreprise");
-      } else {
-        setEntrepriseError("");
-      }
       if (!formel) {
         setFormelError("Veuillez cocher une case avant de continuer");
       } else {
         setFormelError("");
-      }
-      if (!formation) {
-        setFormationError("Veuillez cocher une case avant de continuer");
-      } else {
-        setFormationError("");
-        if (formation.trim() === "Non" && !besoinFormation) {
-          setBesoinFormationError(
-            "Veuillez cocher une case avant de continuer"
-          );
-        } else {
-          setBesoinFormationError("");
-        }
-      }
-      if (!financementEtat) {
-        setFinancementEtatError("Veuillez cocher une case avant de continuer");
-      } else {
-        setFinancementEtatError("");
-      }
-      if (!accesZonesExpositions) {
-        setAccesZonesExpositionsError(
-          "Veuillez cocher une case avant de continuer"
-        );
-      } else {
-        setAccesZonesExpositionsError("");
-      }
-
-      if (accesZonesExpositions.trim() === "Oui" && !siteExposition) {
-        setSiteExpositionCheckedError(
-          "Veuillez cocher une case avant de continuer"
-        );
-      } else {
-        setSiteExpositionCheckedError("");
-      }
-
-      if (
-        accesZonesExpositions.trim() === "Oui" &&
-        siteExposition === "Autres"
-      ) {
-        setSiteExpositionError("Veuillez saisir le nom du site");
-      } else {
-        setSiteExpositionError("");
-      }
-
-      if (!statusEntreprise) {
-        setStatusEntrepriseError(
-          "Veuillez saisir le status de votre entreprise"
-        );
-      } else {
-        setStatusEntrepriseError("");
-      }
-
-      if (siteExpositionChecked && !besoinFormation) {
-        setBesoinFormationError("Veuillez cocher une case avant de continuer");
       }
     } else {
       setLastnameError("");
@@ -200,29 +122,23 @@ const BusinessDashboardRegister = () => {
       setPhoneError("");
       setRegionError("");
       setCorpsdemetiersError("");
-      setSiteExpositionError("");
-      setBesoinFormationError("");
       setEntrepriseError("");
-      setStatusEntrepriseError("");
       setDepartementError("");
       setFormelError("");
-      setFormationError("");
-      setFinancementEtatError("");
-      setAccesZonesExpositionsError("");
-      setSiteExpositionCheckedError("");
-      setSiteExpositionError("");
-      setBusinessAutreValueError("");
 
-      // console.log(user);
+      setBusinessAutreValueError("");
 
       try {
         setIsloading(true);
         const response = await inscriptionForEntreprise(user);
         setIsloading(false);
         if (response) {
-          toast.success("Inscription effectuée avec succès.", {
-            style: { color: "#16a34a" },
-          });
+          toast.success(
+            "Merci pour votre inscription ! Nous vous contacterons sous peu.",
+            {
+              style: { color: "#16a34a" },
+            }
+          );
           formRef.current?.reset();
         }
       } catch (error) {
@@ -239,16 +155,33 @@ const BusinessDashboardRegister = () => {
     setIsloading(false);
   };
 
+  useEffect(() => {
+    const departs = regions.find((r) => r.region === region);
+    if (departs) {
+      setDepartementTab(departs?.departments);
+      setDepartement("");
+      setCommune("");
+    }
+  }, [region]);
+
+  useEffect(() => {
+    const comms = departementTab?.find((d) => d.department === departement);
+    if (comms) {
+      setCommuneTab(comms?.communes);
+      setCommune("");
+    }
+  }, [departement, region]);
+
   return (
     <div
-      className="w-full overflow-hidden max-w-6xl mx-auto py-3 max-md:px-4 px-6 bg-white rounded-lg"
+      className="w-full overflow-hidden mx-auto py-3 max-md:px-4 px-6 bg-white rounded-lg"
       style={{
         boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
       }}
     >
       <div className="w-full flex items-start justify-between mb-6">
         <div className="flex flex-col gap-2 items-start">
-          <h1 className="text-2xl font-bold">Formulaire d'Inscription</h1>
+          <h1 className="text-2xl font-semibold">Formulaire d'Inscription</h1>
           <p className="flex max-w-[300px] text-sm">
             Le coordonnateur du Projet Mobilier National, M. Ibrahima Tall,
             lance sa campagne de recensement. Cette initiative vise à identifier
@@ -328,21 +261,12 @@ const BusinessDashboardRegister = () => {
               setRegion(e.target.value)
             }
           >
-            <option value="">Sélectionner une région</option>
-            <option value="Dakar">Dakar</option>
-            <option value="Diourbel">Diourbel</option>
-            <option value="Fatick">Fatick</option>
-            <option value="Kaolack">Kaolack</option>
-            <option value="Kolda">Kolda</option>
-            <option value="Louga">Louga</option>
-            <option value="Matam">Matam</option>
-            <option value="St Louis">St Louis</option>
-            <option value="Tambacounda">Tambacounda</option>
-            <option value="Thiès">Thiès</option>
-            <option value="Ziguinchor">Ziguinchor</option>
-            <option value="Kaffrine">Kaffrine</option>
-            <option value="Kédougou">Kédougou</option>
-            <option value="Sédhiou">Sédhiou</option>
+            <option value="">Sélectionner votre région</option>
+            {regions.map(({ region }) => (
+              <option key={region} value={region} className="capitalize">
+                {region}
+              </option>
+            ))}
           </select>
           {regionError && (
             <p className="mt-2 text-sm text-red-600">{regionError}</p>
@@ -356,16 +280,25 @@ const BusinessDashboardRegister = () => {
             >
               Département
             </Label>
-            <Input
-              id="departement"
-              type="text"
+            <select
+              id="region"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
               value={departement}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setDepartement(e.target.value)
               }
-              placeholder="Département"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
-            />
+            >
+              <option value="">Sélectionner votre département</option>
+              {departementTab?.map(({ department }) => (
+                <option
+                  key={department}
+                  value={department}
+                  className="capitalize"
+                >
+                  {department}
+                </option>
+              ))}
+            </select>
             {departementError && (
               <p className="mt-1 text-sm text-red-600">{departementError}</p>
             )}
@@ -374,46 +307,39 @@ const BusinessDashboardRegister = () => {
             <Label className="block text-base font-medium" htmlFor="commune">
               Commune
             </Label>
-            <Input
-              id="commune"
-              type="text"
+            <select
+              id="region"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
               value={commune}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setCommune(e.target.value)
               }
-              placeholder="Commune"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
-            />
+            >
+              <option value="">Sélectionner votre commune</option>
+              {communeTab?.map((commune) => (
+                <option key={commune} value={commune} className="capitalize">
+                  {commune?.toLowerCase()}
+                </option>
+              ))}
+            </select>
+            {communeError && (
+              <p className="mt-1 text-sm text-red-600">{communeError}</p>
+            )}
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <div>
             <Label className="block text-base font-medium" htmlFor="village">
-              Village
+              Village/Quartier
             </Label>
             <Input
               id="village"
-              type="text"
-              value={village}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setVillage(e.target.value)
-              }
-              placeholder="Village"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
-            />
-          </div>
-          <div>
-            <Label className="block text-base font-medium" htmlFor="quartier">
-              Quartier
-            </Label>
-            <Input
-              id="quartier"
               type="text"
               value={quartier}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setQuartier(e.target.value)
               }
-              placeholder="Quartier"
+              placeholder="Village/Quartier"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
             />
           </div>
@@ -451,7 +377,13 @@ const BusinessDashboardRegister = () => {
                   htmlFor={option}
                   className="ml-3 block text-base text-gray-600"
                 >
-                  {option === "Autre" ? "Autres" : option}
+                  {option === "Autre" ? "Autres" : option}&nbsp;
+                  {option === "Filière bois" && "( Menuisier bois)"}
+                  {option === "Filière textile" && "( Tailleur )"}
+                  {option === "Filière peaux et cuirs" && "( Cordonnier )"}
+                  {option === "Filière métallique" &&
+                    "( Menuisier Métallique )"}
+                  {option === "Filière mécanique" && "( Mécanicien )"}
                 </Label>
               </div>
             ))}
@@ -482,7 +414,7 @@ const BusinessDashboardRegister = () => {
             </div>
           ) : null}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <div className="flex flex-col items-start gap-2">
             <Label htmlFor="entreprise" className="block text-base">
               Entreprise
@@ -490,7 +422,7 @@ const BusinessDashboardRegister = () => {
             <Input
               id="entreprise"
               type="text"
-              placeholder="Entreprise"
+              placeholder="Nom de votre Entreprise"
               value={entreprise}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setEntreprise(e.target.value)
@@ -501,30 +433,10 @@ const BusinessDashboardRegister = () => {
               <p className="mt-1 text-sm text-red-600">{entrepriseError}</p>
             )}
           </div>
-          <div className="flex flex-col items-start gap-2">
-            <Label htmlFor="statusEntreprise" className="block text-base">
-              Status de l'entreprise
-            </Label>
-            <Input
-              id="statusEntreprise"
-              type="text"
-              placeholder="Status de l'entreprise"
-              value={statusEntreprise}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setStatusEntreprise(e.target.value)
-              }
-              className="w-full text-primary-600 border-gray-300 focus:ring-primary-500"
-            />
-            {statusEntrepriseError && (
-              <p className="mt-1 text-sm text-red-600">
-                {statusEntrepriseError}
-              </p>
-            )}
-          </div>
         </div>
-        {/* <div>
+        <div>
           <label className="block text-base font-medium">
-            Vous êtes dans le formel
+            Avez vous un NINEA
           </label>
           <div className="mt-2 space-y-2">
             {["Oui ", "Non "].map((option) => (
@@ -551,230 +463,23 @@ const BusinessDashboardRegister = () => {
           {formelError && (
             <p className="mt-1 text-sm text-red-600">{formelError}</p>
           )}
-        </div> */}
-        {/* <div className="flex flex-col items-start gap-2">
-          <Label className="block text-base font-medium" htmlFor="formation">
-            Avez-vous une formation dans votre secteur d'activité ?
-          </Label>
-          <div className="mt-2 space-y-2">
-            {["Oui", "Non"].map((option) => (
-              <div key={option} className="flex items-center">
-                <input
-                  id={option}
-                  type="checkbox"
-                  value={formation}
-                  checked={formation === option}
-                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setFormation(e.target.id)
-                  }
-                />
-                <label
-                  htmlFor={option}
-                  className="ml-3 block text-base text-gray-600"
-                >
-                  {option}
-                </label>
-              </div>
-            ))}
-            {formationError && (
-              <p className="mt-1 text-sm text-red-600">{formationError}</p>
-            )}
-          </div>
-        </div> */}
-        {/* {formation === "Non" ? (
-          <div className="flex flex-col items-start gap-2">
-            <Label className="block text-base font-medium" htmlFor="formation">
-              Avez-vous besoin d'une formation ?
-            </Label>
-            <div className="mt-2 space-y-2">
-              {["Oui  ", "Non  "].map((option) => (
-                <div key={option} className="flex items-center">
-                  <input
-                    id={option}
-                    type="checkbox"
-                    value={besoinFormation}
-                    checked={besoinFormation === option}
-                    className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setBesoinFormation(e.target.id)
-                    }
-                  />
-                  <label
-                    htmlFor={option}
-                    className="ml-3 block text-base text-gray-600"
-                  >
-                    {option}
-                  </label>
-                </div>
-              ))}
-            </div>
-            {besoinFormationError && (
-              <p className="text-sm text-red-600">{besoinFormationError}</p>
-            )}
-          </div>
-        ) : null} */}
-        {/* <div className="flex flex-col items-start gap-2">
-          <Label className="block text-base font-medium" htmlFor="formation">
-            Avez-vous bénéficié d'un financement de l'état ?
-          </Label>
-          <div className="mt-2 space-y-2">
-            {[" Oui", " Non"].map((option) => (
-              <div key={option} className="flex items-center">
-                <input
-                  id={option}
-                  type="checkbox"
-                  value={financementEtat}
-                  checked={financementEtat === option}
-                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setFinancementEtat(e.target.id)
-                  }
-                />
-                <label
-                  htmlFor={option}
-                  className="ml-3 block text-base text-gray-600"
-                >
-                  {option}
-                </label>
-              </div>
-            ))}
-            {financementEtatError && (
-              <p className="mt-1 text-sm text-red-600">
-                {financementEtatError}
-              </p>
-            )}
-          </div>
-        </div> */}
-        {/* <div className="flex flex-col items-start gap-2">
-          <Label className="block text-base font-medium" htmlFor="formation">
-            Avez-vous accès aux zones et sites d'expositions ?
-          </Label>
-          <div className="mt-2 space-y-2">
-            {["  Oui", "  Non"].map((option) => (
-              <div key={option} className="flex items-center">
-                <input
-                  id={option}
-                  type="checkbox"
-                  value={accesZonesExpositions}
-                  checked={accesZonesExpositions === option}
-                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setAccesZonesExpositions(e.target.id)
-                  }
-                />
-                <label
-                  htmlFor={option}
-                  className="ml-3 block text-base text-gray-600"
-                >
-                  {option}
-                </label>
-              </div>
-            ))}
-            {accesZonesExpositionsError && (
-              <p className="mt-1 text-sm text-red-600">
-                {accesZonesExpositionsError}
-              </p>
-            )}
-          </div>
-        </div> */}
-        {/* {accesZonesExpositions === "  Oui" ? (
-          <div className="flex flex-col items-start gap-2">
-            <Label className="block text-base font-medium" htmlFor="formation">
-              Si oui, laquelle ?
-            </Label>
-            <div className="mt-2 space-y-2">
-              {["SECA", "ZODA", "Autres"].map((option) => (
-                <div key={option} className="flex items-center">
-                  <input
-                    id={option}
-                    type="checkbox"
-                    value={siteExposition}
-                    checked={siteExposition === option || option === laquelle}
-                    className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      setSiteExposition(e.target.id);
-                      setSiteExpositionChecked(
-                        e.target.id === "Autres" ? e.target.checked : false
-                      );
-                      setLaquelle(e.target.id === "Autres" ? e.target.id : "");
-                    }}
-                  />
-                  <label
-                    htmlFor={option}
-                    className="ml-3 block text-base text-gray-600"
-                  >
-                    {option}
-                  </label>
-                </div>
-              ))}
-            </div>
-            {siteExpositionCheckedError && (
-              <p className="mt-1 text-sm text-red-600">
-                {siteExpositionCheckedError}
-              </p>
-            )}
-          </div>
-        ) : null} */}
-        {/* {siteExpositionChecked ? (
-          <div className="flex flex-col items-start gap-2">
-            <Label htmlFor="siteExposition" className="block text-base">
-              Site d'exposition
-            </Label>
-            <Input
-              id="siteExposition"
-              type="text"
-              placeholder="Site d'exposition"
-              value={siteExposition !== "Autres" ? siteExposition : ""}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setSiteExposition(e.target.value)
-              }
-              className="w-full text-primary-600 border-gray-300 focus:ring-primary-500"
-            />
-            {siteExpositionError && (
-              <p className="text-sm text-red-600">{siteExpositionError}</p>
-            )}
-          </div>
-        ) : null} */}
+        </div>
         <div className="relative flex flex-col items-start gap-2">
           <Label htmlFor="phone" className="block text-base">
             Téléphone
           </Label>
-          <Input
-            id="phone"
-            type="tel"
-            placeholder="Téléphone"
-            value={phone}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setPhone(e.target.value)
-            }
-            className="w-full pl-10 text-primary-600 border-gray-300 focus:ring-primary-500"
+          <PhoneInput
+            defaultCountry="SN"
+            placeholder="+221"
+            international
+            withCountryCallingCode
+            value={phone as E164Number | undefined}
+            onChange={setPhone}
+            className="input-phone px-3 py-2 w-full border outline-none bg-white border-gray-300 rounded"
           />
-          <Phone
-            className="absolute text-gray-400 top-[60%] left-[1%]"
-            size={20}
-          />
+          {phoneError && <p className="text-sm text-red-600">{phoneError}</p>}
         </div>
-        {phoneError && <p className="text-sm text-red-600">{phoneError}</p>}
-        <div className="relative flex flex-col items-start gap-2">
-          <Label htmlFor="email" className="block text-base">
-            E-mail (si disponible)
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="E-mail (si disponible)"
-            value={email}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setEmail(e.target.value)
-            }
-            className="w-full pl-10 text-primary-600 border-gray-300 focus:ring-primary-500"
-          />
-          <Mail
-            className="absolute text-gray-400 top-[60%] left-[1%]"
-            size={20}
-          />
-        </div>
+
         <button
           type="submit"
           className="flex items-center justify-center mx-auto gap-2 text-center p-2 rounded rouded w-full bg-gray-800 text-white transition duration-100 ease-in-out hover:opacity-90"

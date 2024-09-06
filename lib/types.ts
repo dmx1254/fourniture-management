@@ -78,21 +78,13 @@ export type Entreprise = {
   lastname: string;
   firstname: string;
   phone: string;
-  email?: string;
   departement: string;
   commune?: string;
-  village?: string;
   quartier?: string;
   region: string;
   corpsdemetiers: string;
   entreprise: string;
-  statusEntreprise: string;
   formel: string;
-  formation: string;
-  besoinFormation: string;
-  financementEtat: string;
-  accesZonesExpositions: string;
-  siteExposition: string;
 };
 
 export type BusinessUser = {
@@ -117,4 +109,16 @@ export type BusinessUser = {
   siteExposition: string;
   createdAt?: Date;
   updatedAt?: Date;
+};
+
+export type Commune = string;
+
+export type Region = {
+  region: string;
+  departments: Department[];
+};
+
+export type Department = {
+  department: string;
+  communes: Commune[];
 };

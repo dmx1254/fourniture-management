@@ -69,8 +69,7 @@ const ViewBusinessUser = ({
               <InfoItem label="Région" value={user?.region} />
               <InfoItem label="Département" value={user?.departement} />
               <InfoItem label="Commune" value={user?.commune} />
-              <InfoItem label="Village" value={user?.village} />
-              <InfoItem label="Quartier" value={user?.quartier} />
+              <InfoItem label="Village/Quartier" value={user?.quartier} />
             </div>
           </div>
           <Separator className="bg-gray-700" />
@@ -81,14 +80,10 @@ const ViewBusinessUser = ({
             <div className="grid grid-cols-2 gap-4">
               <InfoItem label="Corps de métiers" value={user?.corpsdemetiers} />
               <InfoItem label="Entreprise" value={user?.entreprise} />
-              <InfoItem
-                label="Status de l'entreprise"
-                value={user?.statusEntreprise}
-              />
-              <InfoItem label="Formel" value={user?.formel} />
+              <InfoItem label="Ninea" value={user?.formel} />
             </div>
           </div>
-          <Separator className="bg-gray-700" />
+          {/* <Separator className="bg-gray-700" />
           <div className="space-y-2">
             <h3 className="text-lg font-semibold text-gray-100">
               Formation et financement
@@ -118,7 +113,7 @@ const ViewBusinessUser = ({
                 value={user?.siteExposition}
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </DialogContent>
     </Dialog>

@@ -43,7 +43,7 @@ const generateBusinessUserPDF = (businessUsers: BusinessUser[]) => {
     user.corpsdemetiers,
     user.phone,
     user.region,
-    user.statusEntreprise,
+    user.formel,
   ]);
 
   // Add table
@@ -56,7 +56,7 @@ const generateBusinessUserPDF = (businessUsers: BusinessUser[]) => {
         "Corps de métiers",
         "Téléphone",
         "Région",
-        "Statut",
+        "Ninea",
       ],
     ],
     body: tableData,

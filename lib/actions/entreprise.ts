@@ -45,11 +45,11 @@ const entrepriseSchema = new mongoose.Schema(
     },
     entreprise: {
       type: String,
-      required: true,
+      default: "",
     },
     statusEntreprise: {
       type: String,
-      required: true,
+      default: "",
     },
     formel: {
       type: String,
@@ -58,7 +58,7 @@ const entrepriseSchema = new mongoose.Schema(
     },
     formation: {
       type: String,
-      required: true,
+      default: "",
       trim: true,
     },
     besoinFormation: {
@@ -68,12 +68,12 @@ const entrepriseSchema = new mongoose.Schema(
     },
     financementEtat: {
       type: String,
-      required: true,
+      default: "",
       trim: true,
     },
     accesZonesExpositions: {
       type: String,
-      required: true,
+      default: "",
       trim: true,
     },
     siteExposition: {

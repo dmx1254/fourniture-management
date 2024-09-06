@@ -31,8 +31,10 @@ const BusinessTable = async ({
   );
   const businessUsers: BusinessUser[] = entreprises;
 
-  //   console.log(entreprises);
-  //   console.log(businessUsers);
+  function formatNumber(index: number) {
+    let calculatedIndex: number = index + (currentPage - 1) * 10;
+    return calculatedIndex.toString().padStart(5, "0");
+  }
 
   const convertedDate = (date: Date | undefined) => {
     if (date) {
@@ -44,10 +46,6 @@ const BusinessTable = async ({
 
       return convertedDate;
     }
-  };
-
-  const addANId = (index: number) => {
-    return index.toString().padStart(4, "0");
   };
 
   return (
@@ -72,7 +70,7 @@ const BusinessTable = async ({
               className="border-b text-sm border-gray-200 text-[#111b21]"
             >
               <td className="p-4 font-semibold max-md:hidden">
-                {addANId(index + 1)}
+                {formatNumber(index + 1)}
               </td>
               <td className="p-4 font-semibold">
                 <span className="bg-violet-100 rounded p-1 text-black">
