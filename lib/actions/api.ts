@@ -657,7 +657,8 @@ export async function getEntreprisesAndTotalPages(
   currentPage: number,
   category: string,
   type: string,
-  filiere: string
+  filiere: string,
+  age: string
 ) {
   // console.log("category: " + category, "corps de metiers :" + filiere);
   noStore();
@@ -676,14 +677,23 @@ export async function getEntreprisesAndTotalPages(
   // if (category === "entreprise" && query && query.trim() !== "") {
   //   matchConditions.entreprise = { $regex: query, $options: "i" };
   // }
+  if (age) {
+  }
   if (query && query.trim() !== "") {
     matchConditions.lastname = { $regex: query, $options: "i" };
   }
   if (type === "region") {
     matchConditions.region = { $regex: category, $options: "i" };
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
+    matchConditions.age = { $regex: age, $options: "i" };
   }
   if (type === "filiere") {
+    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
+    matchConditions.region = { $regex: category, $options: "i" };
+    matchConditions.age = { $regex: age, $options: "i" };
+  }
+  if (type === "age") {
+    matchConditions.age = { $regex: age, $options: "i" };
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
     matchConditions.region = { $regex: category, $options: "i" };
   }
@@ -728,7 +738,8 @@ export async function getEntreprises(
   currentPage: number,
   category: string,
   type: string,
-  filiere: string
+  filiere: string,
+  age: string
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -756,10 +767,17 @@ export async function getEntreprises(
   if (type === "region") {
     matchConditions.region = { $regex: category, $options: "i" };
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
+    matchConditions.age = { $regex: age, $options: "i" };
   }
   if (type === "filiere") {
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
     matchConditions.region = { $regex: category, $options: "i" };
+    matchConditions.age = { $regex: age, $options: "i" };
+  }
+  if (type === "age") {
+    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
+    matchConditions.region = { $regex: category, $options: "i" };
+    matchConditions.age = { $regex: age, $options: "i" };
   }
 
   try {

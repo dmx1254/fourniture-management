@@ -90,10 +90,10 @@ export type Entreprise = {
   formation: string;
   besoinFormation?: string;
   genre: string;
-  age: number;
+  age: string;
   chambreDemetier: string;
   chambreDemetierRegion?: string;
-  besoins: string;
+  besoins: string[];
 };
 
 export type BusinessUser = {

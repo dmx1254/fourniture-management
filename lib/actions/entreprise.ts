@@ -85,8 +85,9 @@ const entrepriseSchema = new mongoose.Schema(
       default: "",
     },
     age: {
-      type: Number,
-      default: 18,
+      type: String,
+      default: "",
+      trim: true,
     },
 
     chambreDemetier: {
@@ -98,11 +99,13 @@ const entrepriseSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    besoins: {
-      type: String,
-      default: "",
-      trim: true,
-    },
+    besoins: [
+      {
+        type: String,
+        default: "",
+        trim: true,
+      },
+    ],
   },
   {
     timestamps: true,

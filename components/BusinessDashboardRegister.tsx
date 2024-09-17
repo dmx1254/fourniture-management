@@ -54,23 +54,31 @@ const BusinessDashboardRegister = () => {
     useState<string>("");
   const [chambreDemetierRegionError, setChambreDemetierRegionError] =
     useState<string>("");
-  const [besoins, setBesoins] = useState<string>("");
+  const [besoins, setBesoins] = useState<string[]>([]);
   const [besoinsError, setBesoinsError] = useState<string>("");
+  const [inputBesoin, setInputBesoin] = useState<string>("");
+  const [inputBesoinError, setInputBesoinError] = useState<string>("");
 
   const [genre, setGenre] = useState<string>("");
   const [genreError, setGenreError] = useState<string>("");
-  const [age, setAge] = useState<number | string>("");
+  const [age, setAge] = useState<string>("");
   const [ageError, setageError] = useState<string>("");
 
   const [besoinAutreValue, setBesoinAutreValue] = useState<string>("");
   const [besoinAutreValueError, setBesoinAutreValueError] =
     useState<string>("");
 
-  // console.log(genre);
+  // console.log(besoins);
 
   // console.log(siteExpositionChecked);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    let myNewBesoin = besoins.filter((besoin) => besoin !== "Autre ");
+    besoins.filter((besoin) => besoin !== "Autre ");
+    if (inputBesoin) {
+      myNewBesoin.push(inputBesoin);
+    }
+
     const user = {
       lastname,
       firstname,
@@ -80,7 +88,7 @@ const BusinessDashboardRegister = () => {
       quartier,
       formation,
       region,
-      besoins,
+      besoins: myNewBesoin,
       besoinFormation,
       chambreDemetier,
       chambreDemetierRegion,
@@ -88,20 +96,22 @@ const BusinessDashboardRegister = () => {
       entreprise,
       formel,
       genre,
-      age: typeof age === "string" ? parseInt(age, 10) : age,
+      age,
     };
     if (
       !lastname ||
       !firstname ||
+      phone?.length !== 13 ||
       !commune ||
       !genre ||
-      !region ||
       Number(age) < 18 ||
-      phone?.length !== 13 ||
+      // myNewBesoin.length < 1 ||
+      !region ||
       !departement ||
       !corpsdemetiers ||
       !formel ||
       (businessAutreValue === "Autre" && !corpsdemetiers)
+      // (myNewBesoin.length < 1 && besoins.includes("Autre "))
     ) {
       if (lastname.length < 3) {
         setLastnameError("Le prénom doit avoir 3 caractères minimum");
@@ -143,12 +153,17 @@ const BusinessDashboardRegister = () => {
       } else {
         setCorpsdemetiersError("");
       }
-      // if (besoinAutreValue.trim().toLowerCase() === "autre" && !besoins) {
-      //   setBesoinAutreValueError(
+      // if (myNewBesoin.length < 1) {
+      //   setBesoinsError("Veuillez cocher une case avant de continuer");
+      // } else {
+      //   setBesoinsError("");
+      // }
+      // if (myNewBesoin.length < 1 && besoins.includes("Autre ")) {
+      //   setInputBesoinError(
       //     "Veuillez saisir la formation dont vous avez besoin"
       //   );
       // } else {
-      //   setBesoinAutreValueError("");
+      //   setInputBesoinError("");
       // }
 
       if (businessAutreValue === "Autre" && !corpsdemetiers) {
@@ -195,12 +210,13 @@ const BusinessDashboardRegister = () => {
       setGenreError("");
       setageError("");
       setBusinessAutreValueError("");
-      // setFormationError("");
-      // setBesoinFormationError("");
-      // setChambreDemetierError("");
-      // setChambreDemetierRegionError("");
-      // setBesoinAutreValueError("");
-      // setBesoinsError("");
+      setFormationError("");
+      setBesoinFormationError("");
+      setChambreDemetierError("");
+      setChambreDemetierRegionError("");
+      setBesoinAutreValueError("");
+      setBesoinsError("");
+      setInputBesoinError("");
 
       try {
         setIsloading(true);
@@ -248,7 +264,7 @@ const BusinessDashboardRegister = () => {
 
   return (
     <div
-      className="w-full max-w-5xl overflow-hidden mx-auto py-3 max-md:px-4 px-6 bg-white rounded-lg"
+      className="w-full max-w-6xl overflow-hidden mx-auto py-3 max-md:px-4 px-6 bg-white rounded-lg"
       style={{
         boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
       }}
@@ -258,7 +274,7 @@ const BusinessDashboardRegister = () => {
           <h1 className="text-xl font-semibold">
             FICHE DE RECENSEMENT DES ARTISANS
           </h1>
-          <p className="flex max-w-[400px] text-sm text-justify">
+          <p className="flex max-w-[400px] text-sm/6 text-justify">
             Le Coordonnateur du Projet Mobilier national (PMN), Monsieur
             Ibrahima TALL, lance une campagne de recensement des artisans. Cette
             initiative consistant à recenser les entreprises artisanales dans
@@ -720,7 +736,7 @@ const BusinessDashboardRegister = () => {
             </Label>
             <select
               id="chambreDemetierRegion"
-              className="mt-1 block w-full px-3 py-2 border text-base border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
               value={chambreDemetierRegion}
               onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setChambreDemetierRegion(e.target.value)
@@ -745,25 +761,31 @@ const BusinessDashboardRegister = () => {
             Besoins ?
           </label>
           <div className="mt-2 space-y-2">
-            {["formation", "Formalisation", "financement", "Autre "].map(
+            {["formation", "formalisation", "financement", "Autre "].map(
               (option) => (
                 <div key={option} className="flex items-center">
                   <input
                     id={option}
                     type="checkbox"
                     value={besoins}
-                    checked={
-                      option === corpsdemetiers || option === besoinAutreValue
-                    }
+                    checked={besoins.includes(option)}
                     className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      setBesoinAutreValue(e.target.id);
-                      setBesoins(e.target.id === "Autre " ? "" : e.target.id);
+                      if (!besoins.includes(e.target.id)) {
+                        setBesoins((prevBesoin) => [
+                          ...prevBesoin,
+                          e.target.id,
+                        ]);
+                      } else {
+                        setBesoins((prevBesoin) =>
+                          prevBesoin.filter((besoin) => besoin !== e.target.id)
+                        );
+                      }
                     }}
                   />
                   <label
                     htmlFor={option}
-                    className="ml-3 block text-base text-gray-600"
+                    className="ml-3 block text-base text-gray-600 capitalize"
                   >
                     {option === "Autre " ? "Autres" : option}&nbsp;
                   </label>
@@ -775,7 +797,7 @@ const BusinessDashboardRegister = () => {
             <p className="mt-1 text-sm text-red-600">{besoinsError}</p>
           )}
         </div>
-        {besoinAutreValue === "Autre " ? (
+        {besoins.includes("Autre ") ? (
           <div className="flex flex-col items-start gap-2 mt-4">
             <Label
               htmlFor="besoins"
@@ -787,16 +809,14 @@ const BusinessDashboardRegister = () => {
               id="besoins"
               type="text"
               placeholder="Besoin"
-              value={besoins}
+              value={inputBesoin}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setBesoins(e.target.value)
+                setInputBesoin(e.target.value)
               }
               className="w-full text-primary-600 border-gray-300 focus:ring-primary-500 text-base"
             />
-            {besoinAutreValueError && (
-              <p className="mt-1 text-sm text-red-600">
-                {besoinAutreValueError}
-              </p>
+            {inputBesoinError && (
+              <p className="mt-1 text-sm text-red-600">{inputBesoinError}</p>
             )}
           </div>
         ) : null}

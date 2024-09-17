@@ -11,6 +11,7 @@ import BusinessTable from "@/components/ui/BusinessTable";
 import MoreFilterFiliere from "@/components/ui/MoreFilterFiliere";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import MoreFilterAge from "@/components/MoreFilterAge";
 
 const BussinesPage = async ({
   searchParams,
@@ -19,9 +20,11 @@ const BussinesPage = async ({
     query?: string;
     region?: string;
     filiere?: string;
+    age?: string;
     page?: string;
   };
 }) => {
+  let age = searchParams?.age || "";
   let query = searchParams?.query || "";
   let region = searchParams?.region || "";
   let filiere = searchParams?.filiere || "";
@@ -35,12 +38,13 @@ const BussinesPage = async ({
       currentPage,
       region,
       type,
-      filiere
+      filiere,
+      age
     )) || 1;
   //
 
   const categories = await getAllCatFilter();
-  // console.log(categories);
+  // console.log(searchParams);
 
   // console.log(type)
 
@@ -64,6 +68,7 @@ const BussinesPage = async ({
           </Link>
 
           <div className="flex max-xl:flex-col max-xl:items-start items-center gap-4 max-xl:gap-2">
+            <MoreFilterAge />
             <MoreFilterFiliere categories={categories} />
             <MoreEntrepriseFilter />
           </div>
@@ -80,6 +85,7 @@ const BussinesPage = async ({
           category={region}
           type={type}
           filiere={filiere}
+          age={age}
         />
       </Suspense>
       <Pagination currentPage={currentPage} totalPages={totalPages} />

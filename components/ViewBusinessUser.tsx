@@ -103,7 +103,14 @@ const ViewBusinessUser = ({
                     value={user?.chambreDemetierRegion}
                   />
                 )}
-              <InfoItem label="Besoins" value={user?.besoins} />
+              <InfoItem
+                label="Besoins"
+                value={
+                  Array.isArray(user?.besoins)
+                    ? user?.besoins.join(", ")
+                    : user?.besoins
+                }
+              />
             </div>
           </div>
           {/* <Separator className="bg-gray-700" />

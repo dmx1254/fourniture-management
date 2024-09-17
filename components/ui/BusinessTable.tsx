@@ -13,12 +13,14 @@ const BusinessTable = async ({
   category,
   type,
   filiere,
+  age
 }: {
   query: string;
   currentPage: number;
   category: string;
   type: string;
   filiere: string;
+  age: string;
 }) => {
   const session = await getSession();
 
@@ -27,7 +29,8 @@ const BusinessTable = async ({
     currentPage,
     category,
     type,
-    filiere
+    filiere,
+    age
   );
   const businessUsers: BusinessUser[] = entreprises;
 
