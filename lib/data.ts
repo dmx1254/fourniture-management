@@ -352,7 +352,6 @@ export const regions: Region[] = [
       },
     ],
   },
-
   {
     region: "ziguinchor",
     departments: [

@@ -26,7 +26,7 @@ const ViewBusinessUser = ({
     value,
   }: {
     label: string;
-    value: string | undefined;
+    value: string | number | undefined;
   }) => (
     <div className="flex flex-col space-y-1">
       <p className="text-sm font-medium text-gray-400">{label}</p>
@@ -57,7 +57,9 @@ const ViewBusinessUser = ({
               <InfoItem label="Prénom" value={user?.lastname} />
               <InfoItem label="Nom" value={user?.firstname} />
               <InfoItem label="Téléphone" value={user?.phone} />
-              <InfoItem label="Email" value={user?.email} />
+              <InfoItem label="Genre" value={user?.genre} />
+              <InfoItem label="Âge" value={`${user?.age} ans`} />
+              <InfoItem label="Email" value="" />
             </div>
           </div>
           <Separator className="bg-gray-700" />
@@ -81,6 +83,27 @@ const ViewBusinessUser = ({
               <InfoItem label="Corps de métiers" value={user?.corpsdemetiers} />
               <InfoItem label="Entreprise" value={user?.entreprise} />
               <InfoItem label="Ninea" value={user?.formel} />
+              <InfoItem label="Formation" value={user?.formation} />
+
+              {user?.formation &&
+                user?.formation.trim().toLowerCase() === "non" && (
+                  <InfoItem
+                    label="besoin de formation"
+                    value={user?.besoinFormation}
+                  />
+                )}
+              <InfoItem
+                label="Chambre de métiers "
+                value={user?.chambreDemetier}
+              />
+              {user?.chambreDemetier &&
+                user?.chambreDemetier.trim().toLowerCase() === "oui" && (
+                  <InfoItem
+                    label="Région du chambre de métier"
+                    value={user?.chambreDemetierRegion}
+                  />
+                )}
+              <InfoItem label="Besoins" value={user?.besoins} />
             </div>
           </div>
           {/* <Separator className="bg-gray-700" />

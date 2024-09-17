@@ -80,6 +80,29 @@ const entrepriseSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    genre: {
+      type: String,
+      default: "",
+    },
+    age: {
+      type: Number,
+      default: 18,
+    },
+
+    chambreDemetier: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    chambreDemetierRegion: {
+      type: String,
+      default: "",
+    },
+    besoins: {
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   {
     timestamps: true,

@@ -94,13 +94,13 @@ const BusinessTable = async ({
                 {session.isAdmin && (
                   <ViewBusinessUser userId={user._id} users={businessUsers} />
                 )}
-              <DeleteEntrepriseBtn entrepriseId={user._id} />
+                <DeleteEntrepriseBtn entrepriseId={user._id} />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <DownloadEntreprise entreprises={businessUsers}  />
+      <DownloadEntreprise entreprises={businessUsers} />
     </div>
   );
 };

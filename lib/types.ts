@@ -1,6 +1,8 @@
 import { LucideIcon } from "lucide-react";
 import { IconType } from "react-icons/lib";
 
+import { E164Number } from "libphonenumber-js/core";
+
 export type NavTypes = {
   id: string;
   title: string;
@@ -77,7 +79,7 @@ export type Transaction = {
 export type Entreprise = {
   lastname: string;
   firstname: string;
-  phone: string;
+  phone?: E164Number | undefined;
   departement: string;
   commune?: string;
   quartier?: string;
@@ -85,6 +87,13 @@ export type Entreprise = {
   corpsdemetiers: string;
   entreprise: string;
   formel: string;
+  formation: string;
+  besoinFormation?: string;
+  genre: string;
+  age: number;
+  chambreDemetier: string;
+  chambreDemetierRegion?: string;
+  besoins: string;
 };
 
 export type BusinessUser = {
@@ -107,6 +116,11 @@ export type BusinessUser = {
   financementEtat: string;
   accesZonesExpositions: string;
   siteExposition: string;
+  genre: string;
+  age: number;
+  chambreDemetier: string;
+  chambreDemetierRegion?: string;
+  besoins: string;
   createdAt?: Date;
   updatedAt?: Date;
 };

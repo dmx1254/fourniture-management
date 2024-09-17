@@ -107,19 +107,6 @@ const UserUpdate = ({
                     name="email"
                     defaultValue={user.email}
                   />
-                  {/* {state?.errors?.email?.map(
-                (emailError: string, index: number) => {
-                  return (
-                    <p
-                      key={index}
-                      className="flex text-sm text-red-500 line-clamp-1 mt-1"
-                      aria-live="polite"
-                    >
-                      {emailError}
-                    </p>
-                  );
-                }
-              )} */}
                 </div>
                 <div className="w-full flex flex-col items-start gap-1">
                   <label htmlFor="phone" className="text-white/80 text-sm">
@@ -164,19 +151,19 @@ const UserUpdate = ({
                 </div>
               </div>
               <div className="w-full flex items-center justify-between gap-4">
-              <div className="w-full flex flex-col items-start gap-1">
-                <label htmlFor="address" className="text-white/80 text-sm">
-                  Address
-                </label>
-                <input
-                  className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  type="text"
-                  id="address"
-                  name="address"
-                  placeholder="Address"
-                  defaultValue={user.address}
-                />
-              </div>
+                <div className="w-full flex flex-col items-start gap-1">
+                  <label htmlFor="address" className="text-white/80 text-sm">
+                    Address
+                  </label>
+                  <input
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    type="text"
+                    id="address"
+                    name="address"
+                    placeholder="Address"
+                    defaultValue={user.address}
+                  />
+                </div>
                 <div className="w-full flex flex-col items-start gap-1">
                   <label htmlFor="city" className="text-white/80 text-sm">
                     Poste
@@ -191,9 +178,7 @@ const UserUpdate = ({
                   />
                 </div>
               </div>
-              
-              {/* <div></div>
-      <div></div> */}
+
               <AlertDialogFooter className="self-end mt-2">
                 <AlertDialogCancel className="bg-red-600 hover:bg-red-600 hover:text-white hover:opacity-90 text-white border-[#111b21]">
                   Cancel

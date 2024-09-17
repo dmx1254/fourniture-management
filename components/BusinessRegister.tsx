@@ -21,7 +21,7 @@ const BusinessRegister = () => {
   );
   const [communeTab, setCommuneTab] = useState<string[] | null>(null);
   const [lastname, setLastname] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
+  const [phone, setPhone] = useState<E164Number | undefined>(undefined);
   const [phoneError, setPhoneError] = useState<string>("");
   const [lastnameError, setLastnameError] = useState<string>("");
   const [firstname, setFirstname] = useState<string>("");
@@ -43,6 +43,31 @@ const BusinessRegister = () => {
   const [businessAutreValue, setBusinessAutreValue] = useState<string>("");
   const [businessAutreValueError, setBusinessAutreValueError] =
     useState<string>("");
+
+  const [formation, setFormation] = useState<string>("");
+  const [formationError, setFormationError] = useState<string>("");
+  const [besoinFormation, setBesoinFormation] = useState<string>("");
+  const [besoinFormationError, setBesoinFormationError] = useState<string>("");
+  const [chambreDemetier, setChambreDemetier] = useState<string>("");
+  const [chambreDemetierError, setChambreDemetierError] = useState<string>("");
+  const [chambreDemetierRegion, setChambreDemetierRegion] =
+    useState<string>("");
+  const [chambreDemetierRegionError, setChambreDemetierRegionError] =
+    useState<string>("");
+  const [besoins, setBesoins] = useState<string>("");
+  const [besoinsError, setBesoinsError] = useState<string>("");
+
+  const [genre, setGenre] = useState<string>("");
+  const [genreError, setGenreError] = useState<string>("");
+  const [age, setAge] = useState<number | string>("");
+  const [ageError, setageError] = useState<string>("");
+
+  const [besoinAutreValue, setBesoinAutreValue] = useState<string>("");
+  const [besoinAutreValueError, setBesoinAutreValueError] =
+    useState<string>("");
+
+  // console.log(genre);
+
   // console.log(siteExpositionChecked);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,21 +78,37 @@ const BusinessRegister = () => {
       departement,
       commune,
       quartier,
+      formation,
       region,
+      besoins,
+      besoinFormation,
+      chambreDemetier,
+      chambreDemetierRegion,
       corpsdemetiers,
       entreprise,
       formel,
+      genre,
+      age: typeof age === "string" ? parseInt(age, 10) : age,
     };
     if (
       !lastname ||
       !firstname ||
-      phone.length !== 13 ||
+      phone?.length !== 13 ||
       !commune ||
+      !genre ||
+      Number(age) < 18 ||
+      !besoins ||
       !region ||
       !departement ||
+      !chambreDemetier ||
+      !formation ||
       !corpsdemetiers ||
+      (formation.trim().toLowerCase() === "non" && !besoinFormation) ||
+      (chambreDemetier.trim().toLowerCase() === "oui" &&
+        !chambreDemetierRegion) ||
       !formel ||
-      (businessAutreValue === "Autre" && !corpsdemetiers)
+      (businessAutreValue === "Autre" && !corpsdemetiers) ||
+      (besoinAutreValue.trim().toLowerCase() === "autre" && !besoins)
     ) {
       if (lastname.length < 3) {
         setLastnameError("Le prénom doit avoir 3 caractères minimum");
@@ -84,7 +125,7 @@ const BusinessRegister = () => {
       } else {
         setRegionError("");
       }
-      if (phone.length !== 13) {
+      if (phone?.length !== 13) {
         setPhoneError("Numéro de téléphone incorrect");
       } else {
         setPhoneError("");
@@ -94,10 +135,32 @@ const BusinessRegister = () => {
       } else {
         setCommuneError("");
       }
+      if (!genre) {
+        setGenreError("Veuillez choisir votre genre");
+      } else {
+        setGenreError("");
+      }
+      if (Number(age) < 18) {
+        setageError("Votre âge doit être au moins 18 ans");
+      } else {
+        setageError("");
+      }
       if (!corpsdemetiers && businessAutreValue !== "Autre") {
         setCorpsdemetiersError("Veuillez choisir votre corps de de métier");
       } else {
         setCorpsdemetiersError("");
+      }
+      if (!besoins && besoinAutreValue.trim().toLowerCase() !== "autre") {
+        setBesoinsError("Veuillez cocher une case avant de continuer");
+      } else {
+        setBesoinsError("");
+      }
+      if (besoinAutreValue.trim().toLowerCase() === "autre" && !besoins) {
+        setBesoinAutreValueError(
+          "Veuillez saisir la formation dont vous avez besoin"
+        );
+      } else {
+        setBesoinAutreValueError("");
       }
 
       if (businessAutreValue === "Autre" && !corpsdemetiers) {
@@ -116,6 +179,30 @@ const BusinessRegister = () => {
       } else {
         setFormelError("");
       }
+      if (!formation) {
+        setFormationError("Veuillez cocher une case avant de continuer");
+      } else {
+        setFormationError("");
+      }
+      if (formation.trim().toLowerCase() === "non" && !besoinFormation) {
+        setBesoinFormationError("Veuillez cocher une case avant de continuer");
+      } else {
+        setBesoinFormationError("");
+      }
+
+      if (!chambreDemetier) {
+        setChambreDemetierError("Veuillez cocher une case avant de continuer");
+      } else {
+        setChambreDemetierError("");
+      }
+      if (
+        chambreDemetier.trim().toLowerCase() === "oui" &&
+        !chambreDemetierRegion
+      ) {
+        setChambreDemetierRegionError("Veuillez selectionner la région");
+      } else {
+        setChambreDemetierRegionError("");
+      }
     } else {
       setLastnameError("");
       setFirstnameError("");
@@ -125,8 +212,15 @@ const BusinessRegister = () => {
       setEntrepriseError("");
       setDepartementError("");
       setFormelError("");
-
+      setGenreError("");
+      setageError("");
       setBusinessAutreValueError("");
+      setFormationError("");
+      setBesoinFormationError("");
+      setChambreDemetierError("");
+      setChambreDemetierRegionError("");
+      setBesoinAutreValueError("");
+      setBesoinsError("");
 
       try {
         setIsloading(true);
@@ -181,12 +275,17 @@ const BusinessRegister = () => {
     >
       <div className="w-full flex items-start justify-between mb-6">
         <div className="flex flex-col gap-2 items-start">
-          <h1 className="text-2xl font-semibold">Formulaire d'Inscription</h1>
-          <p className="flex max-w-[300px] text-sm">
-            Le coordonnateur du Projet Mobilier National, M. Ibrahima Tall,
-            lance sa campagne de recensement. Cette initiative vise à identifier
-            et regrouper les entreprises artisanales en vue de leur offrir un
-            accompagnement exhaustif.
+          <h1 className="text-xl font-semibold">
+            FICHE DE RECENSEMENT DES ARTISANS
+          </h1>
+          <p className="flex max-w-[400px] text-sm text-justify">
+            Le Coordonnateur du Projet Mobilier national (PMN), Monsieur
+            Ibrahima TALL, lance une campagne de recensement des artisans. Cette
+            initiative consistant à recenser les entreprises artisanales dans
+            leurs différentes filières et à identifier leurs besoins en
+            formation, formalisation, financement et en accès au foncier,
+            permettra d’avoir une base de données fiable pour mieux suivre
+            l’accompagnement des artisans.
           </p>
         </div>
         <Image
@@ -218,7 +317,7 @@ const BusinessRegister = () => {
                 setLastname(e.target.value)
               }
               placeholder="Prénom"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
             />
             {lastnameError && (
               <p className="mt-1 text-sm text-red-600">{lastnameError}</p>
@@ -239,7 +338,7 @@ const BusinessRegister = () => {
                 setFirstname(e.target.value)
               }
               placeholder="Nom"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
             />
             {firstnameError && (
               <p className="mt-1 text-sm text-red-600">{firstnameError}</p>
@@ -251,11 +350,11 @@ const BusinessRegister = () => {
             className="block text-base font-medium text-gray-700"
             htmlFor="region"
           >
-            Région
+            Région (Lieu de travail)
           </Label>
           <select
             id="region"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
             value={region}
             onChange={(e: ChangeEvent<HTMLSelectElement>) =>
               setRegion(e.target.value)
@@ -275,14 +374,14 @@ const BusinessRegister = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <Label
-              className="block text-base font-medium"
+              className="block text-base font-medium text-gray-700"
               htmlFor="departement"
             >
               Département
             </Label>
             <select
               id="region"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
               value={departement}
               onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setDepartement(e.target.value)
@@ -304,12 +403,15 @@ const BusinessRegister = () => {
             )}
           </div>
           <div>
-            <Label className="block text-base font-medium" htmlFor="commune">
+            <Label
+              className="block text-base font-medium text-gray-700"
+              htmlFor="commune"
+            >
               Commune
             </Label>
             <select
               id="region"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
               value={commune}
               onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                 setCommune(e.target.value)
@@ -329,7 +431,10 @@ const BusinessRegister = () => {
         </div>
         <div className="grid grid-cols-1 gap-6">
           <div>
-            <Label className="block text-base font-medium" htmlFor="village">
+            <Label
+              className="block text-base font-medium text-gray-700"
+              htmlFor="village"
+            >
               Village/Quartier
             </Label>
             <Input
@@ -340,12 +445,71 @@ const BusinessRegister = () => {
                 setQuartier(e.target.value)
               }
               placeholder="Village/Quartier"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
             />
           </div>
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-2">
+            <Label
+              className="block text-base font-medium text-gray-700"
+              htmlFor="age"
+            >
+              Votre âge
+            </Label>
+            <Input
+              id="age"
+              type="number"
+              value={age}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setAge(e.target.value)
+              }
+              placeholder="Votre âge"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
+            />
+            {ageError && (
+              <p className="mt-1 text-sm text-red-600">{ageError}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-2 mt-0 md:mt-0.5">
+            <Label
+              className="block text-base font-medium text-gray-700"
+              htmlFor="genre"
+            >
+              Genre
+            </Label>
+            <div className="w-full flex items-center justify-between gap-4">
+              {["homme", "femme"].map((option) => (
+                <div
+                  key={option}
+                  className="flex items-center justify-center w-full px-3 py-2 border border-dashed rounded border-gray-300"
+                >
+                  <input
+                    id={option}
+                    type="radio"
+                    value={genre}
+                    checked={genre === option}
+                    className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setGenre(e.target.id)
+                    }
+                  />
+                  <label
+                    htmlFor={option}
+                    className="ml-3 block text-base text-gray-600 capitalize"
+                  >
+                    {option}
+                  </label>
+                </div>
+              ))}
+            </div>
+            {genreError && (
+              <p className="mt-1 text-sm text-red-600">{genreError}</p>
+            )}
+          </div>
+        </div>
         <div>
-          <Label className="block text-base font-medium">
+          <Label className="block text-base font-medium text-gray-700">
             Corps de métiers
           </Label>
           <div className="mt-2 space-y-2">
@@ -355,6 +519,8 @@ const BusinessRegister = () => {
               "Filière peaux et cuirs",
               "Filière métallique",
               "Filière mécanique",
+              "Filière sculpteur",
+              "Filière aluminium",
               "Autre",
             ].map((option) => (
               <div key={option} className="flex items-center">
@@ -371,7 +537,7 @@ const BusinessRegister = () => {
                       e.target.id === "Autre" ? "" : e.target.id
                     );
                   }}
-                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
+                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-700"
                 />
                 <Label
                   htmlFor={option}
@@ -393,7 +559,10 @@ const BusinessRegister = () => {
           )}
           {businessAutreValue === "Autre" ? (
             <div className="flex flex-col items-start gap-2 mt-4">
-              <Label htmlFor="corps-de-metiers" className="block text-base">
+              <Label
+                htmlFor="corps-de-metiers"
+                className="block text-base font-medium text-gray-700"
+              >
                 Corps de métiers
               </Label>
               <Input
@@ -414,9 +583,76 @@ const BusinessRegister = () => {
             </div>
           ) : null}
         </div>
+        <div>
+          <label className="block text-base font-medium text-gray-700">
+            Avez-vous bénéficier d’une formation ?
+          </label>
+          <div className="mt-2 space-y-2">
+            {["Oui  ", "Non  "].map((option) => (
+              <div key={option} className="flex items-center">
+                <input
+                  id={option}
+                  type="checkbox"
+                  value={formation}
+                  checked={formation === option}
+                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setFormation(e.target.id)
+                  }
+                />
+                <label
+                  htmlFor={option}
+                  className="ml-3 block text-base text-gray-600"
+                >
+                  {option}
+                </label>
+              </div>
+            ))}
+          </div>
+          {formationError && (
+            <p className="mt-1 text-sm text-red-600">{formationError}</p>
+          )}
+        </div>
+        {formation === "Non  " && (
+          <div>
+            <label className="block text-base font-medium text-gray-700">
+              Avez-vous besoin d’une formation ?
+            </label>
+            <div className="mt-2 space-y-2">
+              {["Oui   ", "Non   "].map((option) => (
+                <div key={option} className="flex items-center">
+                  <input
+                    id={option}
+                    type="checkbox"
+                    value={besoinFormation}
+                    checked={besoinFormation === option}
+                    className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setBesoinFormation(e.target.id)
+                    }
+                  />
+                  <label
+                    htmlFor={option}
+                    className="ml-3 block text-base text-gray-600"
+                  >
+                    {option}
+                  </label>
+                </div>
+              ))}
+            </div>
+            {besoinFormationError && (
+              <p className="mt-1 text-sm text-red-600">
+                {besoinFormationError}
+              </p>
+            )}
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-6">
           <div className="flex flex-col items-start gap-2">
-            <Label htmlFor="entreprise" className="block text-base">
+            <Label
+              htmlFor="entreprise"
+              className="block text-base font-medium text-gray-700"
+            >
               Entreprise
             </Label>
             <Input
@@ -435,7 +671,7 @@ const BusinessRegister = () => {
           </div>
         </div>
         <div>
-          <label className="block text-base font-medium">
+          <label className="block text-base font-medium text-gray-700">
             Avez vous un NINEA
           </label>
           <div className="mt-2 space-y-2">
@@ -446,7 +682,7 @@ const BusinessRegister = () => {
                   type="checkbox"
                   value={formel}
                   checked={formel === option}
-                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
+                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setFormel(e.target.id)
                   }
@@ -464,8 +700,131 @@ const BusinessRegister = () => {
             <p className="mt-1 text-sm text-red-600">{formelError}</p>
           )}
         </div>
+        <div>
+          <label className="block text-base font-medium text-gray-700">
+            Êtes-vous inscrit dans une Chambre de Métiers ?
+          </label>
+          <div className="mt-2 space-y-2">
+            {[" Oui", " Non"].map((option) => (
+              <div key={option} className="flex items-center">
+                <input
+                  id={option}
+                  type="checkbox"
+                  value={chambreDemetier}
+                  checked={chambreDemetier === option}
+                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setChambreDemetier(e.target.id)
+                  }
+                />
+                <label
+                  htmlFor={option}
+                  className="ml-3 block text-base text-gray-600"
+                >
+                  {option}
+                </label>
+              </div>
+            ))}
+          </div>
+          {chambreDemetierError && (
+            <p className="mt-1 text-sm text-red-600">{chambreDemetierError}</p>
+          )}
+        </div>
+        {chambreDemetier === " Oui" && (
+          <div>
+            <Label
+              className="block text-base font-medium text-gray-700"
+              htmlFor="chambreDemetierRegion"
+            >
+              Si OUI, dans quelle région
+            </Label>
+            <select
+              id="chambreDemetierRegion"
+              className="mt-1 block w-full px-3 py-2 border text-base border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
+              value={chambreDemetierRegion}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                setChambreDemetierRegion(e.target.value)
+              }
+            >
+              <option value="">Sélectionner votre région</option>
+              {regions.map(({ region }) => (
+                <option key={region} value={region} className="capitalize">
+                  {region}
+                </option>
+              ))}
+            </select>
+            {chambreDemetierRegionError && (
+              <p className="mt-1 text-sm text-red-600">
+                {chambreDemetierRegionError}
+              </p>
+            )}
+          </div>
+        )}
+        <div>
+          <label className="block text-base font-medium text-gray-700">
+            Besoins ?
+          </label>
+          <div className="mt-2 space-y-2">
+            {["formation", "Formalisation", "financement", "Autre "].map(
+              (option) => (
+                <div key={option} className="flex items-center">
+                  <input
+                    id={option}
+                    type="checkbox"
+                    value={besoins}
+                    checked={
+                      option === corpsdemetiers || option === besoinAutreValue
+                    }
+                    className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      setBesoinAutreValue(e.target.id);
+                      setBesoins(e.target.id === "Autre " ? "" : e.target.id);
+                    }}
+                  />
+                  <label
+                    htmlFor={option}
+                    className="ml-3 block text-base text-gray-600"
+                  >
+                    {option === "Autre " ? "Autres" : option}&nbsp;
+                  </label>
+                </div>
+              )
+            )}
+          </div>
+          {besoinsError && (
+            <p className="mt-1 text-sm text-red-600">{besoinsError}</p>
+          )}
+        </div>
+        {besoinAutreValue === "Autre " ? (
+          <div className="flex flex-col items-start gap-2 mt-4">
+            <Label
+              htmlFor="besoins"
+              className="block text-base font-medium text-gray-700"
+            >
+              Besoins
+            </Label>
+            <Input
+              id="besoins"
+              type="text"
+              placeholder="Besoin"
+              value={besoins}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setBesoins(e.target.value)
+              }
+              className="w-full text-primary-600 border-gray-300 focus:ring-primary-500 text-base"
+            />
+            {besoinAutreValueError && (
+              <p className="mt-1 text-sm text-red-600">
+                {besoinAutreValueError}
+              </p>
+            )}
+          </div>
+        ) : null}
         <div className="relative flex flex-col items-start gap-2">
-          <Label htmlFor="phone" className="block text-base">
+          <Label
+            htmlFor="phone"
+            className="block text-base font-medium text-gray-700"
+          >
             Téléphone
           </Label>
           <PhoneInput
