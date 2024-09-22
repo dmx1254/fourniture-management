@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { BusinessUser } from "@/lib/types";
 import { Separator } from "@/components/ui/separator";
+import { formatCNI } from "@/lib/utils";
 
 const ViewBusinessUser = ({
   userId,
@@ -19,6 +20,7 @@ const ViewBusinessUser = ({
   userId: string;
   users: BusinessUser[];
 }) => {
+  
   const user = users?.find((user) => user?._id === userId);
 
   const InfoItem = ({
@@ -44,7 +46,7 @@ const ViewBusinessUser = ({
       <DialogContent className="w-full sm:max-w-[550px] h-full max-h-[525px] bg-[#022c22] text-gray-200 border-gray-700">
         <DialogHeader className="border-b border-gray-800 pb-4">
           <DialogTitle className="text-lg font-semibold text-gray-100">
-            Information sur l'entreprise
+            Information sur l'artisan
           </DialogTitle>
         </DialogHeader>
 
@@ -58,8 +60,11 @@ const ViewBusinessUser = ({
               <InfoItem label="Nom" value={user?.firstname} />
               <InfoItem label="Téléphone" value={user?.phone} />
               <InfoItem label="Genre" value={user?.genre} />
-              <InfoItem label="Âge" value={`${user?.age} ans`} />
-              <InfoItem label="Email" value="" />
+              <InfoItem
+                label="CNI"
+                value={`${user?.cni ? formatCNI(user?.cni) : ""}`}
+              />
+              <InfoItem label="Validité du CNI" value={user?.isCniValid} />
             </div>
           </div>
           <Separator className="bg-gray-700" />
@@ -111,39 +116,20 @@ const ViewBusinessUser = ({
                     : user?.besoins
                 }
               />
-            </div>
-          </div>
-          {/* <Separator className="bg-gray-700" />
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-gray-100">
-              Formation et financement
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <InfoItem label="Formation" value={user?.formation} />
+              <InfoItem label="Local" value={user?.doYouHaveLocal} />
               <InfoItem
-                label="Besoin de formation"
-                value={user?.besoinFormation}
+                label="Nombre d'employés"
+                value={user?.businessWorker}
               />
               <InfoItem
-                label="Financement de l'État"
-                value={user?.financementEtat}
+                label="Annees d'expériences"
+                value={`${user?.howLongJob} ${
+                  Number(user?.howLongJob) > 1 ? "ans" : "an"
+                }`}
               />
             </div>
           </div>
-          <Separator className="bg-gray-700" />
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-gray-100">Expositions</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <InfoItem
-                label="Accès zones d'expositions"
-                value={user?.accesZonesExpositions}
-              />
-              <InfoItem
-                label="Site d'exposition"
-                value={user?.siteExposition}
-              />
-            </div>
-          </div> */}
+       
         </div>
       </DialogContent>
     </Dialog>

@@ -47,9 +47,9 @@ export const navMenus: NavTypes[] = [
   },
   {
     id: "bqp73",
-    title: "Entreprise",
+    title: "Artisans",
     icon: Handshake,
-    path: "/dashboard/entreprise",
+    path: "/dashboard/artisans",
     emailTest: "",
   },
 ];

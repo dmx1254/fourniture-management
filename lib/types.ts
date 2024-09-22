@@ -90,10 +90,15 @@ export type Entreprise = {
   formation: string;
   besoinFormation?: string;
   genre: string;
-  age: string;
+  age?: string;
   chambreDemetier: string;
   chambreDemetierRegion?: string;
   besoins: string[];
+  cni: string;
+  isCniValid: string;
+  doYouHaveLocal: string;
+  businessWorker: string;
+  howLongJob: string;
 };
 
 export type BusinessUser = {
@@ -118,6 +123,11 @@ export type BusinessUser = {
   siteExposition: string;
   genre: string;
   age: number;
+  cni: string;
+  isCniValid: string;
+  doYouHaveLocal: string;
+  businessWorker: string;
+  howLongJob: string;
   chambreDemetier: string;
   chambreDemetierRegion?: string;
   besoins: string;

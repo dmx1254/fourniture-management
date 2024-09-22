@@ -675,8 +675,8 @@ export async function login(prevState: LoginErrorState, formData: FormData) {
 export async function inscriptionForEntreprise(user: Entreprise) {
   try {
     const entrepriseCreated = await businessRegister(user);
-    revalidatePath("/dashboard/entreprise");
-    return JSON.parse(JSON.stringify(entrepriseCreated));
+    revalidatePath("/dashboard/artisans");
+    return entrepriseCreated;
   } catch (error: any) {
     console.log(error);
     throw new Error(error);

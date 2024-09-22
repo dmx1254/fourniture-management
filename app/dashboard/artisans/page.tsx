@@ -64,7 +64,7 @@ const BussinesPage = async ({
             className="flex items-center text-sm outline-none border-none p-2 rounded bg-[#052e16] shadow-md text-white/80 mr-5 mb-2"
           >
             <Plus size={16} />
-            Ajouter une entreprise
+            Ajouter un artisans
           </Link>
 
           <div className="flex max-xl:flex-col max-xl:items-start items-center gap-4 max-xl:gap-2">

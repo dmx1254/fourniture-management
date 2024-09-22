@@ -633,10 +633,32 @@ export async function loginUser(email: string, password: string) {
 
 export async function businessRegister(user: Entreprise) {
   try {
-    const entrepriseBusinessCreated = await EntrepriseModel.create(user);
-    return entrepriseBusinessCreated;
+    const isEntrepriseExist = await EntrepriseModel.findOne({ cni: user.cni });
+    if (isEntrepriseExist)
+      return {
+        errorMessage:
+          "Cette entreprise avec ce numéro de CNI est déjà enregistrée",
+        sucessMessage: "",
+      };
+    await EntrepriseModel.create(user);
+    return {
+      errorMessage: "",
+      sucessMessage:
+        "Merci pour votre inscription ! Nous vous contacterons sous peu.",
+    };
   } catch (error: any) {
-    throw new Error(error);
+    if(error.name === "MongoError"){
+      console.log("MongoError", error)
+
+    }
+    if(error.name === "CastError"){
+      console.log("CastError", error)
+
+    }
+    if(error.name === "ValidationError"){
+      console.log("ValidationError", error)
+
+    }
   }
 }
 

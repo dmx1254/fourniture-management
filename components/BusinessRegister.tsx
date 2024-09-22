@@ -59,6 +59,17 @@ const BusinessRegister = () => {
   const [inputBesoin, setInputBesoin] = useState<string>("");
   const [inputBesoinError, setInputBesoinError] = useState<string>("");
 
+  const [cni, setCni] = useState<string>("");
+  const [cniError, setCniError] = useState<string>("");
+  const [isCniValid, setIsCniValid] = useState<string>("");
+  const [isCniValidError, setIsCniValidError] = useState<string>("");
+  const [doYouHaveLocal, setDoYouHaveLocal] = useState<string>("");
+  const [doYouHaveLocalError, setDoYouHaveLocalError] = useState<string>("");
+  const [businessWorker, setBusinessWorker] = useState<string>("");
+  const [businessWorkerError, setBusinessWorkerError] = useState<string>("");
+  const [howLongJob, setHowLongJob] = useState<string>("");
+  const [howLongJobError, setHowLongJobError] = useState<string>("");
+
   const [genre, setGenre] = useState<string>("");
   const [genreError, setGenreError] = useState<string>("");
   const [age, setAge] = useState<string>("");
@@ -69,6 +80,16 @@ const BusinessRegister = () => {
     useState<string>("");
 
   // console.log(besoins);
+
+  useEffect(() => {
+    if (parseInt(cni[0]) === 1) {
+      setGenre("homme");
+    } else if (parseInt(cni[0]) === 2) {
+      setGenre("femme");
+    } else {
+      return;
+    }
+  }, [cni]);
 
   // console.log(siteExpositionChecked);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -90,6 +111,11 @@ const BusinessRegister = () => {
       region,
       besoins: myNewBesoin,
       besoinFormation,
+      cni,
+      isCniValid,
+      doYouHaveLocal,
+      businessWorker,
+      howLongJob,
       chambreDemetier,
       chambreDemetierRegion,
       corpsdemetiers,
@@ -102,9 +128,13 @@ const BusinessRegister = () => {
       !lastname ||
       !firstname ||
       phone?.length !== 13 ||
+      cni.length !== 13 ||
       !commune ||
       !genre ||
-      Number(age) < 18 ||
+      !isCniValid.trim() ||
+      !doYouHaveLocal.trim() ||
+      Number(businessWorker) < 1 ||
+      Number(howLongJob) < 1 ||
       myNewBesoin.length < 1 ||
       !region ||
       !departement ||
@@ -138,6 +168,11 @@ const BusinessRegister = () => {
       } else {
         setPhoneError("");
       }
+      if (cni.length !== 13) {
+        setCniError("Numero de CNI incorrect");
+      } else {
+        setCniError("");
+      }
       if (!commune) {
         setCommuneError("Veuillez selectionner votre commune");
       } else {
@@ -148,11 +183,33 @@ const BusinessRegister = () => {
       } else {
         setGenreError("");
       }
-      if (Number(age) < 18) {
-        setageError("Votre âge doit être au moins 18 ans");
+      if (!isCniValid.trim()) {
+        setIsCniValidError("Veuillez cocher une case avant de continuer");
       } else {
-        setageError("");
+        setIsCniValidError("");
       }
+      if (!doYouHaveLocal.trim()) {
+        setDoYouHaveLocalError("Veuillez cocher une case avant de continuer");
+      } else {
+        setDoYouHaveLocalError("");
+      }
+      if (Number(businessWorker) < 1) {
+        setBusinessWorkerError(
+          "Le nombre de vos travailleurs doit être minimum de 1"
+        );
+      } else {
+        setBusinessWorkerError("");
+      }
+      if (Number(howLongJob) < 1) {
+        setHowLongJobError("Vous devez exercer ce métier minimum  1 ans");
+      } else {
+        setHowLongJobError("");
+      }
+      // if (Number(age) < 18) {
+      //   setageError("Votre âge doit être au moins 18 ans");
+      // } else {
+      //   setageError("");
+      // }
       if (!corpsdemetiers && businessAutreValue !== "Autre") {
         setCorpsdemetiersError("Veuillez choisir votre corps de de métier");
       } else {
@@ -230,19 +287,29 @@ const BusinessRegister = () => {
       setBesoinAutreValueError("");
       setBesoinsError("");
       setInputBesoinError("");
+      setCniError("");
+      setIsCniValidError("");
+      setDoYouHaveLocalError("");
+      setBusinessWorkerError("");
+      setHowLongJobError("");
+
+      // console.log(user);
 
       try {
         setIsloading(true);
         const response = await inscriptionForEntreprise(user);
         setIsloading(false);
-        if (response) {
-          toast.success(
-            "Merci pour votre inscription ! Nous vous contacterons sous peu.",
-            {
-              style: { color: "#16a34a" },
-            }
-          );
+        if (response?.sucessMessage) {
+          toast.success(response?.sucessMessage, {
+            style: { color: "#16a34a" },
+          });
           formRef.current?.reset();
+        } else if (response?.errorMessage) {
+          toast.error(response?.errorMessage, {
+            style: { color: "#dc2626" },
+          });
+        } else {
+          return;
         }
       } catch (error) {
         setIsloading(false);
@@ -270,7 +337,8 @@ const BusinessRegister = () => {
   useEffect(() => {
     const comms = departementTab?.find((d) => d.department === departement);
     if (comms) {
-      setCommuneTab(comms?.communes);
+      let filtreWithoutDoublure = new Set(comms?.communes);
+      setCommuneTab(Array.from(filtreWithoutDoublure));
       setCommune("");
     }
   }, [departement, region]);
@@ -282,32 +350,26 @@ const BusinessRegister = () => {
         boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
       }}
     >
-      <div className="w-full flex items-start justify-between mb-6">
-        <div className="flex flex-col gap-2 items-start">
-          <h1 className="text-xl font-semibold">
+      <div className="w-full max-w-[500px] flex-col items-center justify-center mx-auto gap-4 mb-14">
+        <div className="flex flex-col gap-1 items-center">
+          <Image
+            src="/pmn.jpeg"
+            alt="logo"
+            width={100}
+            height={100}
+            style={{
+              objectFit: "cover",
+              objectPosition: "center",
+              marginTop: "-42px",
+            }}
+          />
+          <p className="text-2xl font-semibold text-center -mt-5">
             FICHE DE RECENSEMENT DES ARTISANS
-          </h1>
-          <p className="flex max-w-[400px] text-sm text-justify">
-            Le Coordonnateur du Projet Mobilier national (PMN), Monsieur
-            Ibrahima TALL, lance une campagne de recensement des artisans. Cette
-            initiative consistant à recenser les entreprises artisanales dans
-            leurs différentes filières et à identifier leurs besoins en
-            formation, formalisation, financement et en accès au foncier,
-            permettra d’avoir une base de données fiable pour mieux suivre
-            l’accompagnement des artisans.
           </p>
         </div>
-        <Image
-          src="/pmn.jpeg"
-          alt="logo"
-          width={100}
-          height={100}
-          style={{
-            objectFit: "cover",
-            objectPosition: "center",
-            marginTop: "-16px",
-          }}
-        />
+        <p className="text-3xl text-center mt-6">
+          Bienvenue sur le portail d'inscription du Projet Mobilier National.
+        </p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-6" ref={formRef}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -351,6 +413,65 @@ const BusinessRegister = () => {
             />
             {firstnameError && (
               <p className="mt-1 text-sm text-red-600">{firstnameError}</p>
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-2">
+            <Label
+              className="block text-base font-medium text-gray-700"
+              htmlFor="cni"
+            >
+              Carte nationale d'identité
+            </Label>
+            <Input
+              id="cni"
+              type="number"
+              value={cni}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setCni(e.target.value)
+              }
+              placeholder="Votre CNI"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
+            />
+            {cniError && (
+              <p className="mt-1 text-sm text-red-600">{cniError}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-2 mt-0 md:mt-0.5">
+            <Label
+              className="block text-base font-medium text-gray-700"
+              htmlFor="genre"
+            >
+              Genre
+            </Label>
+            <div className="w-full flex items-center justify-between gap-4">
+              {["homme", "femme"].map((option) => (
+                <div
+                  key={option}
+                  className="flex items-center justify-center w-full px-3 py-2 border border-dashed rounded border-gray-300"
+                >
+                  <input
+                    id={option}
+                    type="radio"
+                    value={genre}
+                    checked={genre === option}
+                    className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setGenre(e.target.id)
+                    }
+                  />
+                  <label
+                    htmlFor={option}
+                    className="ml-3 block text-base text-gray-600 capitalize"
+                  >
+                    {option}
+                  </label>
+                </div>
+              ))}
+            </div>
+            {genreError && (
+              <p className="mt-1 text-sm text-red-600">{genreError}</p>
             )}
           </div>
         </div>
@@ -458,65 +579,25 @@ const BusinessRegister = () => {
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex flex-col gap-2">
-            <Label
-              className="block text-base font-medium text-gray-700"
-              htmlFor="age"
-            >
-              Votre âge
-            </Label>
-            <Input
-              id="age"
-              type="number"
-              value={age}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setAge(e.target.value)
-              }
-              placeholder="Votre âge"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
-            />
-            {ageError && (
-              <p className="mt-1 text-sm text-red-600">{ageError}</p>
-            )}
-          </div>
-          <div className="flex flex-col gap-2 mt-0 md:mt-0.5">
-            <Label
-              className="block text-base font-medium text-gray-700"
-              htmlFor="genre"
-            >
-              Genre
-            </Label>
-            <div className="w-full flex items-center justify-between gap-4">
-              {["homme", "femme"].map((option) => (
-                <div
-                  key={option}
-                  className="flex items-center justify-center w-full px-3 py-2 border border-dashed rounded border-gray-300"
-                >
-                  <input
-                    id={option}
-                    type="radio"
-                    value={genre}
-                    checked={genre === option}
-                    className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setGenre(e.target.id)
-                    }
-                  />
-                  <label
-                    htmlFor={option}
-                    className="ml-3 block text-base text-gray-600 capitalize"
-                  >
-                    {option}
-                  </label>
-                </div>
-              ))}
-            </div>
-            {genreError && (
-              <p className="mt-1 text-sm text-red-600">{genreError}</p>
-            )}
-          </div>
+        <div className="relative flex flex-col items-start gap-2">
+          <Label
+            htmlFor="phone"
+            className="block text-base font-medium text-gray-700"
+          >
+            Téléphone
+          </Label>
+          <PhoneInput
+            defaultCountry="SN"
+            placeholder="+221"
+            international
+            withCountryCallingCode
+            value={phone as E164Number | undefined}
+            onChange={setPhone}
+            className="input-phone px-3 py-2 w-full border outline-none bg-white border-gray-300 rounded"
+          />
+          {phoneError && <p className="text-sm text-red-600">{phoneError}</p>}
         </div>
+
         <div>
           <Label className="block text-base font-medium text-gray-700">
             Corps de métiers
@@ -528,8 +609,6 @@ const BusinessRegister = () => {
               "Filière peaux et cuirs",
               "Filière métallique",
               "Filière mécanique",
-              "Filière sculpteur",
-              "Filière aluminium",
               "Autre",
             ].map((option) => (
               <div key={option} className="flex items-center">
@@ -594,7 +673,8 @@ const BusinessRegister = () => {
         </div>
         <div>
           <label className="block text-base font-medium text-gray-700">
-            Avez-vous bénéficier d’une formation ?
+            Avez-vous bénéficié d’une formation dispensée par une structure de
+            l'État ?
           </label>
           <div className="mt-2 space-y-2">
             {["Oui  ", "Non  "].map((option) => (
@@ -711,7 +791,7 @@ const BusinessRegister = () => {
         </div>
         <div>
           <label className="block text-base font-medium text-gray-700">
-            Êtes-vous inscrit dans une Chambre de Métiers ?
+            Êtes-vous inscrit dans le répertoire de la chambre des Métiers ?
           </label>
           <div className="mt-2 space-y-2">
             {[" Oui", " Non"].map((option) => (
@@ -771,40 +851,143 @@ const BusinessRegister = () => {
         )}
         <div>
           <label className="block text-base font-medium text-gray-700">
+            Votre carte est-elle toujours valide ?
+          </label>
+          <div className="mt-2 space-y-2">
+            {["   Oui", "   Non"].map((option) => (
+              <div key={option} className="flex items-center">
+                <input
+                  id={option}
+                  type="checkbox"
+                  value={isCniValid}
+                  checked={isCniValid === option}
+                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setIsCniValid(e.target.id)
+                  }
+                />
+                <label
+                  htmlFor={option}
+                  className="ml-3 block text-base text-gray-600"
+                >
+                  {option}
+                </label>
+              </div>
+            ))}
+          </div>
+          {isCniValidError && (
+            <p className="mt-1 text-sm text-red-600">{isCniValidError}</p>
+          )}
+        </div>
+        <div>
+          <label className="block text-base font-medium text-gray-700">
+            Disposez-vous d'un local ?
+          </label>
+          <div className="mt-2 space-y-2">
+            {["    Oui", "    Non"].map((option) => (
+              <div key={option} className="flex items-center">
+                <input
+                  id={option}
+                  type="checkbox"
+                  value={doYouHaveLocal}
+                  checked={doYouHaveLocal === option}
+                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setDoYouHaveLocal(e.target.id)
+                  }
+                />
+                <label
+                  htmlFor={option}
+                  className="ml-3 block text-base text-gray-600"
+                >
+                  {option}
+                </label>
+              </div>
+            ))}
+          </div>
+          {doYouHaveLocalError && (
+            <p className="mt-1 text-sm text-red-600">{doYouHaveLocalError}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label
+            className="block text-base font-medium text-gray-700"
+            htmlFor="businessWorker"
+          >
+            Quel est le nombre de vos travailleurs ?
+          </Label>
+          <Input
+            id="businessWorker"
+            type="number"
+            value={businessWorker}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setBusinessWorker(e.target.value)
+            }
+            placeholder="Exemple: 20"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
+          />
+          {businessWorkerError && (
+            <p className="mt-1 text-sm text-red-600">{businessWorkerError}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label
+            className="block text-base font-medium text-gray-700"
+            htmlFor="cni"
+          >
+            Depuis combien de temps exercez-vous ce metier ?
+          </Label>
+          <Input
+            id="cni"
+            type="number"
+            value={howLongJob}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setHowLongJob(e.target.value)
+            }
+            placeholder="Exemple: 5"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
+          />
+          {howLongJobError && (
+            <p className="mt-1 text-sm text-red-600">{howLongJobError}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-base font-medium text-gray-700">
             Besoins ?
           </label>
           <div className="mt-2 space-y-2">
-            {["formation", "formalisation", "financement", "Autre "].map(
-              (option) => (
-                <div key={option} className="flex items-center">
-                  <input
-                    id={option}
-                    type="checkbox"
-                    value={besoins}
-                    checked={besoins.includes(option)}
-                    className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      if (!besoins.includes(e.target.id)) {
-                        setBesoins((prevBesoin) => [
-                          ...prevBesoin,
-                          e.target.id,
-                        ]);
-                      } else {
-                        setBesoins((prevBesoin) =>
-                          prevBesoin.filter((besoin) => besoin !== e.target.id)
-                        );
-                      }
-                    }}
-                  />
-                  <label
-                    htmlFor={option}
-                    className="ml-3 block text-base text-gray-600 capitalize"
-                  >
-                    {option === "Autre " ? "Autres" : option}&nbsp;
-                  </label>
-                </div>
-              )
-            )}
+            {[
+              "formation",
+              "formalisation",
+              "Besoins en matériel",
+              "Autre ",
+            ].map((option) => (
+              <div key={option} className="flex items-center">
+                <input
+                  id={option}
+                  type="checkbox"
+                  value={besoins}
+                  checked={besoins.includes(option)}
+                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-600"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    if (!besoins.includes(e.target.id)) {
+                      setBesoins((prevBesoin) => [...prevBesoin, e.target.id]);
+                    } else {
+                      setBesoins((prevBesoin) =>
+                        prevBesoin.filter((besoin) => besoin !== e.target.id)
+                      );
+                    }
+                  }}
+                />
+                <label
+                  htmlFor={option}
+                  className="ml-3 block text-base text-gray-600 capitalize"
+                >
+                  {option === "Autre " ? "Autres" : option}&nbsp;
+                </label>
+              </div>
+            ))}
           </div>
           {besoinsError && (
             <p className="mt-1 text-sm text-red-600">{besoinsError}</p>
@@ -833,24 +1016,6 @@ const BusinessRegister = () => {
             )}
           </div>
         ) : null}
-        <div className="relative flex flex-col items-start gap-2">
-          <Label
-            htmlFor="phone"
-            className="block text-base font-medium text-gray-700"
-          >
-            Téléphone
-          </Label>
-          <PhoneInput
-            defaultCountry="SN"
-            placeholder="+221"
-            international
-            withCountryCallingCode
-            value={phone as E164Number | undefined}
-            onChange={setPhone}
-            className="input-phone px-3 py-2 w-full border outline-none bg-white border-gray-300 rounded"
-          />
-          {phoneError && <p className="text-sm text-red-600">{phoneError}</p>}
-        </div>
 
         <button
           type="submit"

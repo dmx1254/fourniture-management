@@ -107,3 +107,8 @@ export function generateId(length = 8) {
   }
   return id;
 }
+
+
+export const formatCNI = (cni: string) => {
+  return cni.replace(/(\d{1})(\d{3})(\d{4})(\d{5})/, "$1 $2 $3 $4");
+};

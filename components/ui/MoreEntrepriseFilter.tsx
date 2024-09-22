@@ -56,7 +56,7 @@ const MoreEntrepriseFilter = () => {
             <SelectItem value="kaolack">Kaolack</SelectItem>
             <SelectItem value="kolda">Kolda</SelectItem>
             <SelectItem value="louga">Louga</SelectItem>
-            <SelectItem value="st louis">St Louis</SelectItem>
+            <SelectItem value="saint-louis">Saint-Louis</SelectItem>
             <SelectItem value="tambacounda">Tambacounda</SelectItem>
             <SelectItem value="thiès">Thiès</SelectItem>
             <SelectItem value="ziguinchor">Ziguinchor</SelectItem>

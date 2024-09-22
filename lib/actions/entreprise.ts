@@ -89,6 +89,30 @@ const entrepriseSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+    cni: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    isCniValid: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    doYouHaveLocal: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    businessWorker: {
+      type: String,
+      default: "",
+    },
+    howLongJob: {
+      type: String,
+      default: "",
+    },
 
     chambreDemetier: {
       type: String,
