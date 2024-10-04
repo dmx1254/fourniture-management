@@ -609,9 +609,9 @@ const BusinessRegister = () => {
               "Mécanique",
               "Peaux et Cuirs",
               "Textile",
-              "Autre",
+              // "Autre",
             ].map((option) => (
-              <div key={option} className="flex items-center">
+              <div key={option} className="flex items-start">
                 <Input
                   id={option}
                   type="checkbox"
@@ -625,7 +625,7 @@ const BusinessRegister = () => {
                       e.target.id === "Autre" ? "" : e.target.id
                     );
                   }}
-                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-700"
+                  className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500 accent-green-700 mt-[5px]"
                 />
                 <Label
                   htmlFor={option}
