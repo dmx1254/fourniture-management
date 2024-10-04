@@ -604,11 +604,11 @@ const BusinessRegister = () => {
           </Label>
           <div className="mt-2 space-y-2">
             {[
-              "Filière bois",
-              "Filière textile",
-              "Filière peaux et cuirs",
-              "Filière métallique",
-              "Filière mécanique",
+              "Menuiserie bois",
+              "Menuiserie Métallique et en Aluminium",
+              "Mécanique",
+              "Peaux et Cuirs",
+              "Textile",
               "Autre",
             ].map((option) => (
               <div key={option} className="flex items-center">
@@ -632,12 +632,12 @@ const BusinessRegister = () => {
                   className="ml-3 block text-base text-gray-600"
                 >
                   {option === "Autre" ? "Autres" : option}&nbsp;
-                  {option === "Filière bois" && "( Menuisier bois)"}
-                  {option === "Filière textile" && "( Tailleur )"}
-                  {option === "Filière peaux et cuirs" && "( Cordonnier )"}
-                  {option === "Filière métallique" &&
-                    "( Menuisier Métallique )"}
-                  {option === "Filière mécanique" && "( Mécanicien )"}
+                  {option === "Mécanique" &&
+                    "(Mécanicien, Électricien auto, Tôlier)"}
+                  {option === "Peaux et Cuirs" &&
+                    "(Cordonnier, Tapissier, Maroquinier)"}
+                  {option === "Textile" &&
+                    "(Tailleur, Brodeur, Tricoteur, Tisserant)"}
                 </Label>
               </div>
             ))}

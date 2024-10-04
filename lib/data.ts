@@ -130,6 +130,17 @@ export const regions: Region[] = [
           "Rufisque Ouest",
         ],
       },
+      {
+        department: "keur massar",
+        communes: [
+          "Yeumbeul Sud",
+          "Yeumbeul Nord",
+          "Jaxaay",
+          "Keur Massar Sud",
+          "Keur Massar Nord",
+          "Malika",
+        ],
+      },
     ],
   },
   {
