@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 
-import { useDebouncedCallback } from "use-debounce";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const ProgrameScolaireButon = () => {
