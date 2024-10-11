@@ -8,11 +8,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import PDFGenerator from "./PDFGenerator";
 
 const Header = async () => {
   const session = await getSession();
   return (
     <div className="sticky bg-white border-b border-[#F4F4F4] z-20 p-2 top-0 right-0 left-[250px] w-full flex items-end justify-end">
+      <PDFGenerator />
       <Sheet>
         <SheetTrigger>
           <div className="flex items-center gap-2 p-2">
@@ -31,7 +33,10 @@ const Header = async () => {
             />
           </div>
         </SheetTrigger>
-        <SheetContent side="left" className="bg-[#111b21] text-gray-500 border-none">
+        <SheetContent
+          side="left"
+          className="bg-[#111b21] text-gray-500 border-none"
+        >
           <SheetHeader>
             <SheetTitle className="text-lg text-gray-600">
               Profile de {`${session.lastname} ${session.firstname}`}
