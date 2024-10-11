@@ -10,18 +10,16 @@ import DownloadEntreprise from "./DownloadEntreprise";
 const BusinessTable = async ({
   cni,
   currentPage,
-  category,
+  region,
   type,
   filiere,
-  age,
   program,
 }: {
   cni: string;
   currentPage: number;
-  category: string;
+  region: string;
   type: string;
   filiere: string;
-  age: string;
   program: string;
 }) => {
   const session = await getSession();
@@ -29,13 +27,13 @@ const BusinessTable = async ({
   const { entreprises } = await getEntreprises(
     cni,
     currentPage,
-    category,
+    region,
     type,
     filiere,
-    age,
     program
   );
   const businessUsers: BusinessUser[] = entreprises;
+  // console.log(businessUsers)
 
   function formatNumber(index: number) {
     let calculatedIndex: number = index + (currentPage - 1) * 10;

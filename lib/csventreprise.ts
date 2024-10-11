@@ -29,6 +29,22 @@ const generateBusinessUserCSV = (businessUsers: BusinessUser[]) => {
     "Années d'expérience"
   ].join(",");
 
+  // {
+  //   label: user.tenueScolaireProgram ? "Programme de tenues scolaires" : "",
+  //   value:
+  //     user.tenueScolaireProgram?.trim().toLowerCase() === "oui"
+  //       ? user.tenueScolaireProgram
+  //       : "N/A",
+  // },
+  // {
+  //   label: user.localAdress ? "Adresse de l'atelier" : "",
+  //   value: user.localAdress ? user.localAdress : "N/A",
+  // },
+  // {
+  //   label: user.nbrDeMachine ? "Nombre de machine" : "",
+  //   value: user.nbrDeMachine ? user.nbrDeMachine : "N/A",
+  // },
+
   // CSV rows
   const csvRows = businessUsers.map((user) => {
     return [

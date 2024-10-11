@@ -673,7 +673,7 @@ export async function getBusinessRegister() {
 export async function getEntreprisesAndTotalPages(
   cni: string,
   currentPage: number,
-  category: string,
+  region: string,
   type: string,
   filiere: string,
   program: string
@@ -699,21 +699,20 @@ export async function getEntreprisesAndTotalPages(
   if (cni && cni.trim() !== "") {
     matchConditions.cni = { $regex: cni };
   }
-  if (type === "region") {
-    matchConditions.region = { $regex: category, $options: "i" };
+
+
+  if (region && region.trim() !== "") {
+    matchConditions.region = { $regex: region, $options: "i" };
+  }
+  
+  if (filiere && filiere.trim() !== "") {
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
+  }
+  
+  if (program && program.trim() !== "") {
     matchConditions.specialCat = { $regex: program, $options: "i" };
   }
-  if (type === "filiere") {
-    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
-    matchConditions.region = { $regex: category, $options: "i" };
-    matchConditions.specialCat = { $regex: program, $options: "i" };
-  }
-  if (type === "program") {
-    matchConditions.specialCat = { $regex: program, $options: "i" };
-    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
-    matchConditions.region = { $regex: category, $options: "i" };
-  }
+  
 
   try {
     // Récupérer le nombre total de documents
@@ -753,10 +752,9 @@ export async function getEntreprisesAndTotalPages(
 export async function getEntreprises(
   cni: string,
   currentPage: number,
-  category: string,
+  region: string,
   type: string,
   filiere: string,
-  age: string,
   program: string
 ) {
   noStore();
@@ -764,6 +762,8 @@ export async function getEntreprises(
   const offset = (currentPage - 1) * itemsPerPage;
 
   const matchConditions: any = {};
+
+  // console.log("region: " + region, "type: " + type, "filiere: " + filiere);
 
   // Ajouter une condition pour le titre s'il est spécifié
   // if (category === "lastname" && query && query.trim() !== "") {
@@ -782,20 +782,17 @@ export async function getEntreprises(
   if (cni && cni.trim() !== "") {
     matchConditions.cni = { $regex: cni };
   }
-  if (type === "region") {
-    matchConditions.region = { $regex: category, $options: "i" };
-    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
-    matchConditions.specialCat = { $regex: program, $options: "i" };
+
+  if (region && region.trim() !== "") {
+    matchConditions.region = { $regex: region, $options: "i" };
   }
-  if (type === "filiere") {
+  
+  if (filiere && filiere.trim() !== "") {
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
-    matchConditions.region = { $regex: category, $options: "i" };
-    matchConditions.specialCat = { $regex: program, $options: "i" };
   }
-  if (type === "program") {
+  
+  if (program && program.trim() !== "") {
     matchConditions.specialCat = { $regex: program, $options: "i" };
-    matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
-    matchConditions.region = { $regex: category, $options: "i" };
   }
 
   try {
@@ -806,6 +803,12 @@ export async function getEntreprises(
 
     // Calculer le nombre total de pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+
+    // const testRecupUsers = await EntrepriseModel.find({
+    //   region: "dakar",
+    // });
+
+    // console.log(testRecupUsers);
 
     // Récupérer les utilisateurs correspondant aux critères de filtrage avec pagination
     const users = await EntrepriseModel.aggregate([
@@ -822,7 +825,7 @@ export async function getEntreprises(
         $limit: itemsPerPage,
       },
     ]);
-
+    // console.log(users);
     return {
       entreprises: JSON.parse(JSON.stringify(users)),
       totalPages,

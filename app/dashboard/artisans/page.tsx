@@ -21,12 +21,10 @@ const BussinesPage = async ({
     cni?: string;
     region?: string;
     filiere?: string;
-    age?: string;
     page?: string;
     program?: string;
   };
 }) => {
-  let age = searchParams?.age || "";
   let cni = searchParams?.cni || "";
   let region = searchParams?.region || "";
   let filiere = searchParams?.filiere || "";
@@ -47,8 +45,6 @@ const BussinesPage = async ({
   //
 
   const categories = await getAllCatFilter();
-
-  // console.log(type)
 
   return (
     <div className="w-full flex flex-col items-center p-4 bg-gray-100 min-h-screen">
@@ -84,10 +80,9 @@ const BussinesPage = async ({
         <BusinessTable
           cni={cni}
           currentPage={currentPage}
-          category={region}
+          region={region}
           type={type}
           filiere={filiere}
-          age={age}
           program={program}
         />
       </Suspense>
