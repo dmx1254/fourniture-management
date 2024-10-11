@@ -12,39 +12,41 @@ import MoreFilterFiliere from "@/components/ui/MoreFilterFiliere";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import MoreFilterAge from "@/components/MoreFilterAge";
+import ProgrameScolaireButon from "@/components/ProgrameScolaireButon";
 
 const BussinesPage = async ({
   searchParams,
 }: {
   searchParams?: {
-    query?: string;
+    cni?: string;
     region?: string;
     filiere?: string;
     age?: string;
     page?: string;
+    program?: string;
   };
 }) => {
   let age = searchParams?.age || "";
-  let query = searchParams?.query || "";
+  let cni = searchParams?.cni || "";
   let region = searchParams?.region || "";
   let filiere = searchParams?.filiere || "";
+  let program = searchParams?.program || "";
   let currentPage = Number(searchParams?.page) || 1;
   const alltypes: string[] = Object.keys(searchParams);
   const type: string = alltypes[1] || "";
   //   const businessUsers: BusinessUser[] = await getBusinessRegister();
   let { totalPages } =
     (await getEntreprisesAndTotalPages(
-      query,
+      cni,
       currentPage,
       region,
       type,
       filiere,
-      age
+      program
     )) || 1;
   //
 
   const categories = await getAllCatFilter();
-  // console.log(searchParams);
 
   // console.log(type)
 
@@ -56,7 +58,7 @@ const BussinesPage = async ({
 
       <div className="flex items-end max-xl:items-start justify-between w-full mt-2">
         <div className="w-full max-w-md flex items-center max-xl:items-start gap-4">
-          <Search placeholder="Rechercher par prénom et nom..." />
+          <Search placeholder="Rechercher par CNI..." />
         </div>
         <div className="flex flex-col items-end -mb-2">
           <Link
@@ -68,7 +70,7 @@ const BussinesPage = async ({
           </Link>
 
           <div className="flex max-xl:flex-col max-xl:items-start items-center gap-4 max-xl:gap-2">
-            <MoreFilterAge />
+            <ProgrameScolaireButon />
             <MoreFilterFiliere categories={categories} />
             <MoreEntrepriseFilter />
           </div>
@@ -76,16 +78,17 @@ const BussinesPage = async ({
       </div>
 
       <Suspense
-        key={currentPage + query + region + type + filiere}
+        key={currentPage + cni + region + type + filiere + program}
         fallback={<LatestInvoicesSkeleton />}
       >
         <BusinessTable
-          query={query}
+          cni={cni}
           currentPage={currentPage}
           category={region}
           type={type}
           filiere={filiere}
           age={age}
+          program={program}
         />
       </Suspense>
       <Pagination currentPage={currentPage} totalPages={totalPages} />

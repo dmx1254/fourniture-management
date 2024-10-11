@@ -5,6 +5,8 @@ import TransactionModel from "./transaction";
 import EntrepriseModel from "./entreprise";
 import bcrypt from "bcrypt";
 import { Entreprise } from "../types";
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 
 connectDB();
 
@@ -635,29 +637,23 @@ export async function businessRegister(user: Entreprise) {
   try {
     const isEntrepriseExist = await EntrepriseModel.findOne({ cni: user.cni });
     if (isEntrepriseExist)
-      return {
-        errorMessage:
-          "Cette entreprise avec ce numéro de CNI est déjà enregistrée",
-        sucessMessage: "",
-      };
-    await EntrepriseModel.create(user);
+      await EntrepriseModel.findByIdAndDelete(isEntrepriseExist._id);
+    const userCreated = await EntrepriseModel.create(user);
     return {
       errorMessage: "",
       sucessMessage:
         "Merci pour votre inscription ! Nous vous contacterons sous peu.",
+      userId: userCreated._id,
     };
   } catch (error: any) {
-    if(error.name === "MongoError"){
-      console.log("MongoError", error)
-
+    if (error.name === "MongoError") {
+      console.log("MongoError", error);
     }
-    if(error.name === "CastError"){
-      console.log("CastError", error)
-
+    if (error.name === "CastError") {
+      console.log("CastError", error);
     }
-    if(error.name === "ValidationError"){
-      console.log("ValidationError", error)
-
+    if (error.name === "ValidationError") {
+      console.log("ValidationError", error);
     }
   }
 }
@@ -675,12 +671,12 @@ export async function getBusinessRegister() {
 }
 
 export async function getEntreprisesAndTotalPages(
-  query: string,
+  cni: string,
   currentPage: number,
   category: string,
   type: string,
   filiere: string,
-  age: string
+  program: string
 ) {
   // console.log("category: " + category, "corps de metiers :" + filiere);
   noStore();
@@ -699,23 +695,22 @@ export async function getEntreprisesAndTotalPages(
   // if (category === "entreprise" && query && query.trim() !== "") {
   //   matchConditions.entreprise = { $regex: query, $options: "i" };
   // }
-  if (age) {
-  }
-  if (query && query.trim() !== "") {
-    matchConditions.lastname = { $regex: query, $options: "i" };
+
+  if (cni && cni.trim() !== "") {
+    matchConditions.cni = { $regex: cni };
   }
   if (type === "region") {
     matchConditions.region = { $regex: category, $options: "i" };
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
-    matchConditions.age = { $regex: age, $options: "i" };
+    matchConditions.specialCat = { $regex: program, $options: "i" };
   }
   if (type === "filiere") {
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
     matchConditions.region = { $regex: category, $options: "i" };
-    matchConditions.age = { $regex: age, $options: "i" };
+    matchConditions.specialCat = { $regex: program, $options: "i" };
   }
-  if (type === "age") {
-    matchConditions.age = { $regex: age, $options: "i" };
+  if (type === "program") {
+    matchConditions.specialCat = { $regex: program, $options: "i" };
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
     matchConditions.region = { $regex: category, $options: "i" };
   }
@@ -756,12 +751,13 @@ export async function getEntreprisesAndTotalPages(
 }
 
 export async function getEntreprises(
-  query: string,
+  cni: string,
   currentPage: number,
   category: string,
   type: string,
   filiere: string,
-  age: string
+  age: string,
+  program: string
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -783,23 +779,23 @@ export async function getEntreprises(
   //   matchConditions.phone = { $regex: query, $options: "i" };
   // }
 
-  if (query && query.trim() !== "") {
-    matchConditions.lastname = { $regex: query, $options: "i" };
+  if (cni && cni.trim() !== "") {
+    matchConditions.cni = { $regex: cni };
   }
   if (type === "region") {
     matchConditions.region = { $regex: category, $options: "i" };
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
-    matchConditions.age = { $regex: age, $options: "i" };
+    matchConditions.specialCat = { $regex: program, $options: "i" };
   }
   if (type === "filiere") {
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
     matchConditions.region = { $regex: category, $options: "i" };
-    matchConditions.age = { $regex: age, $options: "i" };
+    matchConditions.specialCat = { $regex: program, $options: "i" };
   }
-  if (type === "age") {
+  if (type === "program") {
+    matchConditions.specialCat = { $regex: program, $options: "i" };
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
     matchConditions.region = { $regex: category, $options: "i" };
-    matchConditions.age = { $regex: age, $options: "i" };
   }
 
   try {
@@ -846,5 +842,15 @@ export async function getAllCatFilter() {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+}
+
+export async function getUserById(userId: string) {
+  try {
+    if (!ObjectId.isValid(userId)) return null;
+    const user = await EntrepriseModel.findById(userId);
+    return JSON.parse(JSON.stringify(user));
+  } catch (error) {
+    console.log(error);
   }
 }

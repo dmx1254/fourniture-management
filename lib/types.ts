@@ -111,6 +111,10 @@ export type BusinessUser = {
   commune?: string;
   village?: string;
   quartier?: string;
+  specialCat?: string;
+  tenueScolaireProgram?: string;
+  localAdress?: string;
+  nbrDeMachine?: string;
   region: string;
   corpsdemetiers: string;
   entreprise: string;

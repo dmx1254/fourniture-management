@@ -20,7 +20,6 @@ const ViewBusinessUser = ({
   userId: string;
   users: BusinessUser[];
 }) => {
-  
   const user = users?.find((user) => user?._id === userId);
 
   const InfoItem = ({
@@ -46,7 +45,7 @@ const ViewBusinessUser = ({
       <DialogContent className="w-full sm:max-w-[550px] h-full max-h-[525px] bg-[#022c22] text-gray-200 border-gray-700">
         <DialogHeader className="border-b border-gray-800 pb-4">
           <DialogTitle className="text-lg font-semibold text-gray-100">
-            Information sur l'artisan
+            Information sur l'artisan {user?.specialCat && "- Programme de confection des tenues scolaires"}
           </DialogTitle>
         </DialogHeader>
 
@@ -108,14 +107,21 @@ const ViewBusinessUser = ({
                     value={user?.chambreDemetierRegion}
                   />
                 )}
-              <InfoItem
-                label="Besoins"
-                value={
-                  Array.isArray(user?.besoins)
-                    ? user?.besoins.join(", ")
-                    : user?.besoins
-                }
-              />
+              {user?.specialCat ? (
+                <InfoItem
+                  label="Programme de tenues scolaires"
+                  value={user?.tenueScolaireProgram}
+                />
+              ) : (
+                <InfoItem
+                  label="Besoins"
+                  value={
+                    Array.isArray(user?.besoins)
+                      ? user?.besoins.join(", ")
+                      : user?.besoins
+                  }
+                />
+              )}
               <InfoItem label="Local" value={user?.doYouHaveLocal} />
               <InfoItem
                 label="Nombre d'employés"
@@ -127,9 +133,20 @@ const ViewBusinessUser = ({
                   Number(user?.howLongJob) > 1 ? "ans" : "an"
                 }`}
               />
+              {user?.specialCat && (
+                <InfoItem
+                  label="Adresse de l'atelier"
+                  value={user?.localAdress}
+                />
+              )}
+              {user?.specialCat && (
+                <InfoItem
+                  label="Nombre de machine"
+                  value={user?.nbrDeMachine}
+                />
+              )}
             </div>
           </div>
-       
         </div>
       </DialogContent>
     </Dialog>

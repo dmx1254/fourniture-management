@@ -42,14 +42,17 @@ const generateBusinessUserPDF = (businessUsers: BusinessUser[]) => {
     let yPosition = 50;
 
     // Function to add a section
-    const addSection = (title: string, data: { label: string; value: string }[]) => {
+    const addSection = (
+      title: string,
+      data: { label: string; value: string }[]
+    ) => {
       doc.setFontSize(17);
       doc.setTextColor(44, 62, 80);
       doc.setFont("helvetica", "bold");
       doc.text(title, 14, yPosition);
       yPosition += 10;
 
-      data.forEach(item => {
+      data.forEach((item) => {
         if (yPosition > 280) {
           doc.addPage();
           yPosition = 20;
@@ -67,6 +70,7 @@ const generateBusinessUserPDF = (businessUsers: BusinessUser[]) => {
 
     // Personal Information
     addSection("Informations personnelles", [
+      { label: "Identifiant", value: user._id },
       { label: "Prénom", value: user.lastname },
       { label: "Nom", value: user.firstname },
       { label: "Téléphone", value: user.phone },
@@ -89,13 +93,50 @@ const generateBusinessUserPDF = (businessUsers: BusinessUser[]) => {
       { label: "Entreprise", value: user.entreprise },
       { label: "Ninea", value: user.formel },
       { label: "Formation", value: user.formation },
-      { label: "Besoin de formation", value: user.formation?.trim().toLowerCase() === "non" ? user.besoinFormation : "N/A" },
+      {
+        label: "Besoin de formation",
+        value:
+          user.formation?.trim().toLowerCase() === "non"
+            ? user.besoinFormation
+            : "N/A",
+      },
       { label: "Chambre de métiers", value: user.chambreDemetier },
-      { label: "Région du chambre de métier", value: user.chambreDemetier?.trim().toLowerCase() === "oui" ? user.chambreDemetierRegion : "N/A" },
-      { label: "Besoins", value: Array.isArray(user.besoins) ? user.besoins.join(", ") : user.besoins },
+      {
+        label: "Région du chambre de métier",
+        value:
+          user.chambreDemetier?.trim().toLowerCase() === "oui"
+            ? user.chambreDemetierRegion
+            : "N/A",
+      },
+      {
+        label: user.tenueScolaireProgram ? "Programme de tenues scolaires" : "",
+        value:
+          user.tenueScolaireProgram?.trim().toLowerCase() === "oui"
+            ? user.tenueScolaireProgram
+            : "N/A",
+      },
+      {
+        label: user.localAdress ? "Adresse de l'atelier" : "",
+        value: user.localAdress ? user.localAdress : "N/A",
+      },
+      {
+        label: user.nbrDeMachine ? "Nombre de machine" : "",
+        value: user.nbrDeMachine ? user.nbrDeMachine : "N/A",
+      },
+      {
+        label: "Besoins",
+        value: Array.isArray(user.besoins)
+          ? user.besoins.join(", ")
+          : user.besoins,
+      },
       { label: "Local", value: user.doYouHaveLocal },
       { label: "Nombre d'employés", value: user.businessWorker },
-      { label: "Annees d'expériences", value: `${user.howLongJob} ${Number(user.howLongJob) > 1 ? "ans" : "an"}` },
+      {
+        label: "Annees d'expériences",
+        value: `${user.howLongJob} ${
+          Number(user.howLongJob) > 1 ? "ans" : "an"
+        }`,
+      },
     ]);
 
     // Add footer
@@ -114,7 +155,12 @@ const generateBusinessUserPDF = (businessUsers: BusinessUser[]) => {
   });
 
   // Save the PDF
-  doc.save(`rapport-des-artisans-numero-${generateId()}-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+  doc.save(
+    `rapport-des-artisans-numero-${generateId()}-${format(
+      new Date(),
+      "yyyy-MM-dd"
+    )}.pdf`
+  );
 };
 
 export default generateBusinessUserPDF;

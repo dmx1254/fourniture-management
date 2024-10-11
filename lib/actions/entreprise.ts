@@ -100,6 +100,25 @@ const entrepriseSchema = new mongoose.Schema(
       trim: true,
     },
 
+    specialCat: {
+      type: String,
+      default: "",
+    },
+    tenueScolaireProgram: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    localAdress: {
+      type: String,
+      default: "",
+    },
+
+    nbrDeMachine: {
+      type: String,
+      default: "",
+    },
+
     doYouHaveLocal: {
       type: String,
       default: "",

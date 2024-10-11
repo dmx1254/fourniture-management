@@ -8,29 +8,32 @@ import DeleteEntrepriseBtn from "./DeleteEntrepriseBtn";
 import DownloadEntreprise from "./DownloadEntreprise";
 
 const BusinessTable = async ({
-  query,
+  cni,
   currentPage,
   category,
   type,
   filiere,
-  age
+  age,
+  program,
 }: {
-  query: string;
+  cni: string;
   currentPage: number;
   category: string;
   type: string;
   filiere: string;
   age: string;
+  program: string;
 }) => {
   const session = await getSession();
 
   const { entreprises } = await getEntreprises(
-    query,
+    cni,
     currentPage,
     category,
     type,
     filiere,
-    age
+    age,
+    program
   );
   const businessUsers: BusinessUser[] = entreprises;
 
@@ -103,7 +106,7 @@ const BusinessTable = async ({
           ))}
         </tbody>
       </table>
-      <DownloadEntreprise entreprises={businessUsers} />
+      <DownloadEntreprise entreprises={businessUsers} program={program} />
     </div>
   );
 };

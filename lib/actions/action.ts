@@ -676,7 +676,7 @@ export async function inscriptionForEntreprise(user: Entreprise) {
   try {
     const entrepriseCreated = await businessRegister(user);
     revalidatePath("/dashboard/artisans");
-    return entrepriseCreated;
+    return JSON.parse(JSON.stringify(entrepriseCreated));
   } catch (error: any) {
     console.log(error);
     throw new Error(error);
