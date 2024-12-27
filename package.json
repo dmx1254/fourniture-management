@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postinstall": "apt-get install -y libnss3",
     "start": "next start",
     "lint": "next lint"
   },
