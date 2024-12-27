@@ -21,7 +21,7 @@ const PublicMarket = () => {
         <div className="absolute w-full h-[27px] bg-white z-50 top-[72%]"></div>
       </div>
       <div className="w-full flex items-start gap-8">
-        <div className="flex flex-col items-start gap-4 bg-[#ECEFED] p-4">
+        <div className="flex  flex-col items-start gap-4 bg-[#ECEFED] p-4">
           <button
             className="relative flex items-center gap-0.5 text-sm text-[#c64934]"
             onClick={() => setIsActive("entretiens")}

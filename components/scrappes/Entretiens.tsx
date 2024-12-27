@@ -29,11 +29,14 @@ const Entretiens = () => {
 
   return (
     <div className="w-full flex flex-col items-start gap-4">
-      <div className="w-full">
-        Nombre de resultats pour{" "}
-        <span className="text-orange-600 font-semibold">Entretiens</span>:{" "}
-        {data?.count}
-      </div>
+      {data?.count && (
+        <div className="w-full">
+          Nombre de resultats pour{" "}
+          <span className="text-orange-600 font-semibold">Entretiens</span>:{" "}
+          {data?.count}
+        </div>
+      )}
+
       {isLoading ? (
         <div className="w-full flex flex-col items-start gap-4">
           {Array.from({ length: 18 }).map((_, index) => (
