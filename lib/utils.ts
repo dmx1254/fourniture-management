@@ -96,11 +96,10 @@ const generatePDF = (products: Product[]) => {
 
 export default generatePDF;
 
-
-
 export function generateId(length = 8) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let id = '';
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let id = "";
   for (let i = 0; i < length; i++) {
     const randomIndex = Math.floor(Math.random() * chars.length);
     id += chars[randomIndex];
@@ -108,7 +107,10 @@ export function generateId(length = 8) {
   return id;
 }
 
-
 export const formatCNI = (cni: string) => {
   return cni.replace(/(\d{1})(\d{3})(\d{4})(\d{5})/, "$1 $2 $3 $4");
+};
+
+export const parseS = (s: string): string => {
+  return s.replace(/&nbsp;/g, "");
 };

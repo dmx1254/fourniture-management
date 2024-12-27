@@ -1,66 +1,100 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import * as cheerio from "cheerio";
+import axios from "axios";
+import iconv from "iconv-lite";
+
+interface SearchResult {
+  title: string;
+  publishDate: string;
+  deadline: string;
+  id: string;
+}
 
 export async function GET(req: Request) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox", // Désactive le bac à sable (sandbox)
-      "--disable-setuid-sandbox", // Désactive une autre couche de sécurité
-    ],
-  });
-
   try {
-    const page = await browser.newPage();
+    // Construire l'URL avec le terme de recherche
+    const searchUrl =
+      "http://www.marchespublics.sn/index.php?option=com_soffres&Itemid=143";
 
-    // Navigate to the page
-    await page.goto("http://www.marchespublics.sn");
+    // Faire la requête POST avec les paramètres de recherche
+    const response = await axios.post(
+      searchUrl,
+      new URLSearchParams({
+        crit: "tenues",
+        who: "mysearch",
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        responseType: "arraybuffer",
+      }
+    );
 
-    // Wait for and fill the search form
-    await page.waitForSelector("#frontsearch");
-    await page.waitForSelector('form#frontsearch input[name="crit"]');
-    await page.type('form#frontsearch input[name="crit"]', "tenues");
-    await page.click('form#frontsearch input[type="submit"]');
+    // Décoder la réponse avec le bon encodage
+    const html = iconv.decode(response.data, "ISO-8859-1");
 
-    // Wait for results table to load
-    await page.waitForSelector(".cooltable");
+    // Charger le HTML dans Cheerio avec les bonnes options
+    const $ = cheerio.load(html, {
+      xml: {
+        decodeEntities: false,
+      },
+      _useHtmlParser2: true,
+    } as cheerio.CheerioOptions);
 
-    // Extract data from the table
-    const results = await page.evaluate(() => {
-      const rows = document.querySelectorAll(
-        ".cooltable tr:not(.cooltablehdr)"
-      );
+    const results: SearchResult[] = [];
 
-      return Array.from(rows)
-        .map((row) => {
-          const columns = row.querySelectorAll("td");
-          if (columns.length >= 3) {
-            return {
-              title: columns[0].textContent?.trim() || "",
-              publishDate: columns[1].textContent?.trim() || "",
-              deadline: columns[2].textContent?.trim() || "",
-              // Extract ID from the details link
-              id: columns[3].querySelector("a")?.href || "",
-            };
+    // Trouver la table des résultats
+    $(".cooltable tr").each((index, element) => {
+      // Ignorer l'en-tête de la table
+      if (!$(element).hasClass("cooltablehdr")) {
+        const columns = $(element).find("td");
+
+        if (columns.length >= 3) {
+          const title = $(columns[0]).text().trim();
+          const publishDate = $(columns[1]).text().trim();
+          const deadline = $(columns[2]).text().trim();
+
+          // Extraire l'ID du lien détails
+          const detailsLink = $(columns[3]).find("a").attr("href") || "";
+          const idMatch = detailsLink.match(/idmarket=(\d+)/);
+          const id = idMatch ? idMatch[1] : "";
+
+          if (title && publishDate && deadline) {
+            results.push({
+              title,
+              publishDate,
+              deadline,
+              id,
+            });
           }
-          return null;
-        })
-        .filter((item) => item !== null);
+        }
+      }
     });
 
-    await browser.close();
+    // Extraire le nombre total de résultats
+    const totalResults =
+      $(".Style4")
+        .text()
+        .match(/(\d+)\s+résultat/)?.[1] || "0";
 
     return NextResponse.json({
       success: true,
+      total: parseInt(totalResults),
       count: results.length,
       data: results,
     });
   } catch (error) {
-    await browser.close();
-    return NextResponse.json({
-      success: false,
-      error:
-        error instanceof Error ? error.message : "An unknown error occurred",
-    });
+    console.error("Erreur lors du scraping:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Une erreur inconnue est survenue",
+      },
+      { status: 500 }
+    );
   }
 }
