@@ -4,6 +4,10 @@ import puppeteer from "puppeteer";
 export async function GET(req: Request) {
   const browser = await puppeteer.launch({
     headless: true,
+    args: [
+      "--no-sandbox", // Désactive le bac à sable (sandbox)
+      "--disable-setuid-sandbox", // Désactive une autre couche de sécurité
+    ],
   });
 
   try {
