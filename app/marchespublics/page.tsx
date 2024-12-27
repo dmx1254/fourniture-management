@@ -16,12 +16,12 @@ const PublicMarket = () => {
           alt="marche public du senegal"
           width={1000}
           height={1000}
-          className="w-screen h-24 object-cover"
+          className="w-full h-16 md:h-24 object-contain"
         />
-        <div className="absolute w-full h-[27px] bg-white z-50 top-[72%]"></div>
+        <div className="absolute w-full h-[48px] md:h-[34px] bg-white z-50 top-[50%] md:top-[64%]"></div>
       </div>
-      <div className="w-full flex items-start gap-8">
-        <div className="flex  flex-col items-start gap-4 bg-[#ECEFED] p-4">
+      <div className="w-full max-md:flex-col flex items-start gap-8">
+        <div className="flex  flex-col items-start gap-4 bg-[#ECEFED] pt-6 sm:pt-4 px-4 pb-4">
           <button
             className="relative flex items-center gap-0.5 text-sm text-[#c64934]"
             onClick={() => setIsActive("entretiens")}
@@ -35,7 +35,7 @@ const PublicMarket = () => {
             />
             Entretiens
             {isActive === "entretiens" && (
-              <span className="absolute w-2 h-2 flex items-center justify-center bg-green-600 rounded-full left-[90%] top-[2%]" />
+              <span className="absolute w-2 h-2 flex items-center justify-center bg-green-600 rounded-full left-[94%] top-[2%]" />
             )}
           </button>
           <button
@@ -71,7 +71,7 @@ const PublicMarket = () => {
             )}
           </button>
         </div>
-        <div className="flex-1">
+        <div className="w-full">
           {isActive === "entretiens" && <Entretiens />}
           {isActive === "achats" && <Achats />}
           {isActive === "tenues" && <Tenues />}

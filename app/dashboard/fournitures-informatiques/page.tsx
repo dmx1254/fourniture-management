@@ -3,7 +3,7 @@ import React, { Suspense } from "react";
 import { Pagination } from "@/components/ui/pagination";
 import Search from "@/components/ui/search";
 import CreateArticle from "@/components/ui/createArticle";
-import Table from "@/components/ui/table";
+import Table from "@/components/table";
 import LatestInvoicesSkeleton from "@/components/skelettons/skeletons";
 import { getArticlesAndTotalPages } from "@/lib/actions/api";
 import MoreFilter from "@/components/ui/moreFilter";

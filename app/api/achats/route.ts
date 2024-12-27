@@ -66,9 +66,7 @@ export async function GET(req: Request) {
           const deadline = cleanText($(columns[2]).text());
 
           // Extraire l'ID du lien détails
-          const detailsLink = $(columns[3]).find("a").attr("href") || "";
-          const idMatch = detailsLink.match(/idmarket=(\d+)/);
-          const id = idMatch ? idMatch[1] : "";
+          const id = $(columns[3]).find("a").attr("href") || "";
 
           if (title && publishDate && deadline) {
             results.push({

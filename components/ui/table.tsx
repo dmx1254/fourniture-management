@@ -1,77 +1,117 @@
-// /pmn.jpeg
+import * as React from "react"
 
-import React from "react";
-import { getArticlesAndTotalPages } from "@/lib/actions/api";
-import { Product } from "@/lib/types";
-import ArticleUpdate from "../updates-comp/ArticleUpdate";
-import { getSession } from "@/lib/actions/action";
-import DownloadInventaire from "../DownloadInventaire";
+import { cn } from "@/lib/utils"
 
-const Table = async ({
-  query,
-  currentPage,
-  category,
-}: {
-  query: string;
-  currentPage: number;
-  category: string;
-}) => {
-  const session = await getSession();
-  const { articles } = await getArticlesAndTotalPages(
-    query,
-    currentPage,
-    category
-  );
-  const products: Product[] = articles;
-  // console.log(products);
-  return (
-    <div className="relative w-full mt-6">
-      <table className="min-w-full bg-white text-left">
-        <thead className="bg-[#052e16] text-white/80">
-          <tr className="border-b border-gray-100 text-sm">
-            <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
-              Articles
-            </th>
-            <th className="hidden x2s:flex p-1 xs:p-2 md:p-4 font-semibold">
-              Stockage Initial
-            </th>
-            <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
-              consommé
-            </th>
-            <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
-              réstant
-            </th>
-            {session.isAdmin && <th className="p-4 font-semibold">Actions</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {products
-            .filter((article) => article.category !== "fournitures-de-bureau")
-            .map((product) => (
-              <tr
-                key={product._id}
-                className="border-b border-gray-200 text-xs text-[#111b21]"
-              >
-                <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
-                  {product.title}
-                </td>
-                <td className="hidden x2s:flex p-1 xs:p-2 md:p-4 font-semibold">
-                  {product.quantity}
-                </td>
-                <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold line-through">
-                  {product.consome}
-                </td>
-                <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-bold">
-                  {product.restant}
-                </td>
-                {session.isAdmin && <ArticleUpdate article={product} />}
-              </tr>
-            ))}
-        </tbody>
-      </table>
-      {session.isAdmin && <DownloadInventaire products={products} />}
-    </div>
-  );
-};
+const Table = React.forwardRef<
+  HTMLTableElement,
+  React.HTMLAttributes<HTMLTableElement>
+>(({ className, ...props }, ref) => (
+  <div className="relative w-full overflow-auto">
+    <table
+      ref={ref}
+      className={cn("w-full caption-bottom text-sm", className)}
+      {...props}
+    />
+  </div>
+))
+Table.displayName = "Table"
 
-export default Table;
+const TableHeader = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+))
+TableHeader.displayName = "TableHeader"
+
+const TableBody = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tbody
+    ref={ref}
+    className={cn("[&_tr:last-child]:border-0", className)}
+    {...props}
+  />
+))
+TableBody.displayName = "TableBody"
+
+const TableFooter = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tfoot
+    ref={ref}
+    className={cn(
+      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+      className
+    )}
+    {...props}
+  />
+))
+TableFooter.displayName = "TableFooter"
+
+const TableRow = React.forwardRef<
+  HTMLTableRowElement,
+  React.HTMLAttributes<HTMLTableRowElement>
+>(({ className, ...props }, ref) => (
+  <tr
+    ref={ref}
+    className={cn(
+      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      className
+    )}
+    {...props}
+  />
+))
+TableRow.displayName = "TableRow"
+
+const TableHead = React.forwardRef<
+  HTMLTableCellElement,
+  React.ThHTMLAttributes<HTMLTableCellElement>
+>(({ className, ...props }, ref) => (
+  <th
+    ref={ref}
+    className={cn(
+      "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+      className
+    )}
+    {...props}
+  />
+))
+TableHead.displayName = "TableHead"
+
+const TableCell = React.forwardRef<
+  HTMLTableCellElement,
+  React.TdHTMLAttributes<HTMLTableCellElement>
+>(({ className, ...props }, ref) => (
+  <td
+    ref={ref}
+    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
+    {...props}
+  />
+))
+TableCell.displayName = "TableCell"
+
+const TableCaption = React.forwardRef<
+  HTMLTableCaptionElement,
+  React.HTMLAttributes<HTMLTableCaptionElement>
+>(({ className, ...props }, ref) => (
+  <caption
+    ref={ref}
+    className={cn("mt-4 text-sm text-muted-foreground", className)}
+    {...props}
+  />
+))
+TableCaption.displayName = "TableCaption"
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+}

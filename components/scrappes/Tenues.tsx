@@ -4,6 +4,15 @@ import React, { useEffect, useState } from "react";
 import { PMNType } from "@/lib/types";
 import { Search } from "lucide-react";
 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
 const Tenues = () => {
   const [data, setData] = useState<PMNType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -41,27 +50,26 @@ const Tenues = () => {
           ))}
         </div>
       ) : (
-        <table className="w-full max-w-6xl overflow-x-auto border border-gray-200">
-          <thead>
-            <tr className="bg-[#F0F0F0] text-sm text-gray-400">
-              <th className="px-4 py-2 text-left">Libellé de l'avis</th>
-              <th className="px-4 py-2 text-center">Publié le</th>
-              <th className="px-4 py-2 text-center w-[160px]">
-                Limite de dépot
-              </th>
-              <th className="px-4 py-2"></th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table className="w-full border">
+          <TableHeader>
+            <TableRow className="bg-[#F0F0F0] text-sm text-gray-400">
+              <TableHead>Libellé de l'avis</TableHead>
+              <TableHead className="text-center">Publié le</TableHead>
+              <TableHead className="w-[160px] text-center">
+                Limite de dépôt
+              </TableHead>
+              <TableHead></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="w-full">
             {data?.data?.map((item, index) => (
-              <tr
-                key={index}
-                className="text-sm text-gray-800 border border-gray-200 cursor-pointer hover:bg-[#e7cfcb]"
-              >
-                <td className="px-4 py-2 text-left">{item.title}</td>
-                <td className="px-4 py-2 text-center">{item.publishDate}</td>
-                <td className="px-4 py-2 text-center">{item.deadline}</td>
-                <td className="px-4 py-2 text-center">
+              <TableRow key={index}>
+                <TableCell>{item.title}</TableCell>
+                <TableCell className="text-center">
+                  {item.publishDate}
+                </TableCell>
+                <TableCell className="text-center">{item.deadline}</TableCell>
+                <TableCell className="text-center">
                   <a
                     href={`http://www.marchespublics.sn/${item.id}`}
                     target="_blank"
@@ -69,11 +77,11 @@ const Tenues = () => {
                   >
                     <Search className="text-gray-500" size={22} />
                   </a>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       )}
     </div>
   );
