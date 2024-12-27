@@ -112,5 +112,11 @@ export const formatCNI = (cni: string) => {
 };
 
 export const parseS = (s: string): string => {
-  return s.replace(/&nbsp;/g, "");
+  // Remplace toutes les occurrences de &nbsp; par une chaîne vide
+  let normalized = s.replace(/&nbsp;/g, "");
+
+  // Normalise la chaîne pour corriger les caractères spéciaux
+  normalized = normalized.normalize("NFKD");
+
+  return normalized;
 };

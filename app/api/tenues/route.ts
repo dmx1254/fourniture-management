@@ -34,6 +34,16 @@ export async function GET(req: Request) {
     // Décoder la réponse avec le bon encodage
     const html = iconv.decode(response.data, "ISO-8859-1");
 
+    const cleanText = (text: string) => {
+      return text
+        .replace(/\u0092/g, "'") // Remplace le caractère spécial de l'apostrophe
+        .replace(/\u0085/g, "...") // Remplace les points de suspension
+        .replace(/&#039;/g, "'") // Remplace l'entité HTML pour l'apostrophe
+        .replace(/&apos;/g, "'") // Remplace une autre entité HTML pour l'apostrophe
+        .replace(/['']/g, "'") // Normalise les différents types d'apostrophes
+        .replace(/&nbsp;/g, "") // Remplaces les espaces
+        .trim();
+    };
     // Charger le HTML dans Cheerio avec les bonnes options
     const $ = cheerio.load(html, {
       xml: {
@@ -51,9 +61,9 @@ export async function GET(req: Request) {
         const columns = $(element).find("td");
 
         if (columns.length >= 3) {
-          const title = $(columns[0]).text().trim();
-          const publishDate = $(columns[1]).text().trim();
-          const deadline = $(columns[2]).text().trim();
+          const title = cleanText($(columns[0]).text());
+          const publishDate = cleanText($(columns[1]).text());
+          const deadline = cleanText($(columns[2]).text());
 
           // Extraire l'ID du lien détails
           const detailsLink = $(columns[3]).find("a").attr("href") || "";
