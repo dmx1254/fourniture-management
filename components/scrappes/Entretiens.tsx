@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { PMNType } from "@/lib/types";
 import { Search } from "lucide-react";
-import { parseS } from "@/lib/utils";
 
 const Entretiens = () => {
   const [data, setData] = useState<PMNType | null>(null);
@@ -62,7 +61,7 @@ const Entretiens = () => {
                 key={index}
                 className="text-sm text-gray-800 border border-gray-200 cursor-pointer hover:bg-[#e7cfcb]"
               >
-                <td className="px-4 py-2 text-left">{parseS(item.title)}</td>
+                <td className="px-4 py-2 text-left">{item.title}</td>
                 <td className="px-4 py-2 text-center">{item.publishDate}</td>
                 <td className="px-4 py-2 text-center">{item.deadline}</td>
                 <td className="px-4 py-2 text-center">

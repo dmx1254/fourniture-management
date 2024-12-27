@@ -110,13 +110,3 @@ export function generateId(length = 8) {
 export const formatCNI = (cni: string) => {
   return cni.replace(/(\d{1})(\d{3})(\d{4})(\d{5})/, "$1 $2 $3 $4");
 };
-
-export const parseS = (s: string): string => {
-  // Remplace toutes les occurrences de &nbsp; par une chaîne vide
-  let normalized = s.replace(/&nbsp;/g, "");
-
-  // Normalise la chaîne pour corriger les caractères spéciaux
-  normalized = normalized.normalize("NFKD");
-
-  return normalized;
-};
