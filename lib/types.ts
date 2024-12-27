@@ -150,3 +150,16 @@ export type Department = {
   department: string;
   communes: Commune[];
 };
+
+interface EntreTien {
+  title: string;
+  publishDate: string;
+  deadline: string;
+  id: string;
+}
+
+export interface PMNType {
+  success: boolean;
+  count: number;
+  data: EntreTien[];
+}
