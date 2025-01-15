@@ -364,7 +364,7 @@ const BusinessRegister = () => {
             }}
           />
           <p className="text-2xl font-semibold text-center -mt-5">
-            FICHE DE RECENSEMENT DES ARTISANS
+            FICHE D'ACCOMPAGNEMENT DES ARTISANS
           </p>
         </div>
         <p className="text-3xl text-center mt-6">
@@ -914,7 +914,7 @@ const BusinessRegister = () => {
             className="block text-base font-medium text-gray-700"
             htmlFor="businessWorker"
           >
-            Quel est le nombre de vos travailleurs ?
+            Quel est le nombre de vos employés ?
           </Label>
           <Input
             id="businessWorker"
