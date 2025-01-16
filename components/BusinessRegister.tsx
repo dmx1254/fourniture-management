@@ -114,8 +114,8 @@ const BusinessRegister = () => {
       cni,
       isCniValid,
       doYouHaveLocal,
-      businessWorker,
-      howLongJob,
+      businessWorker: Math.abs(Number(businessWorker)),
+      howLongJob: Math.abs(Number(howLongJob)),
       chambreDemetier,
       chambreDemetierRegion,
       corpsdemetiers,
@@ -341,7 +341,7 @@ const BusinessRegister = () => {
       setCommuneTab(Array.from(filtreWithoutDoublure));
       setCommune("");
     }
-  }, [departement, region]);
+  }, [departement, region, departementTab]);
 
   return (
     <div
@@ -364,11 +364,12 @@ const BusinessRegister = () => {
             }}
           />
           <p className="text-2xl font-semibold text-center -mt-5">
-            FICHE D'ACCOMPAGNEMENT DES ARTISANS
+            FICHE D&apos;ACCOMPAGNEMENT DES ARTISANS
           </p>
         </div>
         <p className="text-3xl text-center mt-6">
-          Bienvenue sur le portail d'inscription du Projet Mobilier National.
+          Bienvenue sur le portail d&apos;inscription du Projet Mobilier
+          National.
         </p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-6" ref={formRef}>
@@ -422,7 +423,7 @@ const BusinessRegister = () => {
               className="block text-base font-medium text-gray-700"
               htmlFor="cni"
             >
-              Carte nationale d'identité
+              Carte nationale d&apos;identité
             </Label>
             <Input
               id="cni"
@@ -674,7 +675,7 @@ const BusinessRegister = () => {
         <div>
           <label className="block text-base font-medium text-gray-700">
             Avez-vous bénéficié d’une formation dispensée par une structure de
-            l'État ?
+            l&apos;État ?
           </label>
           <div className="mt-2 space-y-2">
             {["Oui  ", "Non  "].map((option) => (
@@ -881,7 +882,7 @@ const BusinessRegister = () => {
         </div>
         <div>
           <label className="block text-base font-medium text-gray-700">
-            Disposez-vous d'un local ?
+            Disposez-vous d&apos;un local ?
           </label>
           <div className="mt-2 space-y-2">
             {["    Oui", "    Non"].map((option) => (
@@ -919,7 +920,7 @@ const BusinessRegister = () => {
           <Input
             id="businessWorker"
             type="number"
-            value={businessWorker}
+            value={Math.abs(Number(businessWorker))}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setBusinessWorker(e.target.value)
             }
@@ -940,7 +941,7 @@ const BusinessRegister = () => {
           <Input
             id="cni"
             type="number"
-            value={howLongJob}
+            value={Math.abs(Number(howLongJob))}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setHowLongJob(e.target.value)
             }

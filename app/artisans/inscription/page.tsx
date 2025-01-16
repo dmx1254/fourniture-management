@@ -18,7 +18,7 @@ const InscriptionPage = () => {
         <p className="font-semibold">Un Peuple - Un But - Une Foi</p>
         <p className="text-lg font-extrabold">*******</p>
         <p className="text-xl font-bold text-center">
-          MINISTERE DU TOURISME ET DE L'ARTISANAT
+          MINISTERE DU TOURISME ET DE L&apos;ARTISANAT
         </p>
         <p className="text-lg font-extrabold">*******</p>
         <p className="text-2xl font-semibold text-center">

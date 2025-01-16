@@ -118,9 +118,9 @@ const DashboardPage = async () => {
             </div>
           ))}
         </div>
-        
+
         <Suspense key={articles.length} fallback={<CardSkeleton />}>
-        <Chart articles={articles} />
+          <Chart articles={articles} />
         </Suspense>
       </div>
     </section>
