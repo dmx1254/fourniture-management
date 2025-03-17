@@ -97,8 +97,8 @@ export type Entreprise = {
   cni: string;
   isCniValid: string;
   doYouHaveLocal: string;
-  businessWorker: string;
-  howLongJob: string;
+  businessWorker: number | string;
+  howLongJob: number | string;
 };
 
 export type BusinessUser = {

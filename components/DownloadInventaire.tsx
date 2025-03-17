@@ -5,7 +5,7 @@ import generatePDF from "@/lib/utils";
 import { CloudUpload } from "lucide-react";
 import React from "react";
 
-const DownloadInventaire = ({ products }: Product[]) => {
+const DownloadInventaire = ({ products }: { products: Product[] }) => {
   return (
     <button
       className="fixed bottom-8 right-6 z-10 bg-orange-600 p-1 rounded cursor-pointer"

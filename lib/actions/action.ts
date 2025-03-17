@@ -612,9 +612,9 @@ export async function updateUserFournitures(
       const category = isCheckFourniture.data.category;
       const title = isCheckFourniture.data.title;
       const consome = isCheckFourniture.data.consome;
-      const lastname = isCheckFourniture.data.lastname;
-      const firstname = isCheckFourniture.data.firstname;
-      const lastcons = isCheckFourniture.data.lastcons;
+      const lastname = isCheckFourniture.data.lastname || "";
+      const firstname = isCheckFourniture.data.firstname || "";
+      const lastcons = isCheckFourniture.data.lastcons || 0;
       if (transId) {
         const response = await updateTransaction(
           transId,
@@ -641,11 +641,14 @@ export async function getSession() {
 
 export async function login(prevState: LoginErrorState, formData: FormData) {
   const sessions = {};
-  for (const [name, value] of formData.entries()) {
-    sessions[name] = value;
-  }
+  const email = formData.get("email");
+  const password = formData.get("password");
+  // for (const [name, value] of formData.entries()) {
+  //   sessions[name] = value;
+  // }
+  const session = { email, password };
 
-  const isCheckLogin = LoginSchema.safeParse(sessions);
+  const isCheckLogin = LoginSchema.safeParse(session);
   if (!isCheckLogin.success) {
     return {
       errors: isCheckLogin.error.flatten().fieldErrors,
