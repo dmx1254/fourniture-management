@@ -54,11 +54,12 @@ export async function GET(req: Request) {
 
     const results: SearchResult[] = [];
 
-    const limit = 20;
+    const year = new Date().getFullYear().toString(); // 2025
+    // const beforeYear = (new Date().getFullYear() - 1).toString(); // 2024
+
     // Trouver la table des résultats
     $(".cooltable tr").each((index, element) => {
       // Ignorer l'en-tête de la table
-      if (results.length >= limit) return;
       if (!$(element).hasClass("cooltablehdr")) {
         const columns = $(element).find("td");
 
@@ -70,7 +71,7 @@ export async function GET(req: Request) {
           // Extraire l'ID du lien détails
           const id = $(columns[3]).find("a").attr("href") || "";
 
-          if (title && publishDate && deadline) {
+          if (title && publishDate && deadline && publishDate.includes(year)) {
             results.push({
               title,
               publishDate,

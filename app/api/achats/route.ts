@@ -53,14 +53,12 @@ export async function GET(req: Request) {
     } as cheerio.CheerioOptions);
 
     const results: SearchResult[] = [];
-
+    const year = new Date().getFullYear().toString(); // 2025
+    // const beforeYear = (new Date().getFullYear() - 1).toString(); // 2024
     // Trouver la table des résultats
-
-    const limit = 20;
     $(".cooltable tr").each((index, element) => {
       // Ignorer l'en-tête de la table
       if (!$(element).hasClass("cooltablehdr")) {
-        if (results.length >= limit) return;
         const columns = $(element).find("td");
 
         if (columns.length >= 3) {
@@ -71,7 +69,7 @@ export async function GET(req: Request) {
           // Extraire l'ID du lien détails
           const id = $(columns[3]).find("a").attr("href") || "";
 
-          if (title && publishDate && deadline) {
+          if (title && publishDate && deadline && publishDate.includes(year)) {
             results.push({
               title,
               publishDate,

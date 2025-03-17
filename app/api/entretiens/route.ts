@@ -52,13 +52,12 @@ export async function GET(req: Request) {
       _useHtmlParser2: true,
     } as cheerio.CheerioOptions);
 
-    const limit = 20;
-
     const results: SearchResult[] = [];
 
+    const year = new Date().getFullYear().toString(); // 2025
+    // const beforeYear = (new Date().getFullYear() - 1).toString(); // 2024
     // Trouver la table des résultats
     $(".cooltable tr").each((index, element) => {
-      if (results.length >= limit) return;
       // Ignorer l'en-tête de la table
       if (!$(element).hasClass("cooltablehdr")) {
         const columns = $(element).find("td");
@@ -71,7 +70,7 @@ export async function GET(req: Request) {
           // Extraire l'ID du lien détails
           const id = $(columns[3]).find("a").attr("href") || "";
 
-          if (title && publishDate && deadline) {
+          if (title && publishDate && deadline && publishDate.includes(year)) {
             results.push({
               title,
               publishDate,
