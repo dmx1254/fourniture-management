@@ -52,10 +52,13 @@ export async function GET(req: Request) {
       _useHtmlParser2: true,
     } as cheerio.CheerioOptions);
 
+    const limit = 20;
+
     const results: SearchResult[] = [];
 
     // Trouver la table des résultats
     $(".cooltable tr").each((index, element) => {
+      if (results.length >= limit) return;
       // Ignorer l'en-tête de la table
       if (!$(element).hasClass("cooltablehdr")) {
         const columns = $(element).find("td");

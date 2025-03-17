@@ -22,10 +22,7 @@ const Tenues = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/tenues", {
-          cache: "no-store", // Essayez ceci au lieu de force-cache
-          signal: AbortSignal.timeout(8000), // Timeout après 8 secondes
-        });
+        const response = await fetch("/api/tenues", { cache: "force-cache" });
         const result = await response.json();
         setData(result);
       } catch (error) {

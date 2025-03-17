@@ -55,9 +55,12 @@ export async function GET(req: Request) {
     const results: SearchResult[] = [];
 
     // Trouver la table des résultats
+
+    const limit = 20;
     $(".cooltable tr").each((index, element) => {
       // Ignorer l'en-tête de la table
       if (!$(element).hasClass("cooltablehdr")) {
+        if (results.length >= limit) return;
         const columns = $(element).find("td");
 
         if (columns.length >= 3) {

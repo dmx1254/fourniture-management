@@ -22,8 +22,7 @@ const Entretiens = () => {
       try {
         setIsLoading(true);
         const response = await fetch("/api/entretiens", {
-          cache: "no-store", // Essayez ceci au lieu de force-cache
-          signal: AbortSignal.timeout(8000), // Timeout après 8 secondes
+          cache: "force-cache",
         });
         const result = await response.json();
         setData(result);
