@@ -22,7 +22,8 @@ const Entretiens = () => {
       try {
         setIsLoading(true);
         const response = await fetch("/api/entretiens", {
-          cache: "force-cache",
+          cache: "no-store", // Essayez ceci au lieu de force-cache
+          signal: AbortSignal.timeout(8000), // Timeout après 8 secondes
         });
         const result = await response.json();
         setData(result);
@@ -54,7 +55,7 @@ const Entretiens = () => {
         <Table className="w-full border">
           <TableHeader>
             <TableRow className="bg-[#F0F0F0] text-sm text-gray-400">
-              <TableHead>Libellé de l'avis</TableHead>
+              <TableHead>Libellé de l&apos;avis</TableHead>
               <TableHead className="text-center">Publié le</TableHead>
               <TableHead className="w-[160px] text-center">
                 Limite de dépôt
