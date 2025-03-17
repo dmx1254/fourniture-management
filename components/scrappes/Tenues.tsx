@@ -22,7 +22,7 @@ const Tenues = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/tenues", { cache: "force-cache" });
+        const response = await fetch("/api/tenues");
         const result = await response.json();
         setData(result);
       } catch (error) {

@@ -22,7 +22,7 @@ const Achats = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/achats", { cache: "force-cache" });
+        const response = await fetch("/api/achats");
         const result = await response.json();
         setData(result);
       } catch (error) {

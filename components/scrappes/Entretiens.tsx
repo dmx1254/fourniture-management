@@ -21,9 +21,7 @@ const Entretiens = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/entretiens", {
-          cache: "force-cache",
-        });
+        const response = await fetch("/api/entretiens");
         const result = await response.json();
         setData(result);
       } catch (error) {
