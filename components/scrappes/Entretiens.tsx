@@ -63,36 +63,24 @@ const Entretiens = () => {
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">
-            {data?.data?.length < 1 ? (
-              <TableCell
-                className="w-full p-6 text-center self-center"
-                colSpan={3}
-              >
-                <p>
-                  Pas de resultats pour l&apos;année{" "}
-                  {new Date().getFullYear().toString()}
-                </p>
-              </TableCell>
-            ) : (
-              data?.data?.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>{item.title}</TableCell>
-                  <TableCell className="text-center">
-                    {item.publishDate}
-                  </TableCell>
-                  <TableCell className="text-center">{item.deadline}</TableCell>
-                  <TableCell className="text-center">
-                    <a
-                      href={`http://www.marchespublics.sn/${item.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Search className="text-gray-500" size={22} />
-                    </a>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+            {data?.data?.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell>{item.title}</TableCell>
+                <TableCell className="text-center">
+                  {item.publishDate}
+                </TableCell>
+                <TableCell className="text-center">{item.deadline}</TableCell>
+                <TableCell className="text-center">
+                  <a
+                    href={`http://www.marchespublics.sn/${item.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Search className="text-gray-500" size={22} />
+                  </a>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       )}

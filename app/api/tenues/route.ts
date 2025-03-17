@@ -10,6 +10,10 @@ interface SearchResult {
   id: string;
 }
 
+export const config = {
+  runtime: "edge", // Active Edge Functions si possible
+};
+
 export async function GET(req: Request) {
   try {
     // Construire l'URL avec le terme de recherche
@@ -54,9 +58,6 @@ export async function GET(req: Request) {
 
     const results: SearchResult[] = [];
 
-    const year = new Date().getFullYear().toString(); // 2025
-    // const beforeYear = (new Date().getFullYear() - 1).toString(); // 2024
-
     // Trouver la table des résultats
     $(".cooltable tr").each((index, element) => {
       // Ignorer l'en-tête de la table
@@ -71,7 +72,7 @@ export async function GET(req: Request) {
           // Extraire l'ID du lien détails
           const id = $(columns[3]).find("a").attr("href") || "";
 
-          if (title && publishDate && deadline && publishDate.includes(year)) {
+          if (title && publishDate && deadline) {
             results.push({
               title,
               publishDate,
