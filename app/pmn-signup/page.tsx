@@ -24,6 +24,8 @@ import { Label } from "@/components/ui/label";
 import PhoneInput from "react-phone-number-input";
 import { E164Number } from "libphonenumber-js/core";
 import "react-phone-number-input/style.css";
+import { Loader } from "lucide-react";
+import { toast } from "sonner";
 
 export default function SignUp() {
   const router = useRouter();
@@ -38,8 +40,9 @@ export default function SignUp() {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [isVerificationOpen, setIsVerificationOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isVerificationOpen, setIsVerificationOpen] = useState<boolean>(false);
+  const [isSendOtpLoading, setIsSendOtpLoading] = useState<boolean>(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationError, setVerificationError] = useState("");
 
@@ -88,7 +91,7 @@ export default function SignUp() {
       });
 
       const data = await res.json();
-      console.log("Response data:", data);
+      // console.log("Response data:", data);
 
       if (res.ok) {
         setIsVerificationOpen(true);
@@ -105,25 +108,51 @@ export default function SignUp() {
 
   const handleVerification = async () => {
     setVerificationError("");
+    const data = {
+      email: formData.email,
+      phone: formData.phone,
+      firstname: formData.firstname,
+      lastname: formData.lastname,
+      occupation: formData.occupation,
+      identicationcode: formData.identicationcode,
+      password: formData.password,
+      code: verificationCode,
+    };
     try {
-      const res = await fetch("/api/verify-code", {
+      setIsSendOtpLoading(true);
+      const res = await fetch("/api/register/verify", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          code: verificationCode,
-          email: formData.email,
+          data,
         }),
       });
 
+      const response = await res.json();
+
       if (res.ok) {
-        router.push("/pmn-login");
+        toast.success("Inscription réussie, redirection...", {
+          style: {
+            background: "#052e16",
+            color: "#fff",
+          },
+          duration: 3000,
+          position: "top-right",
+        });
+        setTimeout(() => {
+          router.push("/pmn-login");
+        }, 2000);
       } else {
-        setVerificationError("Code de vérification incorrect");
+        setVerificationError(
+          response.errorMessage || "Code de vérification incorrect"
+        );
       }
     } catch (err) {
       setVerificationError("Une erreur est survenue lors de la vérification");
+    } finally {
+      setIsSendOtpLoading(false);
     }
   };
 
@@ -136,13 +165,13 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-700 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-4xl">
-        <h2 className="mt-6 text-center text-4xl font-bold text-[#052e16] tracking-tight">
+        <h2 className="mt-6 text-center text-4xl font-bold text-white/90 tracking-tight">
           Créer un compte
         </h2>
-        <p className="mt-3 text-center text-base text-gray-600">
-          Rejoignez notre communauté dès aujourd'hui
+        <p className="mt-3 text-center text-base text-white/80">
+          Rejoignez la communauté PMN dès aujourd'hui
         </p>
       </div>
 
@@ -365,27 +394,8 @@ export default function SignUp() {
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-[#052e16] hover:bg-[#052e16]/90 transition-colors duration-200 disabled:opacity-50"
               >
                 {loading ? (
-                  <div className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
+                  <div className="flex items-center gap-2">
+                    <Loader className="h-5 w-5 text-white animate-spin" />
                     Inscription en cours...
                   </div>
                 ) : (
@@ -442,7 +452,14 @@ export default function SignUp() {
               onClick={handleVerification}
               className="inline-flex justify-center rounded-lg border border-transparent bg-[#052e16] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#052e16]/90 transition-colors"
             >
-              Vérifier
+              {isSendOtpLoading ? (
+                <div className="flex items-center gap-2">
+                  <Loader className="h-5 w-5 text-white animate-spin" />
+                  Vérification en cours...
+                </div>
+              ) : (
+                "Vérifier"
+              )}
             </button>
           </DialogFooter>
         </DialogContent>

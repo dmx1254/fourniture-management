@@ -1,43 +1,46 @@
 import UserPMN from "@/lib/models/user";
 import axios from "axios";
 import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/actions/db";
+
+const accessCodes = [
+  "pmn_JST12",
+  "pmn_DNW23",
+  "pmn_KZT45",
+  "pmn_LQW67",
+  "pmn_MZX89",
+  "pmn_NBY01",
+  "pmn_OCV23",
+  "pmn_PDX45",
+  "pmn_QAS67",
+  "pmn_RCT89",
+  "pmn_SDW01",
+  "pmn_TEZ23",
+  "pmn_UFX45",
+  "pmn_VGB67",
+  "pmn_WJY89",
+];
+
+const accessEmails = [
+  "aminata.diouf@pmn.sn",
+  "ba.ramatoulaye@pmn.sn",
+  "bassirou.sy@pmn.sn",
+  "coumbadoudou.diatta@pmn.sn",
+  "diouf.modou@pmn.sn",
+  "fall.aminata@pmn.sn",
+  "faye.ndeyekhane@pmn.sn",
+  "faye.rose@pmn.sn",
+  "harouna.sylla@pmn.sn",
+  "mamadousy@pmn.sn",
+  "papa.elamadou.gaye@pmn.sn",
+  "sarr.mameadam@pmn.sn",
+  "tall.ibrahima@pmn.sn",
+  "sarr.mameadam@pmn.sn",
+];
+
+await connectDB();
 
 export async function POST(req: Request) {
-  const accessCodes = [
-    "pmn_JST12",
-    "pmn_DNW23",
-    "pmn_KZT45",
-    "pmn_LQW67",
-    "pmn_MZX89",
-    "pmn_NBY01",
-    "pmn_OCV23",
-    "pmn_PDX45",
-    "pmn_QAS67",
-    "pmn_RCT89",
-    "pmn_SDW01",
-    "pmn_TEZ23",
-    "pmn_UFX45",
-    "pmn_VGB67",
-    "pmn_WJY89",
-  ];
-
-  const accessEmails = [
-    "aminata.diouf@pmn.sn",
-    "ba.ramatoulaye@pmn.sn",
-    "bassirou.sy@pmn.sn",
-    "coumbadoudou.diatta@pmn.sn",
-    "diouf.modou@pmn.sn",
-    "fall.aminata@pmn.sn",
-    "faye.ndeyekhane@pmn.sn",
-    "faye.rose@pmn.sn",
-    "harouna.sylla@pmn.sn",
-    "mamadousy@pmn.sn",
-    "papa.elamadou.gaye@pmn.sn",
-    "sarr.mameadam@pmn.sn",
-    "tall.ibrahima@pmn.sn",
-    "sarr.mameadam@pmn.sn",
-  ];
-
   try {
     const data = await req.json();
 
@@ -94,32 +97,27 @@ export async function POST(req: Request) {
       );
     }
 
-    // const sendOtp = await fetch(" https://api.axiomtext.com/api/sms/otp/send", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${process.env.AXIOMTEXT_API_KEY}`,
-    //   },
-    //   body: JSON.stringify({ phone, signature: "PMN" }),
-    // });
+    const sendOtp = await fetch(`${process.env.AXIOMTEXT_API_URL}send`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.AXIOMTEXT_API_KEY!}`,
+      },
+      body: JSON.stringify({ phone, signature: "PMN" }),
+    });
 
-    // const sendOtpData = await sendOtp.json();
+    const sendOtpData = await sendOtp.json();
 
-    // console.log(sendOtpData);
-
-    // const user = await UserPMN.create({
-    //   email,
-    //   phone,
-    //   firstname,
-    //   lastname,
-    //   occupation,
-    //   identicationcode,
-    //   password,
-    // });
+    if (sendOtpData.success) {
+      return NextResponse.json(
+        { message: "Code OTP envoyé" },
+        { status: 200 }
+      );
+    }
 
     return NextResponse.json(
-      { message: "Inscription réussie" },
-      { status: 200 }
+      { errorMessage: sendOtpData.error || "Erreur lors de l'envoi du code OTP" },
+      { status: 500 }
     );
   } catch (error) {
     console.log(error);
