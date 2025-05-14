@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -99,8 +99,8 @@ export const connectDB = async (): Promise<string> => {
 
   if (!cached.promise) {
     cached.promise = mongoose
-      .connect(process.env.DB_CONNECT)
-      .then((mongoose: string) => {
+      .connect(process.env.DB_CONNECT!)
+      .then((mongoose) => {
         return mongoose;
       });
   }

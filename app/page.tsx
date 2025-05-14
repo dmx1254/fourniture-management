@@ -7,12 +7,12 @@ import { useFormState } from "react-dom";
 
 export default function Home() {
   const initialState = { errors: {}, message: "" };
-  const [state, loginAction] = useFormState(login, initialState);
+  // const [state, loginAction] = useFormState(login, initialState);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6">
       <form
-        action={loginAction}
+        // action={loginAction}
         className="w-full max-w-80 flex flex-col items-center gap-4 rounded-[10px] bg-[#111b21] p-4"
       >
         <div className="w-full flex flex-col items-start gap-3">
@@ -27,7 +27,7 @@ export default function Home() {
             placeholder="Votre adresse email"
             className="w-full bg-transparent text-gray-600 outline-none border border-gray-600 placeholder:text-gray-600"
           />
-          <div className="flex flex-col items-start gap-2">
+          {/* <div className="flex flex-col items-start gap-2">
             {state?.errors?.email?.map((emailError: string, index: number) => {
               return (
                 <p
@@ -39,7 +39,7 @@ export default function Home() {
                 </p>
               );
             })}
-          </div>
+          </div> */}
         </div>
         <div className="w-full flex flex-col items-start gap-3">
           <Label htmlFor="password" className="text-gray-600">
@@ -53,7 +53,7 @@ export default function Home() {
             placeholder="Votre mot de passe"
             className="w-full bg-transparent text-gray-600 outline-none border border-gray-600 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 focus:ring-offset-0"
           />
-          <div className="flex flex-col items-start gap-2">
+          {/* <div className="flex flex-col items-start gap-2">
             {state?.errors?.password?.map(
               (passError: string, index: number) => {
                 return (
@@ -67,7 +67,7 @@ export default function Home() {
                 );
               }
             )}
-          </div>
+          </div> */}
         </div>
 
         <LoginButton />
