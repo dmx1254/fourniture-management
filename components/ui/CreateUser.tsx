@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import {
   AlertDialog,
@@ -13,13 +13,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useFormState } from "react-dom";
 import { createNewUser } from "@/lib/actions/action";
 import { toast } from "sonner";
 
 const CreateUser = () => {
   const initialState = { errors: {}, message: "" };
-  const [state, userAction] = useFormState(createNewUser, initialState);
+  const [state, userAction, isPending] = useActionState(createNewUser, initialState);
 
   //   console.log(state);
   useEffect(() => {
@@ -193,7 +192,9 @@ const CreateUser = () => {
                 variant="outline"
                 className="bg-transparent border border-white/80 text-white hover:bg-transparent hover:text-white hover:opacity-90"
               >
-                Créer
+                {
+                  isPending ? "Creating..." : "Créer"
+                }
               </Button>
             </AlertDialogFooter>
           </form>

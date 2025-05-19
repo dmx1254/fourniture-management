@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 
 import {
   AlertDialog,
@@ -25,7 +25,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { updateUserFournitures } from "@/lib/actions/action";
-import { useFormState } from "react-dom";
 import { toast } from "sonner";
 import { CiEdit } from "react-icons/ci";
 import { TransArt, Transaction } from "@/lib/types";
@@ -46,7 +45,7 @@ const TransactionUpdate = ({
   const [firstname, setFirstname] = useState<string>("");
   const [restant, setRestant] = useState<number>(0);
   const initialState = { errors: {}, message: "" };
-  const [state, upadteFournituresAction] = useFormState(
+  const [state, upadteFournituresAction, isPending] = useActionState(
     updateUserFournitures,
     initialState
   );
@@ -200,7 +199,7 @@ const TransactionUpdate = ({
                 variant="outline"
                 className="bg-transparent border-white/80 text-white/80 hover:bg-transparent hover:text-white/80"
               >
-                Créer
+                {isPending ? "Updating..." : "Mettre à jour"}
               </Button>
             </AlertDialogFooter>
           </form>

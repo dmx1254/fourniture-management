@@ -6,23 +6,28 @@ import { TransArt, Transaction } from "@/lib/types";
 import React from "react";
 import TransactionUpdate from "../updates-comp/TransactionUpdate";
 import { getSession } from "@/lib/actions/action";
+import { options } from "@/app/api/auth/[...nextauth]/option";
+import { getServerSession } from "next-auth";
 
 const TransactionTable = async ({
   query,
   currentPage,
   category,
   articles,
+  year,
 }: {
   query: string;
   currentPage: number;
   category: string;
   articles: TransArt[];
+  year: string;
 }) => {
-  const session = await getSession();
+  const session = await getServerSession(options);
   const { transactions } = await getTransactionsAndTotalPages(
     query,
     currentPage,
-    category
+    category,
+    year
   );
   const transact: Transaction[] = transactions;
   //   console.log(allusers);
@@ -48,9 +53,15 @@ const TransactionTable = async ({
             <th className="p-1 md:p-4 font-semibold">Prénom</th>
             <th className="p-1 md:p-4 font-semibold">Nom</th>
             <th className="p-1 md:p-4 font-semibold">Article</th>
-            <th className="max-x2s:hidden p-1 md:p-4 font-semibold">Consommé</th>
-            <th className="max-md:hidden p-1 md:p-4 font-semibold">Date créée</th>
-            {session.isAdmin && <th className="p-4 font-semibold">Actions</th>}
+            <th className="max-x2s:hidden p-1 md:p-4 font-semibold">
+              Consommé
+            </th>
+            <th className="max-md:hidden p-1 md:p-4 font-semibold">
+              Date créée
+            </th>
+            {session?.user?.role === "admin" && (
+              <th className="p-4 font-semibold">Actions</th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -71,13 +82,15 @@ const TransactionTable = async ({
                   {trans.title}
                 </span>
               </td>
-              <td className="max-x2s:hidden p-1 md:p-4 font-semibold">{trans.consome}</td>
+              <td className="max-x2s:hidden p-1 md:p-4 font-semibold">
+                {trans.consome}
+              </td>
               <td className="max-md:hidden p-1 md:p-4 font-semibold">
                 <span className="bg-green-100 rounded p-1 text-black">
                   {convertedDate(trans.createdAt)}
                 </span>
               </td>
-              {session.isAdmin && (
+              {session?.user?.role === "admin" && (
                 <TransactionUpdate trans={trans} articles={articles} />
               )}
             </tr>

@@ -23,14 +23,17 @@ const BussinesPage = async ({
     filiere?: string;
     page?: string;
     program?: string;
+    year?: string;
   };
 }) => {
-  let cni = searchParams?.cni || "";
-  let region = searchParams?.region || "";
-  let filiere = searchParams?.filiere || "";
-  let program = searchParams?.program || "";
-  let currentPage = Number(searchParams?.page) || 1;
-  const alltypes: string[] = Object.keys(searchParams);
+  const newSearchParams = await searchParams;
+  let cni = newSearchParams?.cni || "";
+  let region = newSearchParams?.region || "";
+  let filiere = newSearchParams?.filiere || "";
+  let program = newSearchParams?.program || "";
+  let year = newSearchParams?.year || "";
+  let currentPage = Number(newSearchParams?.page) || 1;
+  const alltypes: string[] = Object.keys(newSearchParams || {});
   const type: string = alltypes[1] || "";
   //   const businessUsers: BusinessUser[] = await getBusinessRegister();
   let { totalPages } =
@@ -40,7 +43,8 @@ const BussinesPage = async ({
       region,
       type,
       filiere,
-      program
+      program,
+      year
     )) || 1;
   //
 
@@ -48,10 +52,6 @@ const BussinesPage = async ({
 
   return (
     <div className="w-full flex flex-col items-center p-4 bg-gray-100 min-h-screen">
-      {/* <div className="w-full flex items-center justify-between ">
-        <span className="p-2 font-bold text-gray-600 text-lg">Entreprises</span>
-      </div> */}
-
       <div className="flex items-end max-xl:items-start justify-between w-full mt-2">
         <div className="w-full max-w-md flex items-center max-xl:items-start gap-4">
           <Search placeholder="Rechercher par CNI..." />
@@ -74,7 +74,7 @@ const BussinesPage = async ({
       </div>
 
       <Suspense
-        key={currentPage + cni + region + type + filiere + program}
+        key={currentPage + cni + region + type + filiere + program + year}
         fallback={<LatestInvoicesSkeleton />}
       >
         <BusinessTable
@@ -84,6 +84,7 @@ const BussinesPage = async ({
           type={type}
           filiere={filiere}
           program={program}
+          year={year}
         />
       </Suspense>
       <Pagination currentPage={currentPage} totalPages={totalPages} />

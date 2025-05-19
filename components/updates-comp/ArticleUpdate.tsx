@@ -2,7 +2,7 @@
 
 import { useFormState } from "react-dom";
 import { Product } from "@/lib/types";
-import React, { useEffect } from "react";
+import React, { useActionState, useEffect } from "react";
 import { CiEdit } from "react-icons/ci";
 import { PiTrashThin } from "react-icons/pi";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ import DeleteArticleBtn from "./DeleteArticleBtn";
 
 const ArticleUpdate = ({ article }: { article: Product }) => {
   const initialstate = { errors: {}, message: "" };
-  const [state, updateAction] = useFormState(updateArticle, initialstate);
+  const [state, updateAction, isPending] = useActionState(updateArticle, initialstate);
 
   useEffect(() => {
     if (state?.message) {
@@ -108,7 +108,8 @@ const ArticleUpdate = ({ article }: { article: Product }) => {
                 variant="outline"
                 className="bg-transparent text-white/80 border-white/80 hover:bg-transparent hover:text-white/80"
               >
-                Mettre à jour
+                {isPending ? "Updating..." : "Mettre à jour"}
+                
               </Button>
             </DialogFooter>
           </form>

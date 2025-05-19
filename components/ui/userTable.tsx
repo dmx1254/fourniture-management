@@ -3,20 +3,29 @@ import { Product, TransArt, User } from "@/lib/types";
 import React from "react";
 import UserUpdate from "../updates-comp/UserUpdate";
 import { getSession } from "@/lib/actions/action";
+import { getServerSession } from "next-auth";
+import { options } from "@/app/api/auth/[...nextauth]/option";
 
 const UserTable = async ({
   query,
   currentPage,
   category,
   articles,
+  year,
 }: {
   query: string;
   currentPage: number;
   category: string;
   articles: TransArt[];
+  year: string;
 }) => {
-  const session = await getSession();
-  const { users } = await getUsersAndTotalPages(query, currentPage, category);
+  const session = await getServerSession(options);
+  const { users } = await getUsersAndTotalPages(
+    query,
+    currentPage,
+    category,
+    year
+  );
   const allusers: User[] = users;
   //   console.log(allusers);
   const convertedDate = (date: Date | undefined) => {
@@ -77,7 +86,12 @@ const UserTable = async ({
                 </span>
               </td>
 
-              <UserUpdate user={user} articles={articles} isAdmin={session.isAdmin} email={session.email} />
+              <UserUpdate
+                user={user}
+                articles={articles}
+                isAdmin={session?.user?.role === "admin"}
+                email={session?.user?.email!}
+              />
             </tr>
           ))}
         </tbody>

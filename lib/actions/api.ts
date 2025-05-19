@@ -5,6 +5,7 @@ import TransactionModel from "./transaction";
 import EntrepriseModel from "./entreprise";
 import bcrypt from "bcrypt";
 import { Entreprise } from "../types";
+import UserPMN from "../models/user";
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -16,7 +17,7 @@ export async function createProduct(
   quantity: number
 ) {
   try {
-    await ArticleModel.create({
+    const articleCreated = await ArticleModel.create({
       title,
       category,
       quantity,
@@ -63,7 +64,8 @@ export async function createUserPro(
 export async function getArticlesAndTotalPages(
   query: string,
   currentPage: number,
-  category: string
+  category: string,
+  year: string
 ) {
   noStore();
   let itemsPerPage: number = 10;
@@ -79,6 +81,13 @@ export async function getArticlesAndTotalPages(
   // Ajouter une condition pour la catégorie si elle est spécifiée
   if (category && category.trim() !== "") {
     matchConditions.category = category;
+  }
+
+  if (year && year.trim() !== "") {
+    matchConditions.createdAt = {
+      $gte: new Date(`${year}-01-01`),
+      $lt: new Date(`${parseInt(year) + 1}-01-01`),
+    };
   }
 
   try {
@@ -216,6 +225,53 @@ export async function createTransaction(
       poste: poste,
     });
 
+    if (trasanctionCreate) {
+      const newTitle =
+        title.toLowerCase() === "carburant"
+          ? `L de ${title}`
+          : title.toLowerCase() === "eau"
+          ? "L d'eau"
+          : title;
+
+      const transactionMessage = `Bonjour, ${lastname} ${firstname}, a commandé ${consome} ${newTitle} le ${new Date().toLocaleDateString("fr-FR", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      })}`;
+      try {
+        const sendSMS = await fetch(
+          "https://api.axiomtext.com/api/sms/message",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.AXIOMTEXT_API_KEY!}`,
+            },
+            body: JSON.stringify({
+              to: "+221778417586",
+              message: transactionMessage,
+              signature: "PMN",
+            }),
+          }
+        );
+
+        if (!sendSMS.ok) {
+          const errorText = await sendSMS.text();
+          console.error("Erreur SMS:", errorText);
+          return;
+        }
+
+        // const data = await sendSMS.json();
+        // console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     return { message: "Transacton crée avec success" };
   } catch (error) {
     console.log(error);
@@ -329,7 +385,8 @@ export async function deleteTransaction(transId: string) {
 export async function getUsersAndTotalPages(
   query: string,
   currentPage: number,
-  category: string
+  category: string,
+  year: string
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -349,6 +406,12 @@ export async function getUsersAndTotalPages(
   }
   if (category === "phone" && query && query.trim() !== "") {
     matchConditions.phone = { $regex: query, $options: "i" };
+  }
+  if (year && year.trim() !== "") {
+    matchConditions.createdAt = {
+      $gte: new Date(`${year}-01-01`),
+      $lt: new Date(`${parseInt(year) + 1}-01-01`),
+    };
   }
 
   try {
@@ -387,7 +450,8 @@ export async function getUsersAndTotalPages(
 export async function getTransactionsAndTotalPages(
   query: string,
   currentPage: number,
-  category: string
+  category: string,
+  year: string
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -407,6 +471,12 @@ export async function getTransactionsAndTotalPages(
   }
   if (category === "phone" && query && query.trim() !== "") {
     matchConditions.phone = { $regex: query, $options: "i" };
+  }
+  if (year && year.trim() !== "") {
+    matchConditions.createdAt = {
+      $gte: new Date(`${year}-01-01`),
+      $lt: new Date(`${parseInt(year) + 1}-01-01`),
+    };
   }
 
   try {
@@ -676,7 +746,8 @@ export async function getEntreprisesAndTotalPages(
   region: string,
   type: string,
   filiere: string,
-  program: string
+  program: string,
+  year: string
 ) {
   // console.log("category: " + category, "corps de metiers :" + filiere);
   noStore();
@@ -700,20 +771,24 @@ export async function getEntreprisesAndTotalPages(
     matchConditions.cni = { $regex: cni };
   }
 
-
   if (region && region.trim() !== "") {
     matchConditions.region = { $regex: region, $options: "i" };
   }
-  
+
   if (filiere && filiere.trim() !== "") {
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
   }
-  
+
   if (program && program.trim() !== "") {
     matchConditions.specialCat = { $regex: program, $options: "i" };
   }
-  
 
+  if (year && year.trim() !== "") {
+    matchConditions.createdAt = {
+      $gte: new Date(`${year}-01-01`),
+      $lt: new Date(`${parseInt(year) + 1}-01-01`),
+    };
+  }
   try {
     // Récupérer le nombre total de documents
     const totalDocuments = await EntrepriseModel.countDocuments(
@@ -755,7 +830,8 @@ export async function getEntreprises(
   region: string,
   type: string,
   filiere: string,
-  program: string
+  program: string,
+  year: string
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -786,15 +862,21 @@ export async function getEntreprises(
   if (region && region.trim() !== "") {
     matchConditions.region = { $regex: region, $options: "i" };
   }
-  
+
   if (filiere && filiere.trim() !== "") {
     matchConditions.corpsdemetiers = { $regex: filiere, $options: "i" };
   }
-  
+
   if (program && program.trim() !== "") {
     matchConditions.specialCat = { $regex: program, $options: "i" };
   }
 
+  if (year && year.trim() !== "") {
+    matchConditions.createdAt = {
+      $gte: new Date(`${year}-01-01`),
+      $lt: new Date(`${parseInt(year) + 1}-01-01`),
+    };
+  }
   try {
     // Récupérer le nombre total de documents
     const totalDocuments = await EntrepriseModel.countDocuments(

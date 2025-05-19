@@ -568,9 +568,9 @@ export async function addUserFournitures(
         category,
         title,
         consome,
-        lastname,
-        firstname,
-        poste
+        lastname || "",
+        firstname || "",
+        poste || ""
       );
       await revalidatePath("/dashboard/utilisateurs");
       return response;

@@ -22,8 +22,8 @@ const MyLinks = ({ userEmail }: { userEmail: string }) => {
           key={id}
           href={path}
         >
-          <Icon className="text-[22px] md:text-[17px]" />
-          <span className="hidden md:flex">{title}</span>
+          <Icon size={20} />
+          <span className="hidden md:flex text-sm">{title}</span>
         </Link>
       ))}
     </div>

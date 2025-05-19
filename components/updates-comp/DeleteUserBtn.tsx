@@ -1,14 +1,17 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useActionState, useEffect } from "react";
 import { PiTrashThin } from "react-icons/pi";
-import { useFormState } from "react-dom";
 import { toast } from "sonner";
 import { deleteUserPro } from "@/lib/actions/action";
+import { Loader } from "lucide-react";
 
 const DeleteUserBtn = ({ userId }: { userId: string }) => {
-    const initialstate = {errors: {}, message: "" };
-  const [state, DeleteAction] = useFormState(deleteUserPro, initialstate);
+  const initialstate = { errors: {}, message: "" };
+  const [state, DeleteAction, isPending] = useActionState(
+    deleteUserPro,
+    initialstate
+  );
 
   // console.log(state);
 
@@ -29,7 +32,11 @@ const DeleteUserBtn = ({ userId }: { userId: string }) => {
         type="submit"
         className="flex items-center justify-center p-0.5 rounded border border-red-600 text-red-600"
       >
-        <PiTrashThin size={16} />
+        {isPending ? (
+          <Loader size={16} className="animate-spin text-red-600" />
+        ) : (
+          <PiTrashThin size={16} />
+        )}
       </button>
       <input type="hidden" name="userId" value={userId} />
     </form>

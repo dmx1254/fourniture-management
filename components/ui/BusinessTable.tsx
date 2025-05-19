@@ -6,6 +6,8 @@ import { BusinessUser } from "@/lib/types";
 import ViewBusinessUser from "../ViewBusinessUser";
 import DeleteEntrepriseBtn from "./DeleteEntrepriseBtn";
 import DownloadEntreprise from "./DownloadEntreprise";
+import { getServerSession } from "next-auth";
+import { options } from "@/app/api/auth/[...nextauth]/option";
 
 const BusinessTable = async ({
   cni,
@@ -14,6 +16,7 @@ const BusinessTable = async ({
   type,
   filiere,
   program,
+  year,
 }: {
   cni: string;
   currentPage: number;
@@ -21,8 +24,9 @@ const BusinessTable = async ({
   type: string;
   filiere: string;
   program: string;
+  year: string;
 }) => {
-  const session = await getSession();
+  const session = await getServerSession(options);
 
   const { entreprises } = await getEntreprises(
     cni,
@@ -30,7 +34,8 @@ const BusinessTable = async ({
     region,
     type,
     filiere,
-    program
+    program,
+    year
   );
   const businessUsers: BusinessUser[] = entreprises;
   // console.log(businessUsers)
@@ -64,7 +69,9 @@ const BusinessTable = async ({
             <th className="p-4 font-semibold max-md:hidden">Entrepise</th>
             <th className="p-4 font-semibold max-lg:hidden">Téléphone</th>
             <th className="p-4 font-semibold max-lg:hidden">Date</th>
-            {session.isAdmin && <th className="p-4 font-semibold">Actions</th>}
+            {session?.user?.role === "admin" && (
+              <th className="p-4 font-semibold">Actions</th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -95,7 +102,7 @@ const BusinessTable = async ({
                 </span>
               </td>
               <td className="flex items-center gap-2 p-4">
-                {session.isAdmin && (
+                {session?.user?.role === "admin" && (
                   <ViewBusinessUser userId={user._id} users={businessUsers} />
                 )}
                 <DeleteEntrepriseBtn entrepriseId={user._id} />

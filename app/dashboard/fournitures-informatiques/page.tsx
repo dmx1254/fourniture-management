@@ -7,7 +7,8 @@ import Table from "@/components/table";
 import LatestInvoicesSkeleton from "@/components/skelettons/skeletons";
 import { getArticlesAndTotalPages } from "@/lib/actions/api";
 import MoreFilter from "@/components/ui/moreFilter";
-import { getSession } from "@/lib/actions/action";
+import { options } from "@/app/api/auth/[...nextauth]/option";
+import { getServerSession } from "next-auth";
 
 const Fourniture = async ({
   searchParams,
@@ -16,14 +17,17 @@ const Fourniture = async ({
     query?: string;
     category?: string;
     page?: string;
+    year?: string;
   };
 }) => {
-  const session = await getSession();
-  let query = searchParams?.query || "";
-  let category = searchParams?.category || "";
-  let currentPage = Number(searchParams?.page) || 1;
+  const session = await getServerSession(options);
+  const newSearchParams = await searchParams;
+  let query = newSearchParams?.query || "";
+  let category = newSearchParams?.category || "";
+  let currentPage = Number(newSearchParams?.page) || 1;
+  let year = newSearchParams?.year || "";
   let { totalPages } =
-    (await getArticlesAndTotalPages(query, currentPage, category)) || 1;
+    (await getArticlesAndTotalPages(query, currentPage, category, year)) || 1;
 
   return (
     <div className="w-full flex flex-col items-center p-4 bg-gray-100">
@@ -31,7 +35,7 @@ const Fourniture = async ({
         <span className="p-2 font-bold text-gray-600">
           Fournitures informatique
         </span>
-        {session.isAdmin && <CreateArticle />}
+        {session?.user?.role === "admin" && <CreateArticle />}
       </div>
       <div className="flex items-center justify-between w-full mt-2">
         <div className="w-full max-w-md flex items-center gap-4">
@@ -43,10 +47,15 @@ const Fourniture = async ({
       </div>
 
       <Suspense
-        key={currentPage + query + category}
+        key={currentPage + query + category + year}
         fallback={<LatestInvoicesSkeleton />}
       >
-        <Table query={query} currentPage={currentPage} category={category} />
+        <Table
+          query={query}
+          currentPage={currentPage}
+          category={category}
+          year={year}
+        />
       </Suspense>
       <Pagination currentPage={currentPage} totalPages={totalPages} />
     </div>

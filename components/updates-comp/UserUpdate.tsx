@@ -2,7 +2,7 @@
 
 import { TransArt, User } from "@/lib/types";
 import { SessionData } from "@/lib/lib";
-import React, { useEffect } from "react";
+import React, { useActionState, useEffect } from "react";
 import { CiEdit } from "react-icons/ci";
 import DeleteUserBtn from "./DeleteUserBtn";
 import {
@@ -14,7 +14,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useFormState } from "react-dom";
 import { updateUserPro } from "@/lib/actions/action";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
@@ -32,7 +31,10 @@ const UserUpdate = ({
   email: string;
 }) => {
   const initialState = { errors: {}, message: "" };
-  const [state, upadteUserAction] = useFormState(updateUserPro, initialState);
+  const [state, upadteUserAction, isPending] = useActionState(
+    updateUserPro,
+    initialState
+  );
 
   useEffect(() => {
     if (state?.message) {
@@ -188,7 +190,7 @@ const UserUpdate = ({
                   variant="outline"
                   className="bg-transparent border border-white/80 text-white hover:bg-transparent hover:text-white hover:opacity-90"
                 >
-                  Mettre à jour
+                  {isPending ? "Updating..." : "Mettre à jour"}
                 </Button>
               </AlertDialogFooter>
             </form>

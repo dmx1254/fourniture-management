@@ -22,13 +22,17 @@ const HistoricPage = async ({
     query?: string;
     category?: string;
     page?: string;
+    year?: string;
   };
 }) => {
-  let query = searchParams?.query || "";
-  let category = searchParams?.category || "";
-  let currentPage = Number(searchParams?.page) || 1;
+  const newSearchParams = await searchParams;
+  let query = newSearchParams?.query || "";
+  let category = newSearchParams?.category || "";
+  let currentPage = Number(newSearchParams?.page) || 1;
+  let year = newSearchParams?.year || "";
   let { totalPages } =
-    (await getTransactionsAndTotalPages(query, currentPage, category)) || 1;
+    (await getTransactionsAndTotalPages(query, currentPage, category, year)) ||
+    1;
   let articles: TransArt[] = await getIdCatAndTitleArticle();
 
   return (
@@ -47,7 +51,7 @@ const HistoricPage = async ({
       </div>
 
       <Suspense
-        key={currentPage + query + category}
+        key={currentPage + query + category + year}
         fallback={<LatestInvoicesSkeleton />}
       >
         <TransactionTable
@@ -55,6 +59,7 @@ const HistoricPage = async ({
           currentPage={currentPage}
           category={category}
           articles={articles}
+          year={year}
         />
       </Suspense>
       <Pagination currentPage={currentPage} totalPages={totalPages} />

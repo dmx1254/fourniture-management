@@ -1,5 +1,3 @@
-// /pmn.jpeg
-
 import React from "react";
 import { getArticlesAndTotalPages } from "@/lib/actions/api";
 import { Product } from "@/lib/types";
@@ -8,26 +6,22 @@ import DownloadInventaire from "./DownloadInventaire";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/option";
 
-const Table = async ({
+const TableApprovisionnements = async ({
   query,
   currentPage,
   category,
-  year,
 }: {
   query: string;
   currentPage: number;
   category: string;
-  year: string;
 }) => {
   const session = await getServerSession(options);
   const { articles } = await getArticlesAndTotalPages(
     query,
     currentPage,
-    category,
-    year
+    category
   );
   const products: Product[] = articles;
-  // console.log(products);
   return (
     <div className="relative w-full mt-6">
       <table className="min-w-full bg-white text-left">
@@ -36,14 +30,17 @@ const Table = async ({
             <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
               Articles
             </th>
+            <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
+              Catégorie
+            </th>
             <th className="hidden x2s:flex p-1 xs:p-2 md:p-4 font-semibold">
               Stockage Initial
             </th>
             <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
-              consommé
+              Consommé
             </th>
             <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
-              réstant
+              Réstant
             </th>
             {session?.user?.role === "admin" && (
               <th className="p-4 font-semibold">Actions</th>
@@ -51,30 +48,31 @@ const Table = async ({
           </tr>
         </thead>
         <tbody>
-          {products
-            .filter((article) => article.category !== "fournitures-de-bureau")
-            .map((product) => (
-              <tr
-                key={product._id}
-                className="border-b border-gray-200 text-xs text-[#111b21]"
-              >
-                <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
-                  {product.title}
-                </td>
-                <td className="hidden x2s:flex p-1 xs:p-2 md:p-4 font-semibold">
-                  {product.quantity}
-                </td>
-                <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold line-through">
-                  {product.consome}
-                </td>
-                <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-bold">
-                  {product.restant}
-                </td>
-                {session?.user?.role === "admin" && (
-                  <ArticleUpdate article={product} />
-                )}
-              </tr>
-            ))}
+          {products.map((product) => (
+            <tr
+              key={product._id}
+              className="border-b border-gray-200 text-xs text-[#111b21]"
+            >
+              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
+                {product.title}
+              </td>
+              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
+                {product.category}
+              </td>
+              <td className="hidden x2s:flex p-1 xs:p-2 md:p-4 font-semibold">
+                {product.quantity}
+              </td>
+              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold line-through">
+                {product.consome}
+              </td>
+              <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-bold">
+                {product.restant}
+              </td>
+              {session?.user?.role === "admin" && (
+                <ArticleUpdate article={product} />
+              )}
+            </tr>
+          ))}
         </tbody>
       </table>
       {session?.user?.role === "admin" && (
@@ -84,4 +82,4 @@ const Table = async ({
   );
 };
 
-export default Table;
+export default TableApprovisionnements; 

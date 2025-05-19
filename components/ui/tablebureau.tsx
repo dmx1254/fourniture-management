@@ -2,23 +2,27 @@ import { getArticlesAndTotalPages } from "@/lib/actions/api";
 import { Product } from "@/lib/types";
 import React from "react";
 import ArticleUpdate from "../updates-comp/ArticleUpdate";
-import { getSession } from "@/lib/actions/action";
 import DownloadInventaire from "../DownloadInventaire";
+import { getServerSession } from "next-auth";
+import { options } from "@/app/api/auth/[...nextauth]/option";
 
 const TableBureau = async ({
   query,
   currentPage,
   category,
+  year,
 }: {
   query: string;
   currentPage: number;
   category: string;
+  year: string;
 }) => {
-  const session = await getSession();
+  const session = await getServerSession(options);
   const { articles } = await getArticlesAndTotalPages(
     query,
     currentPage,
-    category
+    category,
+    year
   );
   const products: Product[] = articles;
   // console.log(products);
@@ -39,7 +43,9 @@ const TableBureau = async ({
             <th className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-semibold">
               réstant
             </th>
-            {session.isAdmin && <th className="p-4 font-semibold">Actions</th>}
+            {session?.user?.role === "admin" && (
+              <th className="p-4 font-semibold">Actions</th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -60,13 +66,15 @@ const TableBureau = async ({
               <td className="p-0.5 x2s:p-1 xs:p-2 md:p-4 font-bold">
                 {product.restant}
               </td>
-              {session.isAdmin && <ArticleUpdate article={product} />}
+              {session?.user?.role === "admin" && (
+                <ArticleUpdate article={product} />
+              )}
             </tr>
           ))}
         </tbody>
       </table>
 
-      {session.isAdmin && products.length > 0 && (
+      {session?.user?.role === "admin" && products.length > 0 && (
         <DownloadInventaire products={products} />
       )}
     </div>

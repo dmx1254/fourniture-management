@@ -163,3 +163,15 @@ export interface PMNType {
   count: number;
   data: EntreTien[];
 }
+
+export interface USERESPONSE {
+  _id: string;
+  email: string;
+  phone: string;
+  firstname: string;
+  lastname: string;
+  occupation: string;
+  identicationcode: string;
+  role: string;
+  password: string;
+}

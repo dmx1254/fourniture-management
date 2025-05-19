@@ -1,16 +1,16 @@
+"use client";
+
 import React from "react";
 import { LogOut } from "lucide-react";
 import MyLinks from "./ui/MyLinks";
-import { logout } from "@/lib/actions/action";
-import { redirect } from "next/navigation";
-import { getSession } from "@/lib/actions/action";
+import { signOut, useSession } from "next-auth/react";
+const Sidebar = () => {
+  const { data: session } = useSession();
 
-const Sidebar = async () => {
-  const session = await getSession();
-  if (!session.userId) {
-    redirect("/");
-  }
-  // console.log(session)
+  const handleLogout = async () => {
+    await signOut();
+  };
+
   return (
     <div
       className="h-screen w-[60px] md:w-[250px] bg-[#052e16] p-2 flex flex-col items-start justify-between"
@@ -25,16 +25,22 @@ const Sidebar = async () => {
             alt="logo"
             className="flex items-center justify-center w-8.5 h-8.5 md:w-12 md:h-12 object-cover object-center rounded-full"
           />
-          <span className="hidden md:flex text-2xl text-white font-extrabold">PMN</span>
+          <span className="hidden md:flex text-2xl text-white font-extrabold">
+            PMN
+          </span>
         </div>
-        <MyLinks userEmail={session.email} />
+        <div className="w-full h-full max-h-[calc(100vh-150px)] overflow-y-scroll sidebar-hidescrollbar">
+          <MyLinks userEmail={session?.user?.email!} />
+        </div>
       </div>
-      <form action={logout}>
-        <button type="submit" className="flex items-center gap-2 p-2">
-          <LogOut size={20} className="text-white text-[24px] md:text-[20px]" />
-          <span className="hidden md:flex text-white">Se deconnecter</span>
-        </button>
-      </form>
+
+      <button
+        onClick={handleLogout}
+        className="flex items-center gap-2 p-2 text-white transition-colors duration-300 hover:text-red-300"
+      >
+        <LogOut size={20} />
+        <span className="hidden md:flex text-sm">Se deconnecter</span>
+      </button>
     </div>
   );
 };

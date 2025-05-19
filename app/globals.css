@@ -72,6 +72,10 @@
     outline: none !important;
     box-shadow: none !important;
   }
+
+  .sidebar-hidescrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {

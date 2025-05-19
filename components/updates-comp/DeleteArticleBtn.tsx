@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useActionState, useEffect } from "react";
 import { PiTrashThin } from "react-icons/pi";
-import { useFormState } from "react-dom";
 import { toast } from "sonner";
 import { deleteArticlePro } from "@/lib/actions/action";
+import { Loader } from "lucide-react";
 
 const DeleteArticleBtn = ({ articleId }: { articleId: string }) => {
     const initialstate = {errors: {}, message: "" };
-  const [state, DeleteAction] = useFormState(deleteArticlePro, initialstate);
+  const [state, DeleteAction, isPending] = useActionState(deleteArticlePro, initialstate);
 
   // console.log(state);
 
@@ -27,7 +27,7 @@ const DeleteArticleBtn = ({ articleId }: { articleId: string }) => {
         type="submit"
         className="flex items-center justify-center p-0.5 rounded border border-red-600 text-red-600"
       >
-        <PiTrashThin size={16} />
+        {isPending ? <Loader size={16} className="animate-spin text-red-600"/> : <PiTrashThin size={16} />}
       </button>
       <input type="hidden" name="articleId" value={articleId} />
     </form>

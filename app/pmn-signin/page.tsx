@@ -2,16 +2,21 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-
+import { signIn } from "next-auth/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 const LoginPage = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+
     setError("");
 
     // Basic validation
@@ -22,27 +27,26 @@ const LoginPage = () => {
     }
 
     try {
-      // Replace with your actual login API endpoint
-      const response = await fetch("/api/login", { // Adjust this API route as needed
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      setLoading(true);
+      const user = await signIn("credentials", {
+        email: email,
+        password: password,
+        redirect: false,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // Handle successful login, e.g., redirect to dashboard
-        console.log("Login successful:", data);
-        // router.push('/dashboard'); // Example redirect
+      if (user?.ok === false) {
+        toast.error(user?.error, {
+          style: {
+            color: "#ef4444",
+          },
+          position: "top-right",
+        });
       } else {
-        setError(data.errorMessage || "Échec de la connexion.");
+        router.push("/dashboard");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Une erreur s\'est produite. Veuillez réessayer.");
+      setError("Une erreur s'est produite. Veuillez réessayer.");
     } finally {
       setLoading(false);
     }
@@ -77,12 +81,12 @@ const LoginPage = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="appearance-none block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out"
-              placeholder="vous@exemple.com"
+              className="appearance-none block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#052e16] focus:border-[#052e16] sm:text-sm transition duration-150 ease-in-out"
+              placeholder="exemple@pmn.sn"
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label
               htmlFor="password"
               className="block text-sm font-medium text-slate-700 mb-1"
@@ -92,14 +96,20 @@ const LoginPage = () => {
             <input
               id="password"
               name="password"
-              type="password"
-              autoComplete="current-password"
+              type={isPasswordVisible ? "text" : "password"}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="appearance-none block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out"
+              className="appearance-none block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#052e16] focus:border-[#052e16] sm:text-sm transition duration-150 ease-in-out"
               placeholder="Votre mot de passe"
             />
+            <button
+              type="button"
+              className="absolute right-2 top-1/2 text-slate-500 hover:text-slate-600"
+              onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+            >
+              {isPasswordVisible ? <Eye size={24} /> : <EyeOff size={24} />}
+            </button>
           </div>
 
           <div>
@@ -124,7 +134,9 @@ const LoginPage = () => {
         </p>
       </div>
       <footer className="mt-12 text-center text-sm text-slate-400">
-        <p>&copy; {new Date().getFullYear()} PMN Stock. Tous droits réservés.</p>
+        <p>
+          &copy; {new Date().getFullYear()} PMN Stock. Tous droits réservés.
+        </p>
       </footer>
     </div>
   );

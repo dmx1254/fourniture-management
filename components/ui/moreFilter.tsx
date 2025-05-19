@@ -79,7 +79,18 @@ const MoreFilter = () => {
           ) : pathname === "/dashboard/fournitures-de-bureau" ? (
             <SelectGroup>
               <SelectLabel>Categories</SelectLabel>
-              <SelectItem value="fournitures-de-bureau">Fournitures de bureau</SelectItem>
+              <SelectItem value="fournitures-de-bureau">
+                Fournitures de bureau
+              </SelectItem>
+            </SelectGroup>
+          ) : pathname === "/dashboard/approvisionnements" ? (
+            <SelectGroup>
+              <SelectLabel>Categories</SelectLabel>
+              <SelectItem value="fournitures-de-nettoyage">
+                Fournitures de nettoyage
+              </SelectItem>
+              <SelectItem value="eau">Eau</SelectItem>
+              <SelectItem value="carburant">Carburant</SelectItem>
             </SelectGroup>
           ) : (
             <SelectGroup>

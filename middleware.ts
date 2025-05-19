@@ -1,30 +1,26 @@
-import { NextRequest, NextResponse } from "next/server";
-import { geolocation } from "@vercel/functions";
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
+
+export default withAuth(
+  async function middleware(req) {
+    const { token } = req.nextauth;
+
+    if (token && req.nextUrl.pathname === "/") {
+      // If the user is authenticated and tries to access the sign-in page, redirect to a protected page
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
+    return NextResponse.next();
+  },
+  {
+    pages: {
+      signIn: "/pmn-signin",
+      signOut: "/",
+      newUser: "/pmn-signup",
+    },
+  }
+);
 
 export const config = {
-  matcher: ["/api/entretiens", "/api/achats", "/api/tenues"], // ✅ Middleware appliqué aux routes API
+  matcher: ["/dashboard/:path*", "/"], // Add the root path to the matcher
 };
-
-export default function middleware(request: NextRequest) {
-  const { country = "US" } = geolocation(request);
-
-  console.log(`🌍 Requête depuis : ${country}`);
-
-  // ✅ Si l'utilisateur est au Sénégal, activer un cache puissant pour booster la rapidité
-  if (country === "SN") {
-    return NextResponse.next({
-      headers: {
-        "Cache-Control": "s-maxage=60, stale-while-revalidate=30", // ⏳ Cache dynamique (60s)
-        "Vercel-CDN-Cache-Control": "max-age=60, stale-while-revalidate=30", // 📌 Optimisation CDN
-      },
-    });
-  }
-
-  // ✅ Si l'utilisateur est ailleurs, activer un cache plus long pour éviter les requêtes répétées
-  return NextResponse.next({
-    headers: {
-      "Cache-Control": "s-maxage=600, stale-while-revalidate=300", // ⏳ Cache de 10 minutes
-      "Vercel-CDN-Cache-Control": "max-age=600, stale-while-revalidate=300",
-    },
-  });
-}

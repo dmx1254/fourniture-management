@@ -11,17 +11,6 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    // const {
-    //   email,
-    //   phone,
-    //   firstname,
-    //   lastname,
-    //   occupation,
-    //   identicationcode,
-    //   password,
-    //   code,
-    // } = data;
-
     console.log("new data", data.data);
     const newPhone = data.data.phone;
 
