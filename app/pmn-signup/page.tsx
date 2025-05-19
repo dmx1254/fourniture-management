@@ -142,7 +142,7 @@ export default function SignUp() {
           position: "top-right",
         });
         setTimeout(() => {
-          router.push("/pmn-login");
+          router.push("/pmn-signin");
         }, 2000);
       } else {
         setVerificationError(
@@ -411,7 +411,7 @@ export default function SignUp() {
                 <span className="px-2 bg-white text-gray-500">
                   Déjà un compte?{" "}
                   <Link
-                    href="/pmn-login"
+                    href="/pmn-signin"
                     className="font-medium text-[#052e16] hover:text-[#052e16]/80 transition-colors"
                   >
                     Se connecter
