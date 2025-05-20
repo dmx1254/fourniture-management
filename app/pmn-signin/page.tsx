@@ -54,8 +54,8 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-700 flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-md bg-white shadow-2xl rounded-xl p-8 md:p-12">
-        <h1 className="text-4xl font-bold text-center text-slate-800 mb-8">
+      <div className="w-full max-w-sm bg-white shadow-2xl rounded-xl p-4 md:p-8">
+        <h1 className="text-3xl font-bold text-center text-slate-800 mb-8">
           Connexion
         </h1>
 
@@ -124,7 +124,7 @@ const LoginPage = () => {
         </form>
 
         <p className="mt-8 text-center text-sm text-slate-600">
-          Vous n\'avez pas de compte ?{" "}
+          Vous n&apos;avez pas de compte ?{" "}
           <Link
             href="/pmn-signup" // Adjust if your register page route is different
             className="font-medium text-[#052e16] hover:text-[#052e16]/90 transition duration-150 ease-in-out"

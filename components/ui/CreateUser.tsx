@@ -18,7 +18,10 @@ import { toast } from "sonner";
 
 const CreateUser = () => {
   const initialState = { errors: {}, message: "" };
-  const [state, userAction, isPending] = useActionState(createNewUser, initialState);
+  const [state, userAction, isPending] = useActionState(
+    createNewUser,
+    initialState
+  );
 
   //   console.log(state);
   useEffect(() => {
@@ -115,72 +118,47 @@ const CreateUser = () => {
                 />
               </div>
             </div>
+
             <div className="w-full flex items-center justify-between gap-4">
               <div className="w-full flex flex-col items-start gap-1">
-                <label htmlFor="country" className="text-white/80 text-sm">
-                  Pays
+                <label htmlFor="occupation" className="text-white/80 text-sm">
+                  Code d&apos;identification
                 </label>
                 <input
-                  placeholder="Pays"
+                  placeholder="Code d'identification"
                   className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                   type="text"
-                  id="country"
-                  name="country"
+                  id="identificationcode"
+                  name="identificationcode"
                 />
               </div>
               <div className="w-full flex flex-col items-start gap-1">
-                <label htmlFor="city" className="text-white/80 text-sm">
-                  Ville
-                </label>
-                <input
-                  placeholder="Ville"
-                  className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  type="text"
-                  id="city"
-                  name="city"
-                />
-              </div>
-            </div>
-            <div className="w-full flex items-center justify-between gap-4">
-            <div className="w-full flex flex-col items-start gap-1">
-              <label htmlFor="address" className="text-white/80 text-sm">
-                Address
-              </label>
-              <input
-                className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
-                type="text"
-                id="address"
-                name="address"
-                placeholder="Address"
-              />
-            </div>
-            <div className="w-full flex flex-col items-start gap-1">
-                <label htmlFor="poste" className="text-white/80 text-sm">
+                <label htmlFor="occupation" className="text-white/80 text-sm">
                   Poste
                 </label>
                 <input
                   placeholder="Poste"
                   className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                   type="text"
-                  id="poste"
-                  name="poste"
+                  id="occupation"
+                  name="occupation"
                 />
               </div>
             </div>
             <div className="flex flex-col items-start gap-1">
-                <label htmlFor="isAdmin" className="text-white/80 text-sm">
-                  Role
-                </label>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-white/80">Admin</span>
+              <label htmlFor="role" className="text-white/80 text-sm">
+                Role
+              </label>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-white/80">Admin</span>
                 <input
-                  className="w-full checked:bg-[#111b21] placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="w-full checked:bg-[#111b21] accent-green-600 placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                   type="checkbox"
-                  id="isAdmin"
-                  name="isAdmin"
+                  id="role"
+                  name="role"
                 />
-                </div>
               </div>
+            </div>
             {/* <div></div>
       <div></div> */}
             <AlertDialogFooter className="self-end mt-2">
@@ -192,9 +170,7 @@ const CreateUser = () => {
                 variant="outline"
                 className="bg-transparent border border-white/80 text-white hover:bg-transparent hover:text-white hover:opacity-90"
               >
-                {
-                  isPending ? "Creating..." : "Créer"
-                }
+                {isPending ? "Creating..." : "Créer"}
               </Button>
             </AlertDialogFooter>
           </form>

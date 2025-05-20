@@ -57,13 +57,21 @@ const BussinesPage = async ({
           <Search placeholder="Rechercher par CNI..." />
         </div>
         <div className="flex flex-col items-end -mb-2">
-          <Link
-            href="/dashboard/nouveau-entreprise"
-            className="flex items-center text-sm outline-none border-none p-2 rounded bg-[#052e16] shadow-md text-white/80 mr-5 mb-2"
-          >
-            <Plus size={16} />
-            Ajouter un artisans
-          </Link>
+          <div className="flex max-md:flex-col items-center gap-2">
+            <Link
+              href="/dashboard/artisans"
+              className="flex items-center text-sm outline-none border-none p-2 rounded bg-red-500 shadow-md text-white mr-5 mb-2 transition-colors duration-200 hover:bg-red-600"
+            >
+              Annuler les filtres
+            </Link>
+            <Link
+              href="/dashboard/nouveau-entreprise"
+              className="flex items-center text-sm outline-none border-none p-2 rounded bg-[#052e16] shadow-md text-white/80 mr-5 mb-2"
+            >
+              <Plus size={16} />
+              Ajouter un artisans
+            </Link>
+          </div>
 
           <div className="flex max-xl:flex-col max-xl:items-start items-center gap-4 max-xl:gap-2">
             <ProgrameScolaireButon />

@@ -11,10 +11,7 @@ const MyLinks = ({ userEmail }: { userEmail: string }) => {
     <div className="w-full flex flex-col items-center md:items-start gap-6">
       {navMenus.map(({ id, title, icon: Icon, path, emailTest }) => (
         <Link
-          style={{
-            display: emailTest === userEmail ? "none" : "flex",
-          }}
-          className={`w-full items-center text-center text-sm gap-2 p-2 rounded transition duration-300 ease-in-out ${
+          className={`flex w-full items-center text-center text-sm gap-2 p-2 rounded transition duration-300 ease-in-out ${
             path === pathname
               ? "bg-[#14532d] text-[#f0fdf4]"
               : "text-white hover:bg-[#14532d] hover:text-white"

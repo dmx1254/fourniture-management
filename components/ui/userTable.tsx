@@ -28,11 +28,11 @@ const UserTable = async ({
   );
   const allusers: User[] = users;
   //   console.log(allusers);
-  const convertedDate = (date: Date | undefined) => {
+  const convertedDate = (date: string) => {
     if (date) {
       const convertedDate = new Date(date).toLocaleDateString("fr-FR", {
         year: "numeric",
-        month: "long",
+        month: "short",
         day: "numeric",
       });
 
@@ -56,44 +56,56 @@ const UserTable = async ({
           </tr>
         </thead>
         <tbody>
-          {allusers.map((user) => (
-            <tr
-              key={user._id}
-              className="border-b border-gray-200 text-xs text-[#111b21]"
-            >
-              <td className="p-2 x2s:p-4 font-semibold">
-                <span className="bg-violet-100 rounded p-1 text-black">
-                  {user.lastname}
-                </span>
-              </td>
-              <td className="p-2 x2s:p-4 font-semibold">{user.firstname}</td>
-              <td className="max-md:hidden p-4 font-semibold">
-                {" "}
-                <span className="bg-orange-100 rounded p-1 text-black">
-                  {user.email}
-                </span>
-              </td>
-              <td className="max-md:hidden p-4 font-semibold">
-                {" "}
-                <span className="bg-cyan-100 rounded p-1 text-black">
-                  {user.poste}
-                </span>
-              </td>
-              <td className="max-md:hidden p-4 font-semibold">{user.phone}</td>
-              <td className="max-md:hidden p-4 font-semibold">
-                <span className="bg-green-100 rounded p-1 text-black">
-                  {convertedDate(user.createdAt)}
-                </span>
-              </td>
+          {allusers
+            .filter((user) => {
+              if (session?.user?.role === "admin") {
+                return true; // Admin voit tous les utilisateurs
+              } else {
+                return (
+                  user.role === "user" && user.email === session?.user?.email
+                ); // Non-admin ne voit que ses données
+              }
+            })
+            .map((user) => (
+              <tr
+                key={user._id}
+                className="border-b border-gray-200 text-xs text-[#111b21]"
+              >
+                <td className="p-2 x2s:p-4 font-semibold">
+                  <span className="bg-violet-100 rounded p-1 text-black">
+                    {user.lastname}
+                  </span>
+                </td>
+                <td className="p-2 x2s:p-4 font-semibold">{user.firstname}</td>
+                <td className="max-md:hidden p-4 font-semibold">
+                  {" "}
+                  <span className="bg-orange-100 rounded p-1 text-black">
+                    {user.email}
+                  </span>
+                </td>
+                <td className="max-md:hidden p-4 font-semibold">
+                  {" "}
+                  <span className="bg-cyan-100 rounded p-1 text-black">
+                    {user.occupation}
+                  </span>
+                </td>
+                <td className="max-md:hidden p-4 font-semibold">
+                  {user.phone}
+                </td>
+                <td className="max-md:hidden p-4 font-semibold">
+                  <span className="bg-green-100 rounded p-1 text-black">
+                    {convertedDate(user.createdAt || "2025-05-19")}
+                  </span>
+                </td>
 
-              <UserUpdate
-                user={user}
-                articles={articles}
-                isAdmin={session?.user?.role === "admin"}
-                email={session?.user?.email!}
-              />
-            </tr>
-          ))}
+                <UserUpdate
+                  user={user}
+                  articles={articles}
+                  isAdmin={session?.user?.role === "admin"}
+                  email={session?.user?.email!}
+                />
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

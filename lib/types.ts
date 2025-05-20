@@ -35,20 +35,14 @@ export type Product = {
 export type User = {
   _id: string;
   email: string;
-  password?: number;
-  isAdmin: boolean;
-  code?: String;
-  profil?: string;
-  phone?: string;
-  lastname: string;
+  phone: string;
   firstname: string;
-  poste?: string;
-  address?: string;
-  country?: string;
-  city?: string;
-  clientIp?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  lastname: string;
+  occupation: string;
+  identicationcode: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TransArt = {

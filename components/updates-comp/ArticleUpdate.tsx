@@ -1,6 +1,5 @@
 "use client";
 
-import { useFormState } from "react-dom";
 import { Product } from "@/lib/types";
 import React, { useActionState, useEffect } from "react";
 import { CiEdit } from "react-icons/ci";

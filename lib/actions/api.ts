@@ -33,27 +33,21 @@ export async function createUserPro(
   firstname: string,
   email: string,
   phone: string,
-  country: string,
-  city: string,
-  address: string,
-  code: string,
-  poste: string,
-  isAdmin: boolean,
-  hashedPassword: string
+  occupation: string,
+  identicationcode: string,
+  hashedPassword: string,
+  role: string
 ) {
   try {
-    await UserModel.create({
+    await UserPMN.create({
       lastname,
       firstname,
       email,
       phone,
-      country,
-      city,
-      address,
-      code,
-      poste,
-      isAdmin,
+      occupation,
+      identicationcode,
       password: hashedPassword,
+      role,
     });
     return { message: "Utilisateur Crée avec succès" };
   } catch (error: any) {
@@ -156,23 +150,19 @@ export async function updateUser(
   firstname: string,
   email: string,
   phone: string,
-  country: string,
-  city: string,
-  address: string,
-  poste: string
+  occupation: string,
+  identicationcode: string
 ) {
   try {
-    const updateUser = await UserModel.findByIdAndUpdate(
+    const updateUser = await UserPMN.findByIdAndUpdate(
       userId,
       {
         lastname,
         firstname,
         email,
         phone,
-        country,
-        city,
-        address,
-        poste,
+        occupation,
+        identicationcode,
       },
       {
         new: true,
@@ -233,16 +223,29 @@ export async function createTransaction(
           ? "L d'eau"
           : title;
 
-      const transactionMessage = `Bonjour, ${lastname} ${firstname}, a commandé ${consome} ${newTitle} le ${new Date().toLocaleDateString("fr-FR", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      })}`;
+      const transactionMessage = `Bonjour, ${lastname} ${firstname}, a commandé ${consome} ${newTitle} le ${new Date().toLocaleDateString(
+        "fr-FR",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        }
+      )}`;
       try {
+        const categoriesForFirstNumber = [
+          "fournitures-de-bureau",
+          "fournitures-de-nettoyage",
+          "eau",
+          "carburant",
+        ];
+        const numTosendSms = categoriesForFirstNumber.includes(category)
+          ? "+221773023577"
+          : "+221788273349";
+
         const sendSMS = await fetch(
           "https://api.axiomtext.com/api/sms/message",
           {
@@ -252,7 +255,7 @@ export async function createTransaction(
               Authorization: `Bearer ${process.env.AXIOMTEXT_API_KEY!}`,
             },
             body: JSON.stringify({
-              to: "+221778417586",
+              to: numTosendSms,
               message: transactionMessage,
               signature: "PMN",
             }),
@@ -416,13 +419,13 @@ export async function getUsersAndTotalPages(
 
   try {
     // Récupérer le nombre total de documents
-    const totalDocuments = await UserModel.countDocuments(matchConditions);
+    const totalDocuments = await UserPMN.countDocuments(matchConditions);
 
     // Calculer le nombre total de pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);
 
     // Récupérer les utilisateurs correspondant aux critères de filtrage avec pagination
-    const users = await UserModel.aggregate([
+    const users = await UserPMN.aggregate([
       {
         $match: matchConditions,
       },

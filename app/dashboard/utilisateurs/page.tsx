@@ -1,9 +1,6 @@
 import React, { Suspense } from "react";
 
-import { CiEdit } from "react-icons/ci";
-import { PiTrashThin } from "react-icons/pi";
 import { Pagination } from "@/components/ui/pagination";
-import { MdOutlineSettings } from "react-icons/md";
 import Search from "@/components/ui/search";
 
 import LatestInvoicesSkeleton from "@/components/skelettons/skeletons";
@@ -15,7 +12,6 @@ import UserTable from "@/components/ui/userTable";
 import CreateUser from "@/components/ui/CreateUser";
 import MoreUserFilter from "@/components/ui/MoreUserFilter";
 import { TransArt } from "@/lib/types";
-import { getSession } from "@/lib/actions/action";
 import { options } from "@/app/api/auth/[...nextauth]/option";
 import { getServerSession } from "next-auth";
 

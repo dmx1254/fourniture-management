@@ -102,16 +102,18 @@ const BusinessTable = async ({
                 </span>
               </td>
               <td className="flex items-center gap-2 p-4">
+                <ViewBusinessUser userId={user._id} users={businessUsers} />
                 {session?.user?.role === "admin" && (
-                  <ViewBusinessUser userId={user._id} users={businessUsers} />
+                  <DeleteEntrepriseBtn entrepriseId={user._id} />
                 )}
-                <DeleteEntrepriseBtn entrepriseId={user._id} />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <DownloadEntreprise entreprises={businessUsers} program={program} />
+      {session?.user?.role === "admin" && (
+        <DownloadEntreprise entreprises={businessUsers} program={program} />
+      )}
     </div>
   );
 };

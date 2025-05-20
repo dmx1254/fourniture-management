@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { TransArt, User } from "@/lib/types";
 import React, { useActionState, useEffect, useState } from "react";
 import { PiAddressBook } from "react-icons/pi";
@@ -49,7 +48,6 @@ const AddUserFourniture = ({
     addUserFournitures,
     initialstate
   );
-  const pathname = usePathname();
 
   const [id, setID] = useState<string>("");
   const [title, setTitle] = useState<string>("");
@@ -65,10 +63,10 @@ const AddUserFourniture = ({
     setCategory(article?.category || "");
     setLastname(user?.lastname || "");
     setFirstname(user?.firstname || "");
-    setPoste(user?.poste || "");
+    setPoste(user?.occupation || "");
     let rest: number = article ? article?.quantity - article?.consome : 0;
     setRestant(rest);
-  }, [id, articles, restant, title, category]);
+  }, [id, articles, restant, title, category, user]);
 
   useEffect(() => {
     if (state?.message) {
@@ -86,17 +84,9 @@ const AddUserFourniture = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        {!isAdmin && email === session?.user?.email ? (
-          <button className="flex items-center justify-center p-0.5 rounded border border-violet-600 text-violet-600">
-            <PiAddressBook size={16} />
-          </button>
-        ) : isAdmin ? (
-          <button className="flex items-center justify-center p-0.5 rounded border border-violet-600 text-violet-600">
-            <PiAddressBook size={16} />
-          </button>
-        ) : (
-          ""
-        )}
+        <button className="flex items-center justify-center p-0.5 rounded border border-violet-600 text-violet-600">
+          <PiAddressBook size={16} />
+        </button>
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-[#022c22] text-white/80 border-none">
         <form action={addFournitureAction}>
@@ -262,7 +252,7 @@ const AddUserFourniture = ({
               variant="outline"
               className="bg-transparent border-white/80 text-white/80 hover:bg-transparent hover:text-white/80"
             >
-              {isPending ? "Creating..." : "Créer"}
+              {isPending ? "Creating..." : "Commander"}
             </Button>
           </AlertDialogFooter>
         </form>

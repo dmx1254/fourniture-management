@@ -134,12 +134,9 @@ const UserSchema = z.object({
       invalid_type_error: "L'email doit être une chaîne de caractères",
     })
     .email("L'email doit être une adresse email valide"),
-  phone: z
-    .string({
-      invalid_type_error: "Le téléphone doit être une chaîne de caractères",
-    })
-    .optional(),
-
+  phone: z.string({
+    invalid_type_error: "Le téléphone doit être une chaîne de caractères",
+  }),
   lastname: z.string({
     required_error: "Le nom de famille est requis",
     invalid_type_error: "Le nom de famille doit être une chaîne de caractères",
@@ -148,30 +145,19 @@ const UserSchema = z.object({
     required_error: "Le prénom est requis",
     invalid_type_error: "Le prénom doit être une chaîne de caractères",
   }),
-  address: z
-    .string({
-      invalid_type_error: "L'adresse doit être une chaîne de caractères",
-    })
-    .optional(),
+  identicationcode: z.string({
+    required_error: "Le code d'identification est requis",
+    invalid_type_error:
+      "Le code d'identification doit être une chaîne de caractères",
+  }),
 
-  city: z
-    .string({
-      invalid_type_error: "L'adresse doit être une chaîne de caractères",
-    })
-    .optional(),
-  country: z
-    .string({
-      invalid_type_error: "Le pays doit être une chaîne de caractères",
-    })
-    .optional(),
-  poste: z
-    .string({
-      invalid_type_error: "La poste doit être une chaîne de caractères",
-    })
-    .optional(),
-  isAdmin: z
-    .boolean({
-      invalid_type_error: "L'admin doit être un boolean",
+  occupation: z.string({
+    required_error: "La poste est requise",
+    invalid_type_error: "La poste doit être une chaîne de caractères",
+  }),
+  role: z.string({
+    required_error: "Le rôle est requis",
+      invalid_type_error: "Le rôle doit être une chaîne de caractères",
     })
     .optional(),
 });
@@ -440,7 +426,7 @@ export async function createNewUser(
 
   for (const [name, value] of formData.entries()) {
     if (name === "isAdmin") {
-      sessions[name] = value === "on" ? true : false;
+      sessions[name] = value === "on" ? "admin" : "user";
     } else {
       sessions[name] = value;
     }
@@ -458,26 +444,20 @@ export async function createNewUser(
     const firstname = isUserCorrect.data.firstname;
     const email = isUserCorrect.data.email;
     const phone = isUserCorrect.data.phone;
-    const country = isUserCorrect.data.country;
-    const city = isUserCorrect.data.city;
-    const address = isUserCorrect.data.address;
-    const poste = isUserCorrect.data.poste;
-    const isAdmin = isUserCorrect.data.isAdmin;
+    const occupation = isUserCorrect.data.occupation;
+    const identicationcode = isUserCorrect.data.identicationcode;
+    const role = isUserCorrect.data.role;
     const password = "Inviteosf12541;";
-    const code = "test";
     const hashedPassword = await bcrypt.hash(password, 10);
     const response = await createUserPro(
       lastname,
       firstname,
       email,
       phone,
-      country,
-      city,
-      address,
-      code,
-      poste,
-      isAdmin,
-      hashedPassword
+      occupation,
+      identicationcode,
+      hashedPassword,
+      role
     );
     await revalidatePath("/dashboard/utilisateurs");
     return response;
@@ -507,10 +487,8 @@ export async function updateUserPro(
     const firstname = isUserCorrect.data.firstname;
     const email = isUserCorrect.data.email;
     const phone = isUserCorrect.data.phone;
-    const country = isUserCorrect.data.country;
-    const city = isUserCorrect.data.city;
-    const address = isUserCorrect.data.address;
-    const poste = isUserCorrect.data.poste;
+    const identicationcode = isUserCorrect.data.identicationcode;
+    const occupation = isUserCorrect.data.occupation;
     if (userId !== undefined) {
       const response = await updateUser(
         userId,
@@ -518,10 +496,8 @@ export async function updateUserPro(
         firstname,
         email,
         phone,
-        country,
-        city,
-        address,
-        poste
+        occupation,
+        identicationcode
       );
       await revalidatePath("/dashboard/utilisateurs");
       return response;

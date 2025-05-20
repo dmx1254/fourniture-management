@@ -11,16 +11,19 @@ interface IUser extends Document {
   password: string;
 }
 
-const userSchema = new Schema({
-  email: { type: String, required: true, unique: true },
-  phone: { type: String, required: true, unique: true },
-  firstname: { type: String, required: true },
-  lastname: { type: String, required: true },
-  occupation: { type: String, required: true },
-  identicationcode: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, required: true, default: "user" },
-});
+const userSchema = new Schema(
+  {
+    email: { type: String, required: true, unique: true },
+    phone: { type: String, required: true, unique: true },
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
+    occupation: { type: String, required: true },
+    identicationcode: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, required: true, default: "user" },
+  },
+  { timestamps: true }
+);
 
 const UserPMN =
   mongoose.models.pmnuser || mongoose.model<IUser>("pmnuser", userSchema);

@@ -110,3 +110,13 @@ export function generateId(length = 8) {
 export const formatCNI = (cni: string) => {
   return cni.replace(/(\d{1})(\d{3})(\d{4})(\d{5})/, "$1 $2 $3 $4");
 };
+
+export const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};

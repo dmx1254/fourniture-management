@@ -76,7 +76,7 @@ const TransactionUpdate = ({
     <td className="flex items-center gap-2 p-3.5 font-semibold ">
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <button className="flex items-center justify-center p-0.5 rounded border border-orange-600 text-orange-600">
+          <button className="flex items-center justify-center p-0.5 rounded border border-orange-400 text-orange-400">
             <CiEdit size={16} />
           </button>
         </AlertDialogTrigger>
@@ -207,7 +207,7 @@ const TransactionUpdate = ({
       </AlertDialog>
 
       <DeleteTransaction transId={trans._id} />
-      <ViewFournitureDetails trans={trans} />
+      {/* <ViewFournitureDetails trans={trans} /> */}
     </td>
   );
 };

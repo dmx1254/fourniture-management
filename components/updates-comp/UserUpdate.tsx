@@ -18,6 +18,7 @@ import { updateUserPro } from "@/lib/actions/action";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import AddUserFourniture from "./AddUserFourniture";
+import UserTransactionDialog from "../UserTransactionDialog";
 
 const UserUpdate = ({
   user,
@@ -124,48 +125,22 @@ const UserUpdate = ({
                   />
                 </div>
               </div>
+              <div className="w-full flex items-center justify-between gap-4"></div>
               <div className="w-full flex items-center justify-between gap-4">
-                <div className="w-full flex flex-col items-start gap-1">
-                  <label htmlFor="country" className="text-white/80 text-sm">
-                    Pays
-                  </label>
-                  <input
-                    placeholder="Pays"
-                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    type="text"
-                    id="country"
-                    name="country"
-                    defaultValue={user.country}
-                  />
-                </div>
-                <div className="w-full flex flex-col items-start gap-1">
+              <div className="w-full flex flex-col items-start gap-1">
                   <label htmlFor="city" className="text-white/80 text-sm">
-                    Ville
+                    Code d'identification
                   </label>
                   <input
-                    placeholder="Ville"
+                    placeholder="Code d'identification"
                     className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                     type="text"
-                    id="city"
-                    name="city"
-                    defaultValue={user.city}
+                    id="identicationcode"
+                    name="identicationcode"
+                    defaultValue={user.identicationcode}
                   />
                 </div>
-              </div>
-              <div className="w-full flex items-center justify-between gap-4">
-                <div className="w-full flex flex-col items-start gap-1">
-                  <label htmlFor="address" className="text-white/80 text-sm">
-                    Address
-                  </label>
-                  <input
-                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    type="text"
-                    id="address"
-                    name="address"
-                    placeholder="Address"
-                    defaultValue={user.address}
-                  />
-                </div>
+
                 <div className="w-full flex flex-col items-start gap-1">
                   <label htmlFor="city" className="text-white/80 text-sm">
                     Poste
@@ -174,9 +149,9 @@ const UserUpdate = ({
                     placeholder="Poste"
                     className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
                     type="text"
-                    id="poste"
-                    name="poste"
-                    defaultValue={user.poste}
+                    id="occupation"
+                    name="occupation"
+                    defaultValue={user.occupation}
                   />
                 </div>
               </div>
@@ -198,6 +173,7 @@ const UserUpdate = ({
         </AlertDialogContent>
       </AlertDialog>
       {isAdmin && <DeleteUserBtn userId={user._id} />}
+      <UserTransactionDialog userId={user._id} />
 
       <AddUserFourniture
         user={user}
