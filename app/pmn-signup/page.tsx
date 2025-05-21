@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import PhoneInput from "react-phone-number-input";
 import { E164Number } from "libphonenumber-js/core";
 import "react-phone-number-input/style.css";
-import { Loader } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import { toast } from "sonner";
 
 export default function SignUp() {
@@ -45,6 +45,9 @@ export default function SignUp() {
   const [isSendOtpLoading, setIsSendOtpLoading] = useState<boolean>(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationError, setVerificationError] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState<boolean>(false);
 
   const validateForm = () => {
     if (formData.firstname.length < 2) {
@@ -212,7 +215,7 @@ export default function SignUp() {
                     value={formData.firstname}
                     onChange={handleChange}
                     className="block w-full pl-10 pr-3 text-sm py-2.5 border border-gray-200 rounded-lg bg-gray-50/50 text-gray-900 placeholder-gray-400 transition-colors hover:bg-white focus:bg-white"
-                    placeholder="John"
+                    placeholder="Prénom"
                   />
                 </div>
               </div>
@@ -237,7 +240,7 @@ export default function SignUp() {
                     value={formData.lastname}
                     onChange={handleChange}
                     className="block w-full pl-10 pr-3 text-sm py-2.5 border border-gray-200 rounded-lg bg-gray-50/50 text-gray-900 placeholder-gray-400 transition-colors hover:bg-white focus:bg-white"
-                    placeholder="Doe"
+                    placeholder="Nom"
                   />
                 </div>
               </div>
@@ -348,7 +351,7 @@ export default function SignUp() {
                     <FiLock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    type="password"
+                    type={isPasswordVisible ? "text" : "password"}
                     name="password"
                     id="password"
                     required
@@ -358,6 +361,17 @@ export default function SignUp() {
                     className="block w-full pl-10 pr-3 text-sm py-2.5 border border-gray-200 rounded-lg bg-gray-50/50 text-gray-900 placeholder-gray-400 transition-colors hover:bg-white focus:bg-white"
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    className="absolute right-2 top-[24%] text-slate-500 hover:text-slate-600"
+                    onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                  >
+                    {isPasswordVisible ? (
+                      <Eye size={24} />
+                    ) : (
+                      <EyeOff size={24} />
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -373,7 +387,7 @@ export default function SignUp() {
                     <FiLock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    type="password"
+                    type={isConfirmPasswordVisible ? "text" : "password"}
                     name="confirmPassword"
                     id="confirmPassword"
                     required
@@ -383,6 +397,19 @@ export default function SignUp() {
                     className="block w-full pl-10 pr-3 text-sm py-2.5 border border-gray-200 rounded-lg bg-gray-50/50 text-gray-900 placeholder-gray-400 transition-colors hover:bg-white focus:bg-white"
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    className="absolute right-2 top-[24%] text-slate-500 hover:text-slate-600"
+                    onClick={() =>
+                      setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
+                    }
+                  >
+                    {isConfirmPasswordVisible ? (
+                      <Eye size={24} />
+                    ) : (
+                      <EyeOff size={24} />
+                    )}
+                  </button>
                 </div>
               </div>
             </div>
