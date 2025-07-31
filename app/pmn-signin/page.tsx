@@ -22,7 +22,6 @@ const LoginPage = () => {
     // Basic validation
     if (!email || !password) {
       setError("Veuillez remplir tous les champs.");
-      setLoading(false);
       return;
     }
 

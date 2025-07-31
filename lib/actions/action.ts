@@ -457,7 +457,7 @@ export async function createNewUser(
       occupation,
       identicationcode,
       hashedPassword,
-      role
+      role || "user"
     );
     await revalidatePath("/dashboard/utilisateurs");
     return response;
