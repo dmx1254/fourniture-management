@@ -2,12 +2,8 @@
 import LoginButton from "@/components/LoginButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { login } from "@/lib/actions/action";
-import { useFormState } from "react-dom";
 
 export default function Home() {
-  const initialState = { errors: {}, message: "" };
-  // const [state, loginAction] = useFormState(login, initialState);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6">

@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useActionState, useEffect } from "react";
 import { PiTrashThin } from "react-icons/pi";
-import { useFormState } from "react-dom";
 import { toast } from "sonner";
 import { deleteEntreprisePro } from "@/lib/actions/action";
 
 const DeleteEntrepriseBtn = ({ entrepriseId }: { entrepriseId: string }) => {
   const initialstate = { errors: {}, message: "" };
-  const [state, DeleteAction] = useFormState(deleteEntreprisePro, initialstate);
+  const [state, DeleteAction, isPending] = useActionState(deleteEntreprisePro, initialstate);
 
   // console.log(state);
 

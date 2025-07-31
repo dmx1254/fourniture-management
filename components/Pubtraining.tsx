@@ -21,9 +21,9 @@ interface FormData {
   identifiant: string;
   prenom: string;
   nom: string;
-  telephone: string;
+  telephone: string | number;
   genre: string;
-  cni: string;
+  cni: string | number;
   validiteCni: string;
   carteProfessionnelle: string;
   validiteCartePro: string;
@@ -246,6 +246,7 @@ const Pubtraining = () => {
                   name="prenom"
                   value={formData.prenom}
                   onChange={handleInputChange}
+                  placeholder="Prénom"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />
@@ -259,6 +260,7 @@ const Pubtraining = () => {
                   type="text"
                   name="nom"
                   value={formData.nom}
+                  placeholder="Nom"
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
@@ -271,10 +273,11 @@ const Pubtraining = () => {
                   Téléphone *
                 </label>
                 <input
-                  type="tel"
+                  type="number"
                   name="telephone"
                   value={formData.telephone}
                   onChange={handleInputChange}
+                  placeholder="Téléphone"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />
@@ -291,7 +294,7 @@ const Pubtraining = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 >
-                  <option value="">Sélectionner</option>
+                  <option value="Choisissew votre genre">Sélectionner</option>
                   <option value="homme">Homme</option>
                   <option value="femme">Femme</option>
                 </select>
@@ -303,10 +306,11 @@ const Pubtraining = () => {
                   CNI *
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   name="cni"
                   value={formData.cni}
                   onChange={handleInputChange}
+                  placeholder="CNI"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />
@@ -335,6 +339,7 @@ const Pubtraining = () => {
                   type="text"
                   name="carteProfessionnelle"
                   value={formData.carteProfessionnelle}
+                  placeholder="Carte professionnelle"
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
@@ -365,6 +370,7 @@ const Pubtraining = () => {
                   type="text"
                   name="adresse"
                   value={formData.adresse}
+                  placeholder="Votre adresse"
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
@@ -380,6 +386,7 @@ const Pubtraining = () => {
                   name="region"
                   value={formData.region}
                   onChange={handleInputChange}
+                  placeholder="Région"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />
@@ -394,6 +401,7 @@ const Pubtraining = () => {
                   name="departement"
                   value={formData.departement}
                   onChange={handleInputChange}
+                  placeholder="Département"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />
@@ -408,6 +416,7 @@ const Pubtraining = () => {
                   name="commune"
                   value={formData.commune}
                   onChange={handleInputChange}
+                  placeholder="Commune"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />
@@ -422,6 +431,7 @@ const Pubtraining = () => {
                   name="villageQuartier"
                   value={formData.villageQuartier}
                   onChange={handleInputChange}
+                  placeholder="Village/Quartier"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />
@@ -475,6 +485,7 @@ const Pubtraining = () => {
                     name="entreprise"
                     value={formData.entreprise}
                     onChange={handleInputChange}
+                    placeholder="Votre entreprise"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     required
                   />
@@ -489,6 +500,7 @@ const Pubtraining = () => {
                     name="ninea"
                     value={formData.ninea}
                     onChange={handleInputChange}
+                    placeholder="NINEA"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     required
                   />
@@ -504,6 +516,7 @@ const Pubtraining = () => {
                     name="adresseEntreprise"
                     value={formData.adresseEntreprise}
                     onChange={handleInputChange}
+                    placeholder="Adresse de l'entreprise"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     required
                   />

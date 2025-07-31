@@ -5,7 +5,6 @@ import {
 import { TransArt, Transaction } from "@/lib/types";
 import React from "react";
 import TransactionUpdate from "../updates-comp/TransactionUpdate";
-import { getSession } from "@/lib/actions/action";
 import { options } from "@/app/api/auth/[...nextauth]/option";
 import { getServerSession } from "next-auth";
 
