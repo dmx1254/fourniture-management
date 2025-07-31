@@ -211,7 +211,8 @@ const Pubtraining = () => {
 
           {/* Titre de la fiche */}
           <h4 className="text-xl md:text-2xl font-bold text-center text-gray-800 mb-6">
-            FICHE D'ACCOMPAGNEMENT DES ARTISANS
+            FICHE DE FORMATION : MAITRISE DES PROCEDURES DE PASSATION DES
+            MARCHES PUBLICS
           </h4>
 
           {/* Message de bienvenue */}
