@@ -8,6 +8,7 @@ import { z } from "zod";
 import {
   businessRegister,
   createProduct,
+  deleteFormation,
   createTransaction,
   createUserPro,
   deleteArticle,
@@ -87,6 +88,17 @@ export type UserDeleteState = {
 export type TransDeleteState = {
   message?: string | null;
 };
+
+export type FormationDeleteState = {
+  message?: string | null;
+};
+
+const FormationDeleteSchema = z.object({
+  formationId: z.string({
+    required_error: "L'identifiant est requis",
+    invalid_type_error: "L'identifiant doit être une chaîne de caractères",
+  }),
+});
 
 const LoginSchema = z.object({
   email: z
@@ -370,6 +382,30 @@ export async function deleteEntreprisePro(
     const entrepriseId = isEntrepriseIdCorrect.data.entrepriseId;
     const response = await deleteEntreprise(entrepriseId);
     await revalidatePath("/dashboard/entreprise");
+    return response;
+  }
+}
+
+
+export async function deleteFormationPro(
+  prevState: FormationDeleteState,
+  formData: FormData
+) {
+  let sessions = {};
+
+  for (const [name, value] of formData.entries()) {
+    sessions[name] = value;
+  }
+
+  const isFormationIdCorrect = await FormationDeleteSchema.safeParse(
+    sessions
+  );
+  if (!isFormationIdCorrect.success) {
+    console.log(isFormationIdCorrect.error);
+  } else {
+    const formationId = isFormationIdCorrect.data.formationId;
+    const response = await deleteFormation(formationId);
+    await revalidatePath("/dashboard/formations-pmn");
     return response;
   }
 }

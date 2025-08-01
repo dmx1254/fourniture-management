@@ -7,6 +7,7 @@ import {
   Paperclip,
   Handshake,
   PillBottle,
+  BookOpen,
 } from "lucide-react";
 
 export const navMenus: NavTypes[] = [
@@ -58,6 +59,13 @@ export const navMenus: NavTypes[] = [
     title: "Approvisionnements",
     icon: PillBottle,
     path: "/dashboard/approvisionnements",
+    emailTest: "",
+  },
+  {
+    id: "fjt85",
+    title: "Formations PMN",
+    icon: BookOpen,
+    path: "/dashboard/formations-pmn",
     emailTest: "",
   },
 ];

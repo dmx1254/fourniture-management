@@ -3,7 +3,7 @@ import autoTable from "jspdf-autotable";
 
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Product } from "./types";
+import { FormationUser, Product } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -95,6 +95,54 @@ const generatePDF = (products: Product[]) => {
 };
 
 export default generatePDF;
+
+export const generatePDFFormation = (formation: FormationUser[]) => {
+  const doc = new jsPDF();
+
+  // Ajouter le logo (facultatif)
+  const logo = "/pmn.jpeg"; // Mettez à jour le chemin vers votre logo
+  doc.addImage(logo, "JPEG", 10, 10, 30, 30);
+
+  // Ajouter le titre
+  doc.setFontSize(18);
+  doc.text(`Fiche de formation PMN`, 105, 40, {
+    align: "center",
+  });
+
+  // Préparer les données du tableau
+  const tableData = formation.map((formation) => [
+    formation.prenom || "",
+    formation.nom || "",
+    formation.region || "",
+    formation.departement || "",
+    formation.entreprise || "",
+    formation.telephone || "",
+    formation.genre || "",
+    formation.corpsMetiers || "",
+  ]);
+
+  // Ajouter le tableau
+  autoTable(doc, {
+    startY: 50,
+    head: [
+      ["Prénom", "Nom", "Région", "Département", "Entreprise", "Téléphone", "Genre", "Corps métiers"],
+    ],
+    body: tableData,
+  });
+
+  // Ajouter le résumé
+ 
+
+  // Vérifiez si autoTable a bien ajouté les données
+  const finalY = doc.lastAutoTable.finalY;
+
+  doc.setFontSize(18);
+  doc.text(`Nombre de formations: ${formation.length}`, 14, finalY + 10);
+
+  // Enregistrer le PDF
+
+  doc.save(`formation-pmn-${formation[0]._id.slice(0, 10)}.pdf`);
+};
 
 export function generateId(length = 8) {
   const chars =

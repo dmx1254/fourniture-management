@@ -133,6 +133,31 @@ export type BusinessUser = {
   updatedAt?: Date;
 };
 
+
+export type FormationUser = {
+  _id: string;
+  identifiant: string;
+  prenom: string;
+  nom: string;
+  telephone: string;
+  genre: string;
+  cni: string;
+  validiteCni: string;
+  carteProfessionnelle: string;
+  validiteCartePro: string;
+  adresse: string;
+  region: string;
+  departement: string;
+  commune: string;
+  villageQuartier: string;
+  corpsMetiers: string[];
+  entreprise: string;
+  ninea: string;
+  adresseEntreprise: string;
+  nombreEmployes: string;
+  anneesExperience: string;
+};
+
 export type Commune = string;
 
 export type Region = {

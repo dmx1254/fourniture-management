@@ -6,6 +6,7 @@ import EntrepriseModel from "./entreprise";
 import bcrypt from "bcrypt";
 import { Entreprise } from "../types";
 import UserPMN from "../models/user";
+import ArtisanFormation from "../models/formartionmarchepublic";
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -359,6 +360,18 @@ export async function getIdCatAndTitleArticle() {
   try {
     const articles = JSON.parse(JSON.stringify(articlesFind));
     return articles;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function deleteFormation(formationId: string) {
+  try {
+    const deleteFormation = await ArtisanFormation.findByIdAndDelete(
+      formationId
+    );
+    return { message: "Formation supprimée avec success" };
   } catch (error) {
     console.log(error);
     throw error;
@@ -921,9 +934,102 @@ export async function getEntreprises(
   }
 }
 
+export async function getFormationAndTotalPages(
+  cni: string,
+  currentPage: number,
+  region: string,
+  corpsMetiers: string
+) {
+  noStore();
+  let itemsPerPage = 10;
+  const offset = (currentPage - 1) * itemsPerPage;
+
+  const matchConditions: any = {};
+
+  // console.log("region: " + region, "type: " + type, "filiere: " + filiere);
+
+  // Ajouter une condition pour le titre s'il est spécifié
+  // if (category === "lastname" && query && query.trim() !== "") {
+  //   matchConditions.lastname = { $regex: query, $options: "i" };
+  // }
+  // if (category === "firstname" && query && query.trim() !== "") {
+  //   matchConditions.firstname = { $regex: query, $options: "i" };
+  // }
+  // if (category === "entreprise" && query && query.trim() !== "") {
+  //   matchConditions.entreprise = { $regex: query, $options: "i" };
+  // }
+  // if (category === "phone" && query && query.trim() !== "") {
+  //   matchConditions.phone = { $regex: query, $options: "i" };
+  // }
+
+  if (cni && cni.trim() !== "") {
+    matchConditions.cni = { $regex: cni };
+  }
+
+  if (region && region.trim() !== "") {
+    matchConditions.region = { $regex: region, $options: "i" };
+  }
+
+  if (corpsMetiers && corpsMetiers.trim() !== "") {
+    matchConditions.corpsMetiers = { $regex: corpsMetiers, $options: "i" };
+  }
+
+  try {
+    // Récupérer le nombre total de documents
+    const totalDocuments = await ArtisanFormation.countDocuments(
+      matchConditions
+    );
+
+    // Calculer le nombre total de pages
+    const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+
+    // const testRecupUsers = await EntrepriseModel.find({
+    //   region: "dakar",
+    // });
+
+    // console.log(testRecupUsers);
+
+    // Récupérer les utilisateurs correspondant aux critères de filtrage avec pagination
+    const users = await ArtisanFormation.aggregate([
+      {
+        $match: matchConditions,
+      },
+      {
+        $sort: { createdAt: 1 },
+      },
+      {
+        $skip: offset,
+      },
+      {
+        $limit: itemsPerPage,
+      },
+    ]);
+    // console.log(users);
+    return {
+      formation: JSON.parse(JSON.stringify(users)),
+      totalPages,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export async function getAllCatFilter() {
   try {
     const categories = await EntrepriseModel.distinct("corpsdemetiers");
+
+    const cats = JSON.parse(JSON.stringify(categories));
+    return cats;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getAllCatFormation() {
+  try {
+    const categories = await ArtisanFormation.distinct("corpsMetiers");
 
     const cats = JSON.parse(JSON.stringify(categories));
     return cats;
