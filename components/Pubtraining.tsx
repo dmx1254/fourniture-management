@@ -452,7 +452,7 @@ const Pubtraining = () => {
               {/* Corps de métiers */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-4">
-                  Corps de métiers * (Sélectionnez un ou plusieurs)
+                  Corps de métiers
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {corpsMetiersOptions.map((metier) => (
@@ -462,7 +462,7 @@ const Pubtraining = () => {
                     >
                       <input
                         type="checkbox"
-                        checked={formData.corpsMetiers.includes(metier)}
+                        checked={formData.corpsMetiers === metier}
                         onChange={() => handleCheckboxChange(metier)}
                         className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
