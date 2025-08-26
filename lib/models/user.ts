@@ -5,6 +5,8 @@ interface IUser extends Document {
   phone: string;
   firstname: string;
   lastname: string;
+  hireDate: string;
+  endDate: string;
   occupation: string;
   identicationcode: string;
   role: string;
@@ -17,6 +19,8 @@ const userSchema = new Schema(
     phone: { type: String, required: true, unique: true },
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
+    hireDate: { type: String, required: false },
+    endDate: { type: String, required: false },
     occupation: { type: String, required: true },
     identicationcode: { type: String, required: true, unique: true },
     password: { type: String, required: true },

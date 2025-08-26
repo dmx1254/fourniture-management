@@ -197,35 +197,10 @@ export default function SignUp() {
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
               <div className="space-y-2">
                 <label
-                  htmlFor="firstname"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Prénom
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FiUser className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    name="firstname"
-                    id="firstname"
-                    required
-                    minLength={2}
-                    value={formData.firstname}
-                    onChange={handleChange}
-                    className="block w-full pl-10 pr-3 text-sm py-2.5 border border-gray-200 rounded-lg bg-gray-50/50 text-gray-900 placeholder-gray-400 transition-colors hover:bg-white focus:bg-white"
-                    placeholder="Prénom"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label
                   htmlFor="lastname"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Nom
+                  Prénom
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -238,6 +213,31 @@ export default function SignUp() {
                     required
                     minLength={2}
                     value={formData.lastname}
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 text-sm py-2.5 border border-gray-200 rounded-lg bg-gray-50/50 text-gray-900 placeholder-gray-400 transition-colors hover:bg-white focus:bg-white"
+                    placeholder="Prénom"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="firstname"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Nom
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FiUser className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="firstname"
+                    id="firstname"
+                    required
+                    minLength={2}
+                    value={formData.firstname}
                     onChange={handleChange}
                     className="block w-full pl-10 pr-3 text-sm py-2.5 border border-gray-200 rounded-lg bg-gray-50/50 text-gray-900 placeholder-gray-400 transition-colors hover:bg-white focus:bg-white"
                     placeholder="Nom"

@@ -8,6 +8,7 @@ import {
   Handshake,
   PillBottle,
   BookOpen,
+  CalendarDays,
 } from "lucide-react";
 
 export const navMenus: NavTypes[] = [
@@ -59,6 +60,13 @@ export const navMenus: NavTypes[] = [
     title: "Approvisionnements",
     icon: PillBottle,
     path: "/dashboard/approvisionnements",
+    emailTest: "",
+  },
+  {
+    id: "hau61",
+    title: "Demandes d'absences",
+    icon: CalendarDays,
+    path: "/dashboard/absences",
     emailTest: "",
   },
   {

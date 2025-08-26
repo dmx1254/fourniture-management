@@ -125,13 +125,21 @@ export const generatePDFFormation = (formation: FormationUser[]) => {
   autoTable(doc, {
     startY: 50,
     head: [
-      ["Prénom", "Nom", "Région", "Département", "Entreprise", "Téléphone", "Genre", "Corps métiers"],
+      [
+        "Prénom",
+        "Nom",
+        "Région",
+        "Département",
+        "Entreprise",
+        "Téléphone",
+        "Genre",
+        "Corps métiers",
+      ],
     ],
     body: tableData,
   });
 
   // Ajouter le résumé
- 
 
   // Vérifiez si autoTable a bien ajouté les données
   const finalY = doc.lastAutoTable.finalY;
@@ -166,5 +174,22 @@ export const formatDate = (date: string) => {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+  });
+};
+
+export const formatAbsenceDate = (date: string) => {
+  return new Date(date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+export const formatDateToInput = (date: string | undefined) => {
+  if (!date) return new Date().toISOString().split("T")[0];
+  return new Date(date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
   });
 };

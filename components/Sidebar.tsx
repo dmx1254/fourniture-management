@@ -6,7 +6,6 @@ import MyLinks from "./ui/MyLinks";
 import { signOut, useSession } from "next-auth/react";
 const Sidebar = () => {
   const { data: session } = useSession();
-
   const handleLogout = async () => {
     await signOut();
   };
@@ -29,7 +28,7 @@ const Sidebar = () => {
             PMN
           </span>
         </div>
-        <div className="w-full h-full max-h-[calc(100vh-150px)] overflow-y-scroll sidebar-hidescrollbar">
+        <div className="w-full h-full max-h-[calc(100vh-250px)] overflow-y-scroll scroll-custom border-b border-[#284e38]">
           <MyLinks userEmail={session?.user?.email!} />
         </div>
       </div>

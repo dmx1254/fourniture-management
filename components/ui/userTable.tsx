@@ -2,7 +2,6 @@ import { getUsersAndTotalPages } from "@/lib/actions/api";
 import { Product, TransArt, User } from "@/lib/types";
 import React from "react";
 import UserUpdate from "../updates-comp/UserUpdate";
-import { getSession } from "@/lib/actions/action";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/option";
 
@@ -101,7 +100,6 @@ const UserTable = async ({
                 <UserUpdate
                   user={user}
                   articles={articles}
-                  isAdmin={session?.user?.role === "admin"}
                   email={session?.user?.email!}
                 />
               </tr>

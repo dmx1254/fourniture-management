@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    console.log("new data", data.data);
+    // console.log("new data", data.data);
     const newPhone = data.data.phone;
 
     const verifyOtp = await fetch(`${process.env.AXIOMTEXT_API_URL}verify`, {
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
     if (verifyOtpData.success) {
       const passwordHash = await bcrypt.hash(data.data.password, 10);
-      const user = await UserPMN.create({
+      await UserPMN.create({
         email: data.data.email,
         phone: newPhone,
         firstname: data.data.firstname,

@@ -96,48 +96,60 @@ const Pubtraining = () => {
     e.preventDefault();
     try {
       console.log("Données du formulaire:", formData);
+      toast.info(
+        "Les artisans ont déjà été choisis, veuillez attendre la prochaine formation.",
+        {
+          style: {
+            background: "#2563eb",
+            color: "#fff",
+          },
+          duration: 5000,
+          position: "top-right",
+        }
+      );
+      return;
 
-      setIsLoading(true);
+      // setIsLoading(true);
 
-      const res = await fetch("/api/formations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          data: { ...formData, corpsMetiers: formData.corpsMetiers },
-        }),
-      });
+      // const res = await fetch("/api/formations", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     data: { ...formData, corpsMetiers: formData.corpsMetiers },
+      //   }),
+      // });
 
-      const response = await res.json();
+      // const response = await res.json();
 
-      if (res.ok) {
-        toast.success(
-          "Votre candidature a été soumise avec succès. Nous vous remercions pour votre inscription et vous contacterons prochainement.",
-          {
-            style: {
-              background: "#052e16",
-              color: "#fff",
-            },
-            duration: 5000,
-            position: "top-right",
-          }
-        );
-        console.log("Response: ", response);
-      } else {
-        toast.error(
-          response.errorMessage ||
-            "Quelque chose s'est mal passé, veuillez réessayer plus tard.",
-          {
-            style: {
-              background: "#dc2626",
-              color: "#fff",
-            },
-            duration: 5000,
-            position: "top-right",
-          }
-        );
-      }
+      // if (res.ok) {
+      //   toast.success(
+      //     "Votre candidature a été soumise avec succès. Nous vous remercions pour votre inscription et vous contacterons prochainement.",
+      //     {
+      //       style: {
+      //         background: "#052e16",
+      //         color: "#fff",
+      //       },
+      //       duration: 5000,
+      //       position: "top-right",
+      //     }
+      //   );
+      //   console.log("Response: ", response);
+      // } else {
+      //   toast.error(
+      //     response.errorMessage ||
+      //       "Quelque chose s'est mal passé, veuillez réessayer plus tard.",
+      //     {
+      //       style: {
+      //         background: "#dc2626",
+      //         color: "#fff",
+      //       },
+      //       duration: 5000,
+      //       position: "top-right",
+      //     }
+      //   );
+      // }
     } catch (error: any) {
       console.log(error);
       toast.error(

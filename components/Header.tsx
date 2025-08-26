@@ -14,6 +14,7 @@ import PDFGenerator from "./PDFGenerator";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import { ChevronDownIcon } from "lucide-react";
+import AbsenceRequest from "./AbsenceRequest";
 
 const Header = () => {
   const { data: session } = useSession();
@@ -24,7 +25,10 @@ const Header = () => {
 
   return (
     <div className="sticky bg-white border-b border-[#F4F4F4] z-20 p-2 top-0 right-0 left-[250px] w-full flex items-end justify-end">
-      <PDFGenerator />
+      <div className="flex items-center gap-2">
+        <AbsenceRequest />
+        <PDFGenerator />
+      </div>
       <Sheet>
         <SheetTrigger>
           <div className="flex items-center gap-2 p-2">

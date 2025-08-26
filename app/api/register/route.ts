@@ -109,14 +109,13 @@ export async function POST(req: Request) {
     const sendOtpData = await sendOtp.json();
 
     if (sendOtpData.success) {
-      return NextResponse.json(
-        { message: "Code OTP envoyé" },
-        { status: 200 }
-      );
+      return NextResponse.json({ message: "Code OTP envoyé" }, { status: 200 });
     }
 
     return NextResponse.json(
-      { errorMessage: sendOtpData.error || "Erreur lors de l'envoi du code OTP" },
+      {
+        errorMessage: sendOtpData.error || "Erreur lors de l'envoi du code OTP",
+      },
       { status: 500 }
     );
   } catch (error) {

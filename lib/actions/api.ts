@@ -3,10 +3,10 @@ import { unstable_noStore as noStore } from "next/cache";
 import UserModel, { connectDB } from "./db";
 import TransactionModel from "./transaction";
 import EntrepriseModel from "./entreprise";
-import bcrypt from "bcrypt";
 import { Entreprise } from "../types";
 import UserPMN from "../models/user";
 import ArtisanFormation from "../models/formartionmarchepublic";
+import AbsenceRequestModel from "../models/absence";
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -152,7 +152,9 @@ export async function updateUser(
   email: string,
   phone: string,
   occupation: string,
-  identicationcode: string
+  identicationcode: string,
+  hireDate: string,
+  endDate: string
 ) {
   try {
     const updateUser = await UserPMN.findByIdAndUpdate(
@@ -164,6 +166,8 @@ export async function updateUser(
         phone,
         occupation,
         identicationcode,
+        hireDate,
+        endDate,
       },
       {
         new: true,
@@ -455,6 +459,72 @@ export async function getUsersAndTotalPages(
 
     return {
       users: JSON.parse(JSON.stringify(users)),
+      totalPages,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getAbsencesAndTotalPages(
+  query: string,
+  currentPage: number,
+  approved: string,
+  startDate: string,
+  endDate: string
+) {
+  noStore();
+  let itemsPerPage = 10;
+  const offset = (currentPage - 1) * itemsPerPage;
+
+  const matchConditions: any = {};
+
+  // Ajouter une condition pour le titre s'il est spécifié
+  if (approved === "approved") {
+    matchConditions.isApproved = { $eq: true };
+  }
+  if (approved === "rejected") {
+    matchConditions.isRejected = { $eq: true };
+  }
+  if (approved === "pending") {
+    matchConditions.isPending = { $eq: true };
+  }
+
+  if (startDate && endDate && startDate !== "" && endDate !== "") {
+    matchConditions.createdAt = {
+      $gte: new Date(startDate + "T00:00:00.000Z"),
+      $lt: new Date(endDate + "T23:59:59.999Z"),
+    };
+  }
+
+  try {
+    // Récupérer le nombre total de documents
+    const totalDocuments = await AbsenceRequestModel.countDocuments(
+      matchConditions
+    );
+
+    // Calculer le nombre total de pages
+    const totalPages = Math.ceil(totalDocuments / itemsPerPage);
+
+    // Récupérer les utilisateurs correspondant aux critères de filtrage avec pagination
+    const absences = await AbsenceRequestModel.aggregate([
+      {
+        $match: matchConditions,
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $skip: offset,
+      },
+      {
+        $limit: itemsPerPage,
+      },
+    ]);
+
+    return {
+      absences: JSON.parse(JSON.stringify(absences)),
       totalPages,
     };
   } catch (error) {
@@ -941,7 +1011,7 @@ export async function getFormationAndTotalPages(
   corpsMetiers: string
 ) {
   noStore();
-  let itemsPerPage = 10;
+  let itemsPerPage = 20;
   const offset = (currentPage - 1) * itemsPerPage;
 
   const matchConditions: any = {};

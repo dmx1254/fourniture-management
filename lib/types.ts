@@ -38,11 +38,47 @@ export type User = {
   phone: string;
   firstname: string;
   lastname: string;
+  hireDate?: Date;
+  endDate?: Date;
   occupation: string;
   identicationcode: string;
   role: string;
   createdAt: string;
   updatedAt: string;
+};
+
+export type Validation = {
+  email: string;
+  isValidate: boolean;
+  isRejected: boolean;
+  dateValidation: Date;
+  fullname: string;
+  commentaire?: string;
+};
+
+export type Absence = {
+  _id: string;
+  dateDepart: Date;
+  dateFin: Date;
+  raison: string;
+  prenom: string;
+  nom: string;
+  occupation: string;
+  telephone: string;
+  emailDemandeur: string;
+  dateSoumission: Date;
+  duree: number;
+  isApproved: boolean;
+  isPending: boolean;
+  isRejected: boolean;
+  validateursRequis: string[];
+  validations?: Validation[];
+  statutValidation: 'en_attente' | 'en_cours' | 'approuve' | 'rejete';
+  dateApprobation?: Date;
+  dateRejet?: Date;
+  motifRejet?: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type TransArt = {
@@ -132,7 +168,6 @@ export type BusinessUser = {
   createdAt?: Date;
   updatedAt?: Date;
 };
-
 
 export type FormationUser = {
   _id: string;

@@ -167,9 +167,25 @@ const UserSchema = z.object({
     required_error: "La poste est requise",
     invalid_type_error: "La poste doit être une chaîne de caractères",
   }),
-  role: z.string({
-    required_error: "Le rôle est requis",
+  role: z
+    .string({
+      required_error: "Le rôle est requis",
       invalid_type_error: "Le rôle doit être une chaîne de caractères",
+    })
+    .optional(),
+
+  hireDate: z
+    .string({
+      required_error: "La date d'embauche est requise",
+      invalid_type_error:
+        "La date d'embauche doit être une chaîne de caractères",
+    })
+    .optional(),
+  endDate: z
+    .string({
+      required_error: "La date de fin de contrat est requise",
+      invalid_type_error:
+        "La date de fin de contrat doit être une chaîne de caractères",
     })
     .optional(),
 });
@@ -386,7 +402,6 @@ export async function deleteEntreprisePro(
   }
 }
 
-
 export async function deleteFormationPro(
   prevState: FormationDeleteState,
   formData: FormData
@@ -397,9 +412,7 @@ export async function deleteFormationPro(
     sessions[name] = value;
   }
 
-  const isFormationIdCorrect = await FormationDeleteSchema.safeParse(
-    sessions
-  );
+  const isFormationIdCorrect = await FormationDeleteSchema.safeParse(sessions);
   if (!isFormationIdCorrect.success) {
     console.log(isFormationIdCorrect.error);
   } else {
@@ -525,6 +538,8 @@ export async function updateUserPro(
     const phone = isUserCorrect.data.phone;
     const identicationcode = isUserCorrect.data.identicationcode;
     const occupation = isUserCorrect.data.occupation;
+    const hireDate = isUserCorrect.data.hireDate;
+    const endDate = isUserCorrect.data.endDate;
     if (userId !== undefined) {
       const response = await updateUser(
         userId,
@@ -533,7 +548,9 @@ export async function updateUserPro(
         email,
         phone,
         occupation,
-        identicationcode
+        identicationcode,
+        hireDate || "",
+        endDate || ""
       );
       await revalidatePath("/dashboard/utilisateurs");
       return response;

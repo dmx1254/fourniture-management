@@ -19,16 +19,16 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import AddUserFourniture from "./AddUserFourniture";
 import UserTransactionDialog from "../UserTransactionDialog";
+import Conges from "../Conges";
+import { useSession } from "next-auth/react";
 
 const UserUpdate = ({
   user,
   articles,
-  isAdmin,
   email,
 }: {
   user: User;
   articles: TransArt[];
-  isAdmin: boolean;
   email: string;
 }) => {
   const initialState = { errors: {}, message: "" };
@@ -36,6 +36,8 @@ const UserUpdate = ({
     updateUserPro,
     initialState
   );
+
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (state?.message) {
@@ -47,6 +49,24 @@ const UserUpdate = ({
       state.message = "";
     }
   }, [state?.message, upadteUserAction, state]);
+
+  const isAbleToViewButton =
+    session?.user?.role === "admin" ||
+    [
+      "ba.ramatoulaye@pmn.sn",
+      "bassirou.sy@pmn.sn",
+      "harouna.sylla@pmn.sn",
+      "mamadousy@pmn.sn",
+      "tall.ibrahima@pmn.sn",
+    ].includes(session?.user?.email!);
+
+  const isAdmin =
+    session?.user?.role === "admin" ||
+    [
+      "tall.ibrahima@pmn.sn",
+      "harouna.sylla@pmn.sn",
+      "mamadousy@pmn.sn",
+    ].includes(session?.user?.email!);
 
   return (
     <td className="flex items-center gap-2 p-3.5 font-semibold ">
@@ -125,9 +145,9 @@ const UserUpdate = ({
                   />
                 </div>
               </div>
-              <div className="w-full flex items-center justify-between gap-4"></div>
+
               <div className="w-full flex items-center justify-between gap-4">
-              <div className="w-full flex flex-col items-start gap-1">
+                <div className="w-full flex flex-col items-start gap-1">
                   <label htmlFor="city" className="text-white/80 text-sm">
                     Code d'identification
                   </label>
@@ -156,6 +176,43 @@ const UserUpdate = ({
                 </div>
               </div>
 
+              <div className="w-full flex items-center justify-between gap-4">
+                <div className="w-full flex flex-col items-start gap-1">
+                  <label htmlFor="hireDate" className="text-white/80 text-sm">
+                    Date d'embauche au PMN
+                  </label>
+                  <input
+                    placeholder="Date d'embauche au PMN"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    type="date"
+                    id="hireDate"
+                    name="hireDate"
+                    defaultValue={
+                      user?.hireDate
+                        ? new Date(user?.hireDate).toISOString().split("T")[0]
+                        : ""
+                    }
+                  />
+                </div>
+                <div className="w-full flex flex-col items-start gap-1">
+                  <label htmlFor="endDate" className="text-white/80 text-sm">
+                    Date de fin de contrat au PMN
+                  </label>
+                  <input
+                    placeholder="Date de fin de contrat au PMN"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    type="date"
+                    id="endDate"
+                    name="endDate"
+                    defaultValue={
+                      user?.endDate
+                        ? new Date(user?.endDate).toISOString().split("T")[0]
+                        : ""
+                    }
+                  />
+                </div>
+              </div>
+
               <AlertDialogFooter className="self-end mt-2">
                 <AlertDialogCancel className="bg-red-600 hover:bg-red-600 hover:text-white hover:opacity-90 text-white border-[#111b21]">
                   Cancel
@@ -173,14 +230,17 @@ const UserUpdate = ({
         </AlertDialogContent>
       </AlertDialog>
       {isAdmin && <DeleteUserBtn userId={user._id} />}
-      <UserTransactionDialog userId={user._id} />
+      {isAdmin && <UserTransactionDialog userId={user._id} />}
 
-      <AddUserFourniture
-        user={user}
-        articles={articles}
-        isAdmin={isAdmin}
-        email={email}
-      />
+      {isAdmin && (
+        <AddUserFourniture
+          isAdmin={isAdmin}
+          user={user}
+          articles={articles}
+          email={email}
+        />
+      )}
+      {isAbleToViewButton && <Conges user={user} />}
     </td>
   );
 };
