@@ -59,6 +59,7 @@ export async function POST(req: Request) {
     );
   } catch (error) {
     console.log(error);
+    console.log("Erreur lors de la demande d'absence", error);
     return NextResponse.json(
       { errorMessage: "Erreur lors de la demande d'absence" },
       { status: 500 }
