@@ -75,10 +75,10 @@ const AbsenceRequest = () => {
       // Vérifier que la date de départ n'est pas dans le passé
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      if (start < today) {
-        newErrors.dateDepart =
-          "La date de départ ne peut pas être dans le passé";
-      }
+      // if (start < today) {
+      //   newErrors.dateDepart =
+      //     "La date de départ ne peut pas être dans le passé";
+      // }
     }
 
     if (!formData.raison.trim()) {

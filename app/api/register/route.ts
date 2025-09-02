@@ -1,5 +1,4 @@
 import UserPMN from "@/lib/models/user";
-import axios from "axios";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/actions/db";
 
@@ -36,6 +35,7 @@ const accessEmails = [
   "sarr.mameadam@pmn.sn",
   "tall.ibrahima@pmn.sn",
   "sarr.mameadam@pmn.sn",
+  "oumou.gaye@pmn.sn",
 ];
 
 await connectDB();
