@@ -43,6 +43,14 @@ const AbsenceTable = async ({
     endDate
   );
 
+  const filteredAbsences = absences.filter((absence: Absence) => {
+    if (session?.user?.role === "user") {
+      return absence.emailDemandeur === session?.user?.email;
+    } else {
+      return true;
+    }
+  });
+
   return (
     <div className="relative w-full mt-6">
       <table className="min-w-full bg-white text-left">
@@ -58,7 +66,7 @@ const AbsenceTable = async ({
           </tr>
         </thead>
         <tbody className="bg-white">
-          {absences.map((absence: Absence) => (
+          {filteredAbsences.map((absence: Absence) => (
             <tr
               key={absence._id}
               className="border-b border-gray-200 text-xs text-[#111b21] hover:bg-gray-50"
@@ -150,6 +158,17 @@ const AbsenceTable = async ({
                       const userValidation = absence.validations.find(
                         (v) => v.email === session.user.email
                       );
+
+                      const isRejected = absence.validations.filter(
+                        (v) =>
+                          v.email === "tall.ibrahima@pmn.sn" &&
+                          v.isRejected === true
+                      );
+
+                      const isRejetedByCordo = isRejected.length > 0;
+
+                      // console.log("isRejetedByCordo", isRejetedByCordo);
+
                       if (userValidation) {
                         return (
                           <ValidationDialog
@@ -175,6 +194,7 @@ const AbsenceTable = async ({
                               ).length,
                             }}
                             validation={userValidation}
+                            isRejetedByCordo={isRejetedByCordo}
                             peutValider={
                               !userValidation.isValidate &&
                               !userValidation.isRejected

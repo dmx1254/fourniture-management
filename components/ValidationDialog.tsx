@@ -24,6 +24,7 @@ import {
   Loader,
 } from "lucide-react";
 import { toast } from "sonner";
+import type { ValidationDialog } from "@/lib/types";
 
 interface ValidationDialogProps {
   absence: {
@@ -52,6 +53,7 @@ interface ValidationDialogProps {
   peutValider: boolean;
   emailValidateur: string;
   onValidationComplete?: () => void;
+  isRejetedByCordo: boolean;
 }
 
 const ValidationDialog: React.FC<ValidationDialogProps> = ({
@@ -59,6 +61,7 @@ const ValidationDialog: React.FC<ValidationDialogProps> = ({
   validation,
   peutValider,
   emailValidateur,
+  isRejetedByCordo,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [action, setAction] = useState<"approve" | "reject" | null>(null);
@@ -170,18 +173,18 @@ const ValidationDialog: React.FC<ValidationDialogProps> = ({
           variant="outline"
           size="sm"
           className="text-xs"
-          disabled={!peutValider}
+          disabled={!peutValider || isRejetedByCordo}
         >
-          {validation.isValidate ? (
+          {validation.isValidate && !isRejetedByCordo ? (
             <CheckCircle className="w-3 h-3 text-green-600 mr-1" />
-          ) : validation.isRejected ? (
+          ) : validation.isRejected || isRejetedByCordo ? (
             <XCircle className="w-3 h-3 text-red-600 mr-1" />
           ) : (
             <Clock className="w-3 h-3 text-gray-400 mr-1" />
           )}
-          {validation.isValidate
+          {validation.isValidate && !isRejetedByCordo
             ? "Validée"
-            : validation.isRejected
+            : validation.isRejected || isRejetedByCordo
             ? "Rejetée"
             : "Valider"}
         </Button>
@@ -193,7 +196,7 @@ const ValidationDialog: React.FC<ValidationDialogProps> = ({
             Validation de la demande d'absence
           </DialogTitle>
           <DialogDescription className="text-gray-600">
-            {peutValider
+            {peutValider && !isRejetedByCordo
               ? "Approuvez ou rejetez cette demande d'absence"
               : "Détails de la demande d'absence"}
           </DialogDescription>
@@ -300,7 +303,7 @@ const ValidationDialog: React.FC<ValidationDialogProps> = ({
           </div>
 
           {/* Actions de validation */}
-          {peutValider && (
+          {peutValider && !isRejetedByCordo && (
             <div className="space-y-4">
               <div>
                 <Label
@@ -365,7 +368,7 @@ const ValidationDialog: React.FC<ValidationDialogProps> = ({
           )}
 
           {/* Statut de validation actuel */}
-          {!peutValider && (
+          {!peutValider && !isRejetedByCordo && (
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-700 mb-2">
                 Votre validation
@@ -373,12 +376,12 @@ const ValidationDialog: React.FC<ValidationDialogProps> = ({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Statut:</span>
-                  {validation.isValidate ? (
+                  {validation.isValidate && !isRejetedByCordo ? (
                     <Badge className="bg-green-100 text-green-800 border-green-200">
                       <CheckCircle className="w-3 h-3 mr-1" />
                       Approuvée
                     </Badge>
-                  ) : validation.isRejected ? (
+                  ) : validation.isRejected || isRejetedByCordo ? (
                     <Badge className="bg-red-100 text-red-800 border-red-200">
                       <XCircle className="w-3 h-3 mr-1" />
                       Rejetée
@@ -390,7 +393,7 @@ const ValidationDialog: React.FC<ValidationDialogProps> = ({
                     </Badge>
                   )}
                 </div>
-                {validation.dateValidation && (
+                {validation.dateValidation && !isRejetedByCordo && (
                   <div className="text-sm text-gray-600">
                     Date:{" "}
                     {new Date(validation.dateValidation).toLocaleDateString(
@@ -398,7 +401,7 @@ const ValidationDialog: React.FC<ValidationDialogProps> = ({
                     )}
                   </div>
                 )}
-                {validation.commentaire && (
+                {validation.commentaire && !isRejetedByCordo && (
                   <div className="text-sm text-gray-600">
                     <span className="font-medium">Commentaire:</span>{" "}
                     {validation.commentaire}

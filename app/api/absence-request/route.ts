@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     };
 
     const absences = await AbsenceRequestModel.create(absenceRequest);
-    console.log(absences);
+    // console.log(absences);
 
     for (const validation of absences.validations) {
       try {

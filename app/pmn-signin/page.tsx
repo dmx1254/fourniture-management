@@ -104,10 +104,10 @@ const LoginPage = () => {
             />
             <button
               type="button"
-              className="absolute right-2 top-1/2 text-slate-500 hover:text-slate-600"
+              className="absolute right-3 top-1/2 text-slate-500 hover:text-slate-600"
               onClick={() => setIsPasswordVisible(!isPasswordVisible)}
             >
-              {isPasswordVisible ? <Eye size={24} /> : <EyeOff size={24} />}
+              {isPasswordVisible ? <Eye size={22} /> : <EyeOff size={22} />}
             </button>
           </div>
 

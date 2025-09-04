@@ -56,6 +56,20 @@ export type Validation = {
   commentaire?: string;
 };
 
+
+export type ValidationDialog = {
+  _id: string;
+  email: string;
+  isValidate: boolean;
+  isRejected: boolean;
+  dateValidation: Date;
+  fullname: string;
+  phone: string;
+  commentaire?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type Absence = {
   _id: string;
   dateDepart: Date;
