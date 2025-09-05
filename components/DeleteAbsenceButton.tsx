@@ -14,6 +14,7 @@ import { DialogFooter } from "./ui/dialog";
 
 const DeleteAbsenceButton = ({ absenceId }: { absenceId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const handleDelete = async (absenceId: string) => {
     try {
@@ -58,8 +59,8 @@ const DeleteAbsenceButton = ({ absenceId }: { absenceId: string }) => {
   return (
     <button
       onClick={() => handleDelete(absenceId)}
-      disabled={isLoading}
-      className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-colors"
+      disabled={isDisabled}
+      className="bg-red-500 disabled:bg-red-300 disabled:cursor-not-allowed disabled:opacity-50 text-white p-2 rounded-md hover:bg-red-600 transition-colors"
     >
       {isLoading ? (
         <Loader className="w-4 h-4 animate-spin" />
