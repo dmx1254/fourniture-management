@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import CongesEmployeModel from "@/lib/models/conges";
 import UserPMN from "@/lib/models/user";
+import AbsenceRequestModel from "@/lib/models/absence";
 
 // Fonction utilitaire pour calculer les congés acquis
 function calculerCongesAcquis(hireDate: string, endDate?: string): number {
@@ -55,9 +56,19 @@ export async function GET(req: Request) {
       });
     }
 
+    const validateAbsence = await AbsenceRequestModel.find({
+      userId: userId,
+      statutValidation: "approuve",
+    }).select("duree -_id");
+
+    const congesConsommes = validateAbsence.reduce((acc, absence) => acc + absence.duree, 0);
+
+    congesEmploye.congesConsommes = congesConsommes;
+    await congesEmploye.save();
+
     // Calculer les congés acquis
     const congesAcquis = calculerCongesAcquis(user.hireDate, user.endDate);
-    const solde = congesAcquis - congesEmploye.congesConsommes;
+    const solde = congesAcquis - congesConsommes;
     const historiqueConges = await CongesEmployeModel.find({ userId }).populate(
       "userId",
       "firstname lastname hireDate endDate"
@@ -67,7 +78,7 @@ export async function GET(req: Request) {
       {
         userId,
         congesAcquis,
-        congesConsommes: congesEmploye.congesConsommes,
+        congesConsommes: congesConsommes,
         solde,
         hireDate: user.hireDate,
         endDate: user.endDate,
