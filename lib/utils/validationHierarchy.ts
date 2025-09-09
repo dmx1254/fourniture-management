@@ -49,6 +49,16 @@ export const VALIDATEURS_CONFIG = {
       },
     ],
   },
+  GROUPE_4: {
+    emails: ["ba.ramatoulaye@pmn.sn", "tall.ibrahima@pmn.sn"], // Tous les autres
+    validateurs: ["tall.ibrahima@pmn.sn"],
+    phonesValidators: [
+      {
+        email: "tall.ibrahima@pmn.sn",
+        phone: "+221772382463",
+      },
+    ],
+  },
 };
 
 // Noms complets des validateurs
@@ -66,6 +76,8 @@ export function getValidateursRequis(emailDemandeur: string): string[] {
     return VALIDATEURS_CONFIG.GROUPE_1.validateurs;
   } else if (VALIDATEURS_CONFIG.GROUPE_2.emails.includes(emailDemandeur)) {
     return VALIDATEURS_CONFIG.GROUPE_2.validateurs;
+  } else if (VALIDATEURS_CONFIG.GROUPE_4.emails.includes(emailDemandeur)) {
+    return VALIDATEURS_CONFIG.GROUPE_4.validateurs;
   } else {
     return VALIDATEURS_CONFIG.GROUPE_3.validateurs;
   }
