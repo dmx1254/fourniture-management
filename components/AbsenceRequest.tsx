@@ -36,14 +36,32 @@ const AbsenceRequest = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // Calculer la durée automatiquement
+  // Calculer la durée automatiquement (excluant les weekends)
   const calculateDuration = () => {
     if (formData.dateDepart && formData.dateFin) {
-      const start = new Date(formData.dateDepart);
-      const end = new Date(formData.dateFin);
-      const diffTime = Math.abs(end.getTime() - start.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return diffDays;
+      let start = new Date(formData.dateDepart);
+      let end = new Date(formData.dateFin);
+      
+      // S'assurer que start est avant end
+      if (start > end) {
+        const temp = start;
+        start = end;
+        end = temp;
+      }
+      
+      let count = 0;
+      const current = new Date(start);
+      
+      while (current <= end) {
+        const dayOfWeek = current.getDay();
+        // Exclure samedi (6) et dimanche (0)
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          count++;
+        }
+        current.setDate(current.getDate() + 1);
+      }
+      
+      return count;
     }
     return 0;
   };

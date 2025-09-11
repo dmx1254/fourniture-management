@@ -29,32 +29,6 @@ export async function POST(req: Request) {
     };
 
     const absences = await AbsenceRequestModel.create(absenceRequest);
-    // console.log(absences);
-
-    // for (const validation of absences.validations) {
-    //   try {
-    //     const res = await fetch(
-    //       `${process.env.AXIOMTEXT_API_URL_MESSAGE}message`,
-    //       {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           Authorization: `Bearer ${process.env.AXIOMTEXT_API_KEY!}`,
-    //         },
-    //         body: JSON.stringify({
-    //           to: validation.phone,
-    //           message: `Bonjour, ${validation.fullname}, vous avez une demande d'absence en attente de validation. Voici le lien de la demande: https://pmn.vercel.app/dashboard/absences`,
-    //           signature: "PMN",
-    //         }),
-    //       }
-    //     );
-
-    //     const data = await res.json();
-    //     // console.log(data);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
 
     const smsPromises = absences.validations.map(
       async (validation: ValidationResponse) => {
@@ -76,7 +50,7 @@ export async function POST(req: Request) {
           );
 
           const data = await res.json();
-          console.log(data);
+          // console.log(data);
           return { success: true, validation: validation.fullname };
         } catch (error) {
           console.log(`Erreur SMS pour ${validation.fullname}:`, error);
