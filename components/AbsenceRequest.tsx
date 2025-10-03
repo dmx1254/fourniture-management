@@ -52,7 +52,7 @@ const AbsenceRequest = () => {
       let count = 0;
       const current = new Date(start);
       
-      while (current <= end) {
+      while (current < end) {
         const dayOfWeek = current.getDay();
         // Exclure samedi (6) et dimanche (0)
         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
