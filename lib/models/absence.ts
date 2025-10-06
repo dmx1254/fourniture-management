@@ -31,6 +31,7 @@ interface AbsenceRequest extends Document {
   dateApprobation?: Date; // Date de l'approbation finale
   dateRejet?: Date; // Date du rejet
   motifRejet?: string; // Motif du rejet global
+  proofOfAbsence?: string; // Base64 du fichier de preuve d'absence
 }
 
 const validationSchema = new Schema<Validation>(
@@ -72,6 +73,7 @@ const absenceSchema = new Schema<AbsenceRequest>(
     dateApprobation: { type: Date },
     dateRejet: { type: Date },
     motifRejet: { type: String },
+    proofOfAbsence: { type: String, required: false },
   },
   { timestamps: true }
 );

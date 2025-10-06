@@ -9,6 +9,7 @@ import ArtisanFormation from "../models/formartionmarchepublic";
 import AbsenceRequestModel from "../models/absence";
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
+import bcrypt from "bcrypt";
 
 connectDB();
 
@@ -154,9 +155,19 @@ export async function updateUser(
   occupation: string,
   identicationcode: string,
   hireDate: string,
-  endDate: string
+  endDate: string,
+  password: string
 ) {
   try {
+    const userFind = await UserPMN.findById(userId);
+    const user = JSON.parse(JSON.stringify(userFind));
+    const oldPassword = user.password;
+    let hashedPassword: string;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    } else {
+      hashedPassword = oldPassword;
+    }
     const updateUser = await UserPMN.findByIdAndUpdate(
       userId,
       {
@@ -168,6 +179,7 @@ export async function updateUser(
         identicationcode,
         hireDate,
         endDate,
+        password: hashedPassword,
       },
       {
         new: true,

@@ -25,12 +25,54 @@ import {
   TrendingUpIcon,
   UsersIcon,
   CalendarDaysIcon,
+  FileIcon,
+  DownloadIcon,
 } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { formatAbsenceDate } from "@/lib/utils";
 
 const SeeAbsence = ({ absence }: { absence: Absence }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showProof, setShowProof] = useState(false);
+
+  // Fonction pour ouvrir le justificatif dans un nouvel onglet
+  const handleViewProof = () => {
+    if (absence.proofOfAbsence) {
+      const newWindow = window.open();
+      if (newWindow) {
+        newWindow.document.write(`
+          <html>
+            <head>
+              <title>Justificatif médical</title>
+              <style>
+                body { margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f5f5f5; }
+                img { max-width: 100%; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                embed { width: 100%; height: 90vh; border: none; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+              </style>
+            </head>
+            <body>
+              ${absence.proofOfAbsence.startsWith('data:image/') 
+                ? `<img src="${absence.proofOfAbsence}" alt="Justificatif médical" />`
+                : `<embed src="${absence.proofOfAbsence}" type="application/pdf" />`
+              }
+            </body>
+          </html>
+        `);
+      }
+    }
+  };
+
+  // Fonction pour télécharger le justificatif
+  const handleDownloadProof = () => {
+    if (absence.proofOfAbsence) {
+      const link = document.createElement('a');
+      link.href = absence.proofOfAbsence;
+      link.download = `justificatif_medical_${absence.prenom}_${absence.nom}.${absence.proofOfAbsence.includes('pdf') ? 'pdf' : 'jpg'}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
 
   // Fonction pour obtenir le statut basé sur le nouveau système de validation
   const getStatusInfo = () => {
@@ -249,6 +291,51 @@ const SeeAbsence = ({ absence }: { absence: Absence }) => {
                 </p>
               </div>
             </div>
+
+            {/* Justificatif médical */}
+            {absence.proofOfAbsence && (
+              <div className="mt-6">
+                <label className="text-sm font-medium text-gray-600 mb-3 block">
+                  Justificatif médical
+                </label>
+                <div className="bg-white p-4 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-blue-100 rounded-full">
+                        <FileIcon className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800">
+                          {absence.proofOfAbsence.startsWith('data:image/') 
+                            ? 'Image médicale' 
+                            : 'Document PDF médical'
+                          }
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Justificatif pour: {absence.raison}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleViewProof}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                      >
+                        <EyeIcon className="w-4 h-4" />
+                        Voir
+                      </button>
+                      <button
+                        onClick={handleDownloadProof}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                      >
+                        <DownloadIcon className="w-4 h-4" />
+                        Télécharger
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Progression des validations */}

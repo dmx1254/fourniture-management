@@ -174,6 +174,19 @@ const UserUpdate = ({
                     defaultValue={user.occupation}
                   />
                 </div>
+                {/* <div className="w-full flex flex-col items-start gap-1">
+                  <label htmlFor="password" className="text-white/80 text-sm">
+                    Mot de passe
+                  </label>
+                  <input
+                    placeholder="Mot de passe"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    type="password"
+                    id="password"
+                    name="password"
+                    defaultValue=""
+                  />
+                </div> */}
               </div>
 
               <div className="w-full flex items-center justify-between gap-4">

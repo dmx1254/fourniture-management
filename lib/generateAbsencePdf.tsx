@@ -108,7 +108,7 @@ const generateAbsencePdf = (absence: Absence) => {
     locale: fr,
   });
 
-  const texteDemande = `Je viens par cette présente solliciter l'autorisation de m'absenter du ${dateDepart} au ${dateFin}, soit ${absence.duree} jour(s) ouvrable(s) pour raison ${absence.raison}.`;
+  const texteDemande = `Je viens par cette présente solliciter l'autorisation de m'absenter du ${dateDepart} au ${dateFin}, soit ${absence.duree} jour(s) ouvrable(s) pour ${absence.raison}.`;
 
   // Gestion du texte long avec retour à la ligne
   const maxWidth = 170;

@@ -24,7 +24,7 @@ function calculerCongesAcquis(hireDate: string, endDate?: string): number {
     (dateFin.getMonth() - dateEmbauche.getMonth());
 
   // 2.5 jours par mois
-  return Math.max(0, moisDiff * 2.5);
+  return Math.max(0, moisDiff * 2);
 }
 
 // PUT - Approuver ou rejeter une demande d'absence

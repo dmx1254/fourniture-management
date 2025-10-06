@@ -22,7 +22,7 @@ function calculerCongesAcquis(hireDate: string, endDate?: string): number {
     1; // +1 pour inclure le mois de début
 
   // 2.5 jours par mois
-  return Math.max(0, moisDiff * 2.5);
+  return Math.max(0, moisDiff * 2);
 }
 
 // GET - Obtenir le solde des congés d'un employé
@@ -59,6 +59,7 @@ export async function GET(req: Request) {
     const validateAbsence = await AbsenceRequestModel.find({
       userId: userId,
       statutValidation: "approuve",
+      raison: { $ne: "repos medicale" },
     }).select("duree -_id");
 
     const congesConsommes = validateAbsence.reduce((acc, absence) => acc + absence.duree, 0);

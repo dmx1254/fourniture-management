@@ -135,7 +135,7 @@ const Conges = ({ user }: { user: User }) => {
                   </div>
                   <div className="text-blue-100 font-medium">Congés acquis</div>
                   <div className="text-blue-200 text-sm mt-1">
-                    2.5 jours/mois
+                    2 jours/mois
                   </div>
                 </div>
 

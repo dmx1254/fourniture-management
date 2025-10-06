@@ -188,6 +188,10 @@ const UserSchema = z.object({
         "La date de fin de contrat doit être une chaîne de caractères",
     })
     .optional(),
+  password: z.string({
+    required_error: "Le mot de passe est requis",
+    invalid_type_error: "Le mot de passe doit être une chaîne de caractères",
+  }),
 });
 
 const TransactionSchema = z.object({
@@ -540,6 +544,7 @@ export async function updateUserPro(
     const occupation = isUserCorrect.data.occupation;
     const hireDate = isUserCorrect.data.hireDate;
     const endDate = isUserCorrect.data.endDate;
+    const password = isUserCorrect.data.password;
     if (userId !== undefined) {
       const response = await updateUser(
         userId,
@@ -550,7 +555,8 @@ export async function updateUserPro(
         occupation,
         identicationcode,
         hireDate || "",
-        endDate || ""
+        endDate || "",
+        password || ""
       );
       await revalidatePath("/dashboard/utilisateurs");
       return response;

@@ -12,7 +12,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useSession } from "next-auth/react";
 import {
   CalendarIcon,
@@ -32,7 +38,9 @@ const AbsenceRequest = () => {
     dateDepart: "",
     dateFin: "",
     raison: "",
+    proofBase64: "",
   });
+  const [proofOfAbsence, setProofOfAbsence] = useState<File | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,17 +49,17 @@ const AbsenceRequest = () => {
     if (formData.dateDepart && formData.dateFin) {
       let start = new Date(formData.dateDepart);
       let end = new Date(formData.dateFin);
-      
+
       // S'assurer que start est avant end
       if (start > end) {
         const temp = start;
         start = end;
         end = temp;
       }
-      
+
       let count = 0;
       const current = new Date(start);
-      
+
       while (current < end) {
         const dayOfWeek = current.getDay();
         // Exclure samedi (6) et dimanche (0)
@@ -60,7 +68,7 @@ const AbsenceRequest = () => {
         }
         current.setDate(current.getDate() + 1);
       }
-      
+
       return count;
     }
     return 0;
@@ -81,13 +89,14 @@ const AbsenceRequest = () => {
     if (formData.dateDepart && formData.dateFin) {
       const start = new Date(formData.dateDepart);
       const end = new Date(formData.dateFin);
-      
+
       // Vérifier que la date de fin est au minimum 1 jour après la date de départ
       const minEndDate = new Date(start);
       minEndDate.setDate(minEndDate.getDate() + 1);
-      
+
       if (end <= start) {
-        newErrors.dateFin = "La date de fin doit être au minimum 1 jour après la date de départ";
+        newErrors.dateFin =
+          "La date de fin doit être au minimum 1 jour après la date de départ";
       }
 
       // Vérifier que la date de départ n'est pas dans le passé
@@ -101,6 +110,12 @@ const AbsenceRequest = () => {
 
     if (!formData.raison.trim()) {
       newErrors.raison = "La raison de l'absence est requise";
+    }
+
+    // Validation du justificatif médical si la raison est "repos medicale"
+    if (formData.raison === "repos medicale" && !proofOfAbsence) {
+      newErrors.proofOfAbsence =
+        "Le justificatif médical est obligatoire pour un repos médical";
     }
 
     setErrors(newErrors);
@@ -131,6 +146,7 @@ const AbsenceRequest = () => {
         emailDemandeur: session?.user?.email || "",
         dateSoumission: new Date().toISOString(),
         userId: session?.user?.id || "",
+        proofOfAbsence: formData.proofBase64 || "",
       };
 
       // console.log("Demande d'absence:", absenceRequest);
@@ -152,7 +168,14 @@ const AbsenceRequest = () => {
           position: "top-right",
         });
         setIsOpen(false);
-        setFormData({ dateDepart: "", dateFin: "", raison: "" });
+        setFormData({
+          dateDepart: "",
+          dateFin: "",
+          raison: "",
+          proofBase64: "",
+        });
+        setProofOfAbsence(null);
+
         setErrors({});
       } else {
         toast.error(data.errorMessage, {
@@ -164,7 +187,13 @@ const AbsenceRequest = () => {
           position: "top-right",
         });
         setIsOpen(false);
-        setFormData({ dateDepart: "", dateFin: "", raison: "" });
+        setFormData({
+          dateDepart: "",
+          dateFin: "",
+          raison: "",
+          proofBase64: "",
+        });
+        setProofOfAbsence(null);
         setErrors({});
       }
 
@@ -185,18 +214,18 @@ const AbsenceRequest = () => {
     if (field === "dateDepart" && value) {
       const startDate = new Date(value);
       const currentEndDate = new Date(formData.dateFin);
-      
+
       // Si la date de fin est antérieure ou égale à la nouvelle date de départ
       if (formData.dateFin && currentEndDate <= startDate) {
         // Définir la date de fin au minimum 1 jour après la date de départ
         const minEndDate = new Date(startDate);
         minEndDate.setDate(minEndDate.getDate() + 1);
-        const minEndDateString = minEndDate.toISOString().split('T')[0];
-        
-        setFormData(prev => ({ 
-          ...prev, 
+        const minEndDateString = minEndDate.toISOString().split("T")[0];
+
+        setFormData((prev) => ({
+          ...prev,
           dateDepart: value,
-          dateFin: minEndDateString 
+          dateFin: minEndDateString,
         }));
         return; // Sortir de la fonction car on a déjà mis à jour le state
       }
@@ -331,11 +360,15 @@ const AbsenceRequest = () => {
                   type="date"
                   value={formData.dateFin}
                   onChange={(e) => handleInputChange("dateFin", e.target.value)}
-                  min={formData.dateDepart ? (() => {
-                    const minDate = new Date(formData.dateDepart);
-                    minDate.setDate(minDate.getDate() + 1);
-                    return minDate.toISOString().split('T')[0];
-                  })() : undefined}
+                  min={
+                    formData.dateDepart
+                      ? (() => {
+                          const minDate = new Date(formData.dateDepart);
+                          minDate.setDate(minDate.getDate() + 1);
+                          return minDate.toISOString().split("T")[0];
+                        })()
+                      : undefined
+                  }
                   required
                   className={`mt-1 ${
                     errors.dateFin
@@ -380,16 +413,43 @@ const AbsenceRequest = () => {
             <Label htmlFor="raison" className="text-sm text-gray-600">
               Raison de l'absence
             </Label>
-            <Textarea
-              id="raison"
-              placeholder="Décrivez la raison de votre absence..."
+            <Select
               value={formData.raison}
-              onChange={(e) => handleInputChange("raison", e.target.value)}
+              onValueChange={(value) => handleInputChange("raison", value)}
               required
-              className={`mt-1 min-h-[100px] resize-none ${
-                errors.raison ? "border-red-500 focus-visible:ring-red-500" : ""
-              }`}
-            />
+            >
+              <SelectTrigger
+                className={`mt-1 ${
+                  errors.raison
+                    ? "border-red-500 focus-visible:ring-red-500"
+                    : ""
+                }`}
+              >
+                <SelectValue placeholder="Sélectionnez la raison de votre absence..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="raison personnelle">
+                  Raison personnelle
+                </SelectItem>
+                <SelectItem value="raison medicale">Raison médicale</SelectItem>
+                <SelectItem value="repos medicale">Repos médical</SelectItem>
+                <SelectItem value="raison familiale">
+                  Raison familiale
+                </SelectItem>
+                <SelectItem value="convenance personnelle">
+                  Convenance personnelle
+                </SelectItem>
+                <SelectItem value="raison administrative ou judiciaire">
+                  Raison administrative ou judiciaire
+                </SelectItem>
+                <SelectItem value="raison d'études ou de formation">
+                  Raison d'études ou de formation
+                </SelectItem>
+                <SelectItem value="raison religieuse">
+                  Raison religieuse
+                </SelectItem>
+              </SelectContent>
+            </Select>
             {errors.raison && (
               <div className="flex items-center gap-1 mt-1 text-red-500 text-xs">
                 <AlertCircleIcon className="w-3 h-3" />
@@ -397,6 +457,45 @@ const AbsenceRequest = () => {
               </div>
             )}
           </div>
+
+          {/* Champ de fichier pour repos médical */}
+          {formData.raison === "repos medicale" && (
+            <div>
+              <Label htmlFor="proofOfAbsence" className="text-sm text-gray-600">
+                Justificatif médical (PDF, JPG, PNG)
+              </Label>
+              <Input
+                id="proofOfAbsence"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setProofOfAbsence(file);
+                    // Convertir le fichier en base64
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      // Stocker le base64 dans le formData si nécessaire
+                      handleInputChange("proofBase64", reader.result as string);
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className={`mt-1 ${
+                  errors.proofOfAbsence
+                    ? "border-red-500 focus-visible:ring-red-500"
+                    : ""
+                }`}
+                required
+              />
+              {errors.proofOfAbsence && (
+                <div className="flex items-center gap-1 mt-1 text-red-500 text-xs">
+                  <AlertCircleIcon className="w-3 h-3" />
+                  {errors.proofOfAbsence}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Boutons d'action */}
           <div className="flex gap-3 pt-4">
@@ -414,7 +513,8 @@ const AbsenceRequest = () => {
                 isLoading ||
                 !formData.dateDepart ||
                 !formData.dateFin ||
-                !formData.raison
+                !formData.raison ||
+                (formData.raison === "repos medicale" && !proofOfAbsence)
               }
               className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
             >
