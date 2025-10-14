@@ -18,17 +18,23 @@ type InventoryItem = {
 
 const InventoryReport = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [category, setCategory] = useState("");
 
-  const generateInventoryPdf = async () => {
+  const generateInventoryPdf = async (category: string) => {
+    setCategory(category);
     setIsLoading(true);
-    
+
     try {
       // Récupérer les données de l'inventaire
-      const response = await fetch("/api/inventory");
+      const categoryUrl =
+        category === "informatique" ? "/api/inventory" : "/api/bureau";
+      const response = await fetch(categoryUrl);
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.errorMessage || "Erreur lors de la récupération des données");
+        throw new Error(
+          result.errorMessage || "Erreur lors de la récupération des données"
+        );
       }
 
       const inventory: InventoryItem[] = result.data;
@@ -54,9 +60,9 @@ const InventoryReport = () => {
 
       // En-tête avec logos
       try {
-        doc.addImage("/senegal.png", "PNG", 135, 10, 20, 15, undefined, "FAST");
-        doc.addImage("/mintour.png", "PNG", 10, 15, 15, 15, undefined, "FAST");
-        doc.addImage("/pmn.jpeg", "JPEG", 272, 15, 15, 15, undefined, "FAST");
+        doc.addImage("/senegal.png", "PNG", 135, 8, 20, 15, undefined, "FAST");
+        doc.addImage("/mintour.png", "PNG", 10, 8, 15, 15, undefined, "FAST");
+        doc.addImage("/pmn.jpeg", "JPEG", 272, 8, 15, 15, undefined, "FAST");
       } catch (error) {
         console.log("Erreur lors du chargement des images:", error);
       }
@@ -65,11 +71,11 @@ const InventoryReport = () => {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(18);
       doc.setTextColor(0, 51, 102);
-      doc.text("RAPPORT D'INVENTAIRE", 148.5, 20, { align: "center" });
+      doc.text("RAPPORT D'INVENTAIRE", 148.5, 30, { align: "center" });
 
       doc.setFontSize(12);
       doc.setTextColor(0, 0, 0);
-      doc.text("Projet Mobilier National", 148.5, 27, { align: "center" });
+      doc.text("Projet Mobilier National", 148.5, 37, { align: "center" });
 
       // Date de génération
       doc.setFont("helvetica", "normal");
@@ -78,31 +84,40 @@ const InventoryReport = () => {
       const currentDate = format(new Date(), "dd MMMM yyyy 'à' HH:mm", {
         locale: fr,
       });
-      doc.text(`Généré le ${currentDate}`, 148.5, 33, { align: "center" });
+      doc.text(`Généré le ${currentDate}`, 148.5, 43, { align: "center" });
 
       // Ligne de séparation
       doc.setDrawColor(0, 51, 102);
       doc.setLineWidth(0.5);
-      doc.line(15, 38, 282, 38);
+      doc.line(15, 48, 282, 48);
 
       // Statistiques générales
       const totalArticles = inventory.length;
-      const totalQuantite = inventory.reduce((sum, item) => sum + item.quantiteTotale, 0);
-      const totalConsome = inventory.reduce((sum, item) => sum + item.consomeTotale, 0);
-      const totalRestant = inventory.reduce((sum, item) => sum + item.restantTotal, 0);
+      const totalQuantite = inventory.reduce(
+        (sum, item) => sum + item.quantiteTotale,
+        0
+      );
+      const totalConsome = inventory.reduce(
+        (sum, item) => sum + item.consomeTotale,
+        0
+      );
+      const totalRestant = inventory.reduce(
+        (sum, item) => sum + item.restantTotal,
+        0
+      );
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(0, 51, 102);
-      doc.text("Statistiques Générales", 15, 45);
+      doc.text("Statistiques Générales", 15, 55);
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       doc.setTextColor(0, 0, 0);
-      doc.text(`Nombre d'articles différents : ${totalArticles}`, 15, 50);
-      doc.text(`Quantité totale : ${totalQuantite}`, 15, 55);
-      doc.text(`En service : ${totalConsome}`, 90, 50);
-      doc.text(`En attente : ${totalRestant}`, 90, 55);
+      doc.text(`Nombre d'articles différents : ${totalArticles}`, 15, 60);
+      doc.text(`Quantité totale : ${totalQuantite}`, 15, 65);
+      doc.text(`En service : ${totalConsome}`, 90, 60);
+      doc.text(`En attente : ${totalRestant}`, 90, 65);
 
       // Préparer les données du tableau
       const tableData = inventory.map((item) => [
@@ -124,7 +139,7 @@ const InventoryReport = () => {
 
       // Créer le tableau
       autoTable(doc, {
-        startY: 62,
+        startY: 72,
         head: [
           [
             "Désignation des matières",
@@ -174,7 +189,7 @@ const InventoryReport = () => {
       const pageCount = (doc as any).internal.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
-        
+
         // Ligne de séparation
         doc.setDrawColor(200, 200, 200);
         doc.setLineWidth(0.3);
@@ -198,16 +213,14 @@ const InventoryReport = () => {
         );
 
         // Numéro de page
-        doc.text(
-          `Page ${i} sur ${pageCount}`,
-          282,
-          205,
-          { align: "right" }
-        );
+        doc.text(`Page ${i} sur ${pageCount}`, 282, 205, { align: "right" });
       }
 
       // Sauvegarder le PDF
-      const fileName = `inventaire-pmn-${format(new Date(), "yyyy-MM-dd-HHmm")}.pdf`;
+      const fileName = `inventaire-pmn-${format(
+        new Date(),
+        "yyyy-MM-dd-HHmm"
+      )}.pdf`;
       doc.save(fileName);
 
       toast.success("Rapport d'inventaire généré avec succès !", {
@@ -220,18 +233,38 @@ const InventoryReport = () => {
       });
     } finally {
       setIsLoading(false);
+      setCategory("");
     }
   };
 
   return (
-    <button
-      onClick={generateInventoryPdf}
-      disabled={isLoading}
-      className="flex items-center gap-2 font-bold text-sm bg-orange-600 text-white p-2 rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      <FiDownload />
-      <span>{isLoading ? "Génération..." : "Inventaire"}</span>
-    </button>
+    <div className="flex items-center gap-2">
+      <button
+        onClick={() => generateInventoryPdf("informatique")}
+        disabled={isLoading}
+        className="flex items-center gap-2 font-bold text-sm bg-orange-600 text-white p-2 rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <FiDownload />
+        <span>
+          {isLoading && category === "informatique"
+            ? "Génération..."
+            : "Inventaire informatique"}
+        </span>
+      </button>
+
+      <button
+        onClick={() => generateInventoryPdf("bureautique")}
+        disabled={isLoading}
+        className="flex items-center gap-2 font-bold text-sm bg-cyan-600 text-white p-2 rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <FiDownload />
+        <span>
+          {isLoading && category === "bureautique"
+            ? "Génération..."
+            : "Inventaire bureautique"}
+        </span>
+      </button>
+    </div>
   );
 };
 

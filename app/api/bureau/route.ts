@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     // Utiliser l'agrégation MongoDB pour regrouper par titre et calculer les totaux
     const inventory = await ArticleModel.aggregate([
       {
-        $match: { category: { $ne: "fournitures-de-bureau" } },
+        $match: { category: { $eq: "fournitures-de-bureau" } },
       },
       {
         $group: {
