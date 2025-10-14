@@ -260,7 +260,7 @@ export async function createTransaction(
           "carburant",
         ];
         const numTosendSms = categoriesForFirstNumber.includes(category)
-          ? "+221773023577"
+          ? "+221777978715"
           : "+221788273349";
 
         const sendSMS = await fetch(
