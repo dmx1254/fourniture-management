@@ -29,6 +29,8 @@ const Fourniture = async ({
   let { totalPages } =
     (await getArticlesAndTotalPages(query, currentPage, category, year)) || 1;
 
+    console.log(query);
+
   return (
     <div className="w-full flex flex-col items-center p-4 bg-gray-100">
       <div className="w-full flex items-center justify-between">

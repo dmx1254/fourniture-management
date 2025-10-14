@@ -570,6 +570,11 @@ export async function getTransactionsAndTotalPages(
   if (category === "phone" && query && query.trim() !== "") {
     matchConditions.phone = { $regex: query, $options: "i" };
   }
+
+  if (category === "title" && query && query.trim() !== "") {
+    matchConditions.title = { $regex: query, $options: "i" };
+  }
+
   if (year && year.trim() !== "") {
     matchConditions.createdAt = {
       $gte: new Date(`${year}-01-01`),

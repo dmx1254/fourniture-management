@@ -15,6 +15,7 @@ import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import { ChevronDownIcon } from "lucide-react";
 import AbsenceRequest from "./AbsenceRequest";
+import InventoryReport from "./InventoryReport";
 
 const Header = () => {
   const { data: session } = useSession();
@@ -26,6 +27,7 @@ const Header = () => {
   return (
     <div className="sticky bg-white border-b border-[#F4F4F4] z-20 p-2 top-0 right-0 left-[250px] w-full flex items-end justify-end">
       <div className="flex items-center gap-2">
+        <InventoryReport />
         <AbsenceRequest />
         <PDFGenerator />
       </div>

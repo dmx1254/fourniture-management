@@ -17,7 +17,7 @@ import {
 import { updateUserPro } from "@/lib/actions/action";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import AddUserFourniture from "./AddUserFourniture";
+import AddUserFourniture, { AddMultipleUserFourniture } from "./AddUserFourniture";
 import UserTransactionDialog from "../UserTransactionDialog";
 import Conges from "../Conges";
 import { useSession } from "next-auth/react";
@@ -251,6 +251,12 @@ const UserUpdate = ({
           user={user}
           articles={articles}
           email={email}
+        />
+      )}
+      {isAdmin && (
+        <AddMultipleUserFourniture
+          user={user}
+          articles={articles}
         />
       )}
       {isAbleToViewButton && <Conges user={user} />}

@@ -53,6 +53,7 @@ const MoreUserFilter = () => {
             <SelectItem value="firstname">Nom</SelectItem>
             <SelectItem value="email">Email</SelectItem>
             <SelectItem value="phone">Telephone</SelectItem>
+            <SelectItem value="title">Article</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

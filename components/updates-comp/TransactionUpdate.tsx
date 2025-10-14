@@ -50,14 +50,18 @@ const TransactionUpdate = ({
     initialState
   );
 
+  console.log(articles);
+
   useEffect(() => {
-    const article = articles.find((article) => article._id === id);
+    const article = articles.find((article) => article.title === trans.title);
     // console.log(article);
     setTitle(article?.title || "");
     setCategory(article?.category || "");
     let rest: number = article ? article?.quantity - article?.consome : 0;
     setRestant(rest);
-  }, [id, articles, restant, title, category]);
+
+    console.log("article: ", article);
+  }, [trans.title, articles, restant, title, category]);
 
   useEffect(() => {
     if (state?.message) {

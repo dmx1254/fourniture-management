@@ -34,7 +34,6 @@ const accessEmails = [
   "papa.elamadou.gaye@pmn.sn",
   "sarr.mameadam@pmn.sn",
   "tall.ibrahima@pmn.sn",
-  "sarr.mameadam@pmn.sn",
   "oumou.gaye@pmn.sn",
 ];
 
