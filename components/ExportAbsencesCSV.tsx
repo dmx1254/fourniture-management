@@ -4,8 +4,10 @@ import { Download } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const ExportAbsencesCSV = () => {
+  const {data: session} = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
 
@@ -88,6 +90,13 @@ const ExportAbsencesCSV = () => {
   };
 
   const handleExport = async () => {
+    if (session?.user?.role !== "admin") {
+      toast.error("Vous n'avez pas les permissions pour exporter les demandes d'absence", {
+        style: { color: "red" },
+        position: "top-right",
+      });
+      return;
+    }
     setIsLoading(true);
 
     try {
