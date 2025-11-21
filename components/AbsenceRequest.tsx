@@ -44,11 +44,18 @@ const AbsenceRequest = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
 
+  // Fonction pour parser les dates sans problème de fuseau horaire
+  const parseDate = (dateString: string) => {
+    const [year, month, day] = dateString.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  };
+
   // Calculer la durée automatiquement (excluant les weekends)
+  // Compte la date de départ ET la date de fin incluses
   const calculateDuration = () => {
     if (formData.dateDepart && formData.dateFin) {
-      let start = new Date(formData.dateDepart);
-      let end = new Date(formData.dateFin);
+      let start = parseDate(formData.dateDepart);
+      let end = parseDate(formData.dateFin);
 
       // S'assurer que start est avant end
       if (start > end) {
@@ -60,7 +67,8 @@ const AbsenceRequest = () => {
       let count = 0;
       const current = new Date(start);
 
-      while (current < end) {
+      // Inclure la date de fin : utiliser <= au lieu de <
+      while (current <= end) {
         const dayOfWeek = current.getDay();
         // Exclure samedi (6) et dimanche (0)
         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
@@ -87,16 +95,13 @@ const AbsenceRequest = () => {
     }
 
     if (formData.dateDepart && formData.dateFin) {
-      const start = new Date(formData.dateDepart);
-      const end = new Date(formData.dateFin);
+      const start = parseDate(formData.dateDepart);
+      const end = parseDate(formData.dateFin);
 
-      // Vérifier que la date de fin est au minimum 1 jour après la date de départ
-      const minEndDate = new Date(start);
-      minEndDate.setDate(minEndDate.getDate() + 1);
-
-      if (end <= start) {
+      // Permettre que la date de fin soit égale à la date de départ (les deux dates sont incluses)
+      if (end < start) {
         newErrors.dateFin =
-          "La date de fin doit être au minimum 1 jour après la date de départ";
+          "La date de fin doit être identique ou postérieure à la date de départ";
       }
 
       // Vérifier que la date de départ n'est pas dans le passé
@@ -212,20 +217,15 @@ const AbsenceRequest = () => {
 
     // Si la date de départ change, ajuster automatiquement la date de fin si nécessaire
     if (field === "dateDepart" && value) {
-      const startDate = new Date(value);
-      const currentEndDate = new Date(formData.dateFin);
+      const startDate = parseDate(value);
+      const currentEndDate = formData.dateFin ? parseDate(formData.dateFin) : null;
 
-      // Si la date de fin est antérieure ou égale à la nouvelle date de départ
-      if (formData.dateFin && currentEndDate <= startDate) {
-        // Définir la date de fin au minimum 1 jour après la date de départ
-        const minEndDate = new Date(startDate);
-        minEndDate.setDate(minEndDate.getDate() + 1);
-        const minEndDateString = minEndDate.toISOString().split("T")[0];
-
+      // Si la date de fin est antérieure à la nouvelle date de départ, la mettre à la date de départ
+      if (currentEndDate && currentEndDate < startDate) {
         setFormData((prev) => ({
           ...prev,
           dateDepart: value,
-          dateFin: minEndDateString,
+          dateFin: value, // Permettre que la date de fin soit égale à la date de départ
         }));
         return; // Sortir de la fonction car on a déjà mis à jour le state
       }
@@ -360,15 +360,7 @@ const AbsenceRequest = () => {
                   type="date"
                   value={formData.dateFin}
                   onChange={(e) => handleInputChange("dateFin", e.target.value)}
-                  min={
-                    formData.dateDepart
-                      ? (() => {
-                          const minDate = new Date(formData.dateDepart);
-                          minDate.setDate(minDate.getDate() + 1);
-                          return minDate.toISOString().split("T")[0];
-                        })()
-                      : undefined
-                  }
+                  min={formData.dateDepart || undefined}
                   required
                   className={`mt-1 ${
                     errors.dateFin

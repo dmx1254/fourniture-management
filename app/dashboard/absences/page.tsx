@@ -7,6 +7,7 @@ import MoreAbsenceFilter from "@/components/MoreAbsenceFilter";
 import AbsenceTable from "@/components/absencetable";
 import { getAbsencesAndTotalPages } from "@/lib/actions/api";
 import SearchAbsence from "@/components/SearchAbsence";
+import ExportAbsencesCSV from "@/components/ExportAbsencesCSV";
 
 const UserAbsencesPage = async ({
   searchParams,
@@ -40,6 +41,9 @@ const UserAbsencesPage = async ({
           <SearchAbsence placeholder="Rechercher la demande d'absence que vous voulez..." />
         </div>
         <div className="flex items-center gap-4">
+          <Suspense fallback={<div className="w-32 h-10 bg-gray-200 rounded animate-pulse" />}>
+            <ExportAbsencesCSV />
+          </Suspense>
           <MoreAbsenceFilter />
         </div>
       </div>

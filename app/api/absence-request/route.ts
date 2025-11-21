@@ -81,8 +81,66 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const absences = await AbsenceRequestModel.find();
-    return NextResponse.json(absences, { status: 200 });
+    const { searchParams } = new URL(req.url);
+    const query = searchParams.get("query") || "";
+    const approved = searchParams.get("approved") || "";
+    const startDate = searchParams.get("startDate") || "";
+    const endDate = searchParams.get("endDate") || "";
+    const exportAll = searchParams.get("export") === "true";
+
+    const matchConditions: any = {};
+
+    // Ajouter une condition pour le statut s'il est spécifié
+    if (approved === "approved") {
+      matchConditions.isApproved = { $eq: true };
+    }
+    if (approved === "rejected") {
+      matchConditions.isRejected = { $eq: true };
+    }
+    if (approved === "pending") {
+      matchConditions.isPending = { $eq: true };
+    }
+
+    // Filtre par date
+    if (startDate && endDate && startDate !== "" && endDate !== "") {
+      matchConditions.createdAt = {
+        $gte: new Date(startDate + "T00:00:00.000Z"),
+        $lt: new Date(endDate + "T23:59:59.999Z"),
+      };
+    }
+
+    // Filtre par recherche (nom, prénom, email)
+    if (query && query !== "") {
+      matchConditions.$or = [
+        { nom: { $regex: query, $options: "i" } },
+        { prenom: { $regex: query, $options: "i" } },
+        { emailDemandeur: { $regex: query, $options: "i" } },
+        { occupation: { $regex: query, $options: "i" } },
+      ];
+    }
+
+    let absences;
+    if (exportAll) {
+      // Pour l'export, récupérer toutes les absences sans pagination
+      absences = await AbsenceRequestModel.aggregate([
+        {
+          $match: matchConditions,
+        },
+        {
+          $sort: { createdAt: -1 },
+        },
+      ]);
+    } else {
+      // Pour l'API normale, retourner toutes les absences (comportement par défaut)
+      absences = await AbsenceRequestModel.find(matchConditions).sort({
+        createdAt: -1,
+      });
+    }
+
+    return NextResponse.json(
+      { success: true, data: JSON.parse(JSON.stringify(absences)) },
+      { status: 200 }
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json(
