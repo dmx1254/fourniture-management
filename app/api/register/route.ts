@@ -18,6 +18,24 @@ const accessCodes = [
   "pmn_UFX45",
   "pmn_VGB67",
   "pmn_WJY89",
+  "pmn_XKZ01",
+  "pmn_YLW23",
+  "pmn_ZMX45",
+  "pmn_ANB67",
+  "pmn_BOD89",
+  "pmn_COE01",
+  "pmn_DQF23",
+  "pmn_ERG45",
+  "pmn_FSJ67",
+  "pmn_GSH90",
+  "pmn_HTI12",
+  "pmn_IJU34",
+  "pmn_KLM56",
+  "pmn_NPO78",
+  "pmn_QRS90",
+  "pmn_TUV12",
+  "pmn_WXY34",
+  "pmn_ZAB56",
 ];
 
 const accessEmails = [
@@ -35,6 +53,8 @@ const accessEmails = [
   "sarr.mameadam@pmn.sn",
   "tall.ibrahima@pmn.sn",
   "oumou.gaye@pmn.sn",
+  "halima.ba@pmn.sn",
+  "ndeye.ngone.fidior@pmn.sn",
 ];
 
 await connectDB();

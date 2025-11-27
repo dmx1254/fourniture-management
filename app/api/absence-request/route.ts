@@ -58,7 +58,8 @@ export async function POST(req: Request) {
         }
       }
     );
-    await Promise.all(smsPromises);
+    // Utiliser Promise.allSettled pour ignorer les erreurs d'envoi de SMS
+    await Promise.allSettled(smsPromises);
 
     revalidatePath("/dashboard/absences", "layout");
 
