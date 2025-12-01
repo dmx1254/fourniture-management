@@ -7,6 +7,10 @@ import { getServerSession } from "next-auth";
 import { options } from "../../auth/[...nextauth]/option";
 import { revalidatePath } from "next/cache";
 
+import { connectDB } from "@/lib/actions/db";
+
+await connectDB();
+
 export async function POST(req: Request) {
   const session = await getServerSession(options);
   if (!session) {

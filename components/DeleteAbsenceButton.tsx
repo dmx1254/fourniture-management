@@ -59,7 +59,7 @@ const DeleteAbsenceButton = ({ absenceId }: { absenceId: string }) => {
   return (
     <button
       onClick={() => handleDelete(absenceId)}
-      disabled={isDisabled}
+      // disabled={isDisabled}
       className="bg-red-500 disabled:bg-red-300 disabled:cursor-not-allowed disabled:opacity-50 text-white p-2 rounded-md hover:bg-red-600 transition-colors"
     >
       {isLoading ? (

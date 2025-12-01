@@ -6,6 +6,10 @@ import { NextResponse } from "next/server";
 import { options } from "../../auth/[...nextauth]/option";
 import { getServerSession } from "next-auth";
 
+import { connectDB } from "@/lib/actions/db";
+
+await connectDB();
+
 // Fonction utilitaire pour calculer les congés acquis
 function calculerCongesAcquis(hireDate: string, endDate?: string): number {
   if (!hireDate) return 0;

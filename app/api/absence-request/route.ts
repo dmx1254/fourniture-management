@@ -6,6 +6,9 @@ import {
 } from "@/lib/utils/validationHierarchy";
 import { revalidatePath } from "next/cache";
 import type { ValidationResponse } from "@/lib/types";
+import { connectDB } from "@/lib/actions/db";
+
+await connectDB();
 
 export async function POST(req: Request) {
   try {
