@@ -26,7 +26,7 @@ const Header = () => {
 
   return (
     <div className="sticky bg-white border-b border-[#F4F4F4] z-20 p-2 top-0 right-0 left-[250px] w-full flex items-end justify-end">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 max-md:grid max-md:grid-cols-1 max-md:gap-4">
         <InventoryReport />
         <AbsenceRequest />
         <PDFGenerator />

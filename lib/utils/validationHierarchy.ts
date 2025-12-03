@@ -84,6 +84,34 @@ export function getValidateursRequis(emailDemandeur: string): string[] {
 }
 
 /**
+ * Détermine les téléphones des validateurs requis selon l'email de l'employé
+ */
+export function getTelephonesValidateursRequis(
+  emailDemandeur: string
+): { email: string; phone: string }[] {
+  if (VALIDATEURS_CONFIG.GROUPE_1.emails.includes(emailDemandeur)) {
+    return VALIDATEURS_CONFIG.GROUPE_1.phonesValidators.map((validator) => ({
+      email: validator.email,
+      phone: validator.phone,
+    }));
+  } else if (VALIDATEURS_CONFIG.GROUPE_2.emails.includes(emailDemandeur)) {
+    return VALIDATEURS_CONFIG.GROUPE_2.phonesValidators.map((validator) => ({
+      email: validator.email,
+      phone: validator.phone,
+    }));
+  } else if (VALIDATEURS_CONFIG.GROUPE_4.emails.includes(emailDemandeur)) {
+    return VALIDATEURS_CONFIG.GROUPE_4.phonesValidators.map((validator) => ({
+      email: validator.email,
+      phone: validator.phone,
+    }));
+  } else {
+    return VALIDATEURS_CONFIG.GROUPE_3.phonesValidators.map((validator) => ({
+      email: validator.email,
+      phone: validator.phone,
+    }));
+  }
+}
+/**
  * Initialise le tableau des validations avec les validateurs requis
  */
 export function initialiserValidations(validateursRequis: string[]) {

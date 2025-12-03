@@ -137,6 +137,47 @@ const AbsenceRequest = () => {
     try {
       setIsLoading(true);
       const duration = calculateDuration();
+      if (duration <= 0) {
+        toast.error(
+          "La durée de l'absence ne peut pas être inférieure à 1 jour",
+          {
+            style: {
+              background: "#dc2626",
+              color: "#fff",
+            },
+            duration: 5000,
+            position: "top-right",
+          }
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      if (!formData.dateDepart || !formData.dateFin) {
+        toast.error("La date de départ et la date de fin sont requises", {
+          style: {
+            background: "#dc2626",
+            color: "#fff",
+          },
+          duration: 5000,
+          position: "top-right",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (!formData.raison) {
+        toast.error("La raison de l'absence est requise", {
+          style: {
+            background: "#dc2626",
+            color: "#fff",
+          },
+          duration: 5000,
+          position: "top-right",
+        });
+        setIsLoading(false);
+        return;
+      }
 
       const absenceRequest = {
         ...formData,
@@ -162,6 +203,7 @@ const AbsenceRequest = () => {
       });
 
       const data = await response.json();
+      // console.log(data);
 
       if (response.ok) {
         toast.success("Demande d'absence enregistrée avec succès", {
@@ -182,6 +224,10 @@ const AbsenceRequest = () => {
         setProofOfAbsence(null);
 
         setErrors({});
+        await fetch("/api/user/sendsms", {
+          method: "POST",
+          body: JSON.stringify({ phones: data.validateursRequis }),
+        });
       } else {
         toast.error(data.errorMessage, {
           style: {
@@ -201,10 +247,6 @@ const AbsenceRequest = () => {
         setProofOfAbsence(null);
         setErrors({});
       }
-
-      // const data = await response.json();
-
-      // console.log(data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -218,7 +260,9 @@ const AbsenceRequest = () => {
     // Si la date de départ change, ajuster automatiquement la date de fin si nécessaire
     if (field === "dateDepart" && value) {
       const startDate = parseDate(value);
-      const currentEndDate = formData.dateFin ? parseDate(formData.dateFin) : null;
+      const currentEndDate = formData.dateFin
+        ? parseDate(formData.dateFin)
+        : null;
 
       // Si la date de fin est antérieure à la nouvelle date de départ, la mettre à la date de départ
       if (currentEndDate && currentEndDate < startDate) {

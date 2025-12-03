@@ -2,10 +2,10 @@ import AbsenceRequestModel from "@/lib/models/absence";
 import { NextResponse } from "next/server";
 import {
   getValidateursRequis,
+  getTelephonesValidateursRequis,
   initialiserValidations,
 } from "@/lib/utils/validationHierarchy";
 import { revalidatePath } from "next/cache";
-import type { ValidationResponse } from "@/lib/types";
 import { connectDB } from "@/lib/actions/db";
 
 await connectDB();
@@ -16,6 +16,9 @@ export async function POST(req: Request) {
 
     // Déterminer les validateurs requis selon l'email de l'employé
     const validateursRequis = getValidateursRequis(data.emailDemandeur);
+    const telephonesValidateursRequis = getTelephonesValidateursRequis(
+      data.emailDemandeur
+    );
 
     // Initialiser le tableau des validations
     const validations = initialiserValidations(validateursRequis);
@@ -31,45 +34,26 @@ export async function POST(req: Request) {
       statutValidation: "en_attente",
     };
 
-    const absences = await AbsenceRequestModel.create(absenceRequest);
-
-    const smsPromises = absences.validations.map(
-      async (validation: ValidationResponse) => {
-        try {
-          const res = await fetch(
-            `${process.env.AXIOMTEXT_API_URL_MESSAGE}message`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.AXIOMTEXT_API_KEY!}`,
-              },
-              body: JSON.stringify({
-                to: validation.phone,
-                message: `Bonjour, ${validation.fullname}, vous avez une demande d'absence en attente de validation. Voici le lien: https://pmn.vercel.app/dashboard/absences`,
-                signature: "PMN",
-              }),
-            }
-          );
-
-          const data = await res.json();
-          // console.log(data);
-          return { success: true, validation: validation.fullname };
-        } catch (error) {
-          console.log(`Erreur SMS pour ${validation.fullname}:`, error);
-          return { success: false, validation: validation.fullname, error };
-        }
-      }
-    );
-    // Utiliser Promise.allSettled pour ignorer les erreurs d'envoi de SMS
-    await Promise.allSettled(smsPromises);
+    await AbsenceRequestModel.create(absenceRequest);
 
     revalidatePath("/dashboard/absences", "layout");
+
+    const validateurFormateEmailToFullName = telephonesValidateursRequis.map(
+      (v) => {
+        let emailfullname = v.email.split("@")[0];
+        let fullname = emailfullname.split(".");
+        let fullnameFormate = `${fullname[1]} ${fullname[0]}`;
+        return {
+          fullname: fullnameFormate,
+          phone: v.phone,
+        };
+      }
+    );
 
     return NextResponse.json(
       {
         message: "Demande d'absence enregistrée avec succès",
-        validateursRequis: validateursRequis.length,
+        validateursRequis: validateurFormateEmailToFullName,
       },
       { status: 201 }
     );
