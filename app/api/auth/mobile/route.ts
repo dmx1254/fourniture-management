@@ -1,6 +1,10 @@
 import UserPMN from "@/lib/models/user";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import { connectDB } from "@/lib/actions/db";
+
+
+await connectDB();
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();
