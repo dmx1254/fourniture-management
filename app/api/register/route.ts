@@ -55,6 +55,9 @@ const accessEmails = [
   "oumou.gaye@pmn.sn",
   "halima.ba@pmn.sn",
   "ndeye.ngone.fidior@pmn.sn",
+  "toure.amadou@pmn.sn",
+  "diallo-omar.alpha@pmn.sn",
+  "souane.lamine@pmn.sn",
 ];
 
 await connectDB();
