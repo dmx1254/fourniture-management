@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { error: "Utilisateur non trouvé" },
+        { errorMessage: "Utilisateur non trouvé" },
         { status: 404 }
       );
     }
@@ -23,15 +23,24 @@ export async function POST(req: Request) {
 
     if (!isPasswordCorrect) {
       return NextResponse.json(
-        { error: "Mot de passe incorrect" },
+        { errorMessage: "Mot de passe incorrect" },
         { status: 401 }
       );
     }
 
-    return NextResponse.json({ message: "Connexion réussie" }, { status: 200 });
+    const userData = await UserPMN.findOne({ email });
+
+    if (!userData) {
+      return NextResponse.json(
+        { errorMessage: "Une erreur est survenue" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ user: userData, message: "Connexion réussie" }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Une erreur est survenue" },
+      { errorMessage: "Une erreur est survenue" },
       { status: 500 }
     );
   }
@@ -42,7 +51,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ message: "Connexion réussie" }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Une erreur est survenue" },
+      { errorMessage: "Une erreur est survenue" },
       { status: 500 }
     );
   }
