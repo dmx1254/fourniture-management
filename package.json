@@ -39,7 +39,7 @@
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.471.2",
     "mongoose": "^8.9.5",
-    "next": "15.1.4",
+    "next": "15.1.11",
     "next-auth": "^4.24.11",
     "react": "^19",
     "react-chartjs-2": "^5.3.0",
