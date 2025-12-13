@@ -122,3 +122,29 @@ export async function DELETE(
     );
   }
 }
+
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
+  try {
+    const absence = await AbsenceRequestModel.find({ userId: id });
+
+    if (!absence) {
+      return NextResponse.json(
+        { errorMessage: "Demande d'absence non trouvée" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ absences: absence }, { status: 200 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { error: "Erreur lors de la récupération de la demande d'absence" },
+      { status: 500 }
+    );
+  }
+}
