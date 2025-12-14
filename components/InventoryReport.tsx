@@ -1,12 +1,26 @@
 "use client";
 
 import { FiDownload } from "react-icons/fi";
+import { FiFileText } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useSession } from "next-auth/react";
 
 type InventoryItem = {
   quantiteTotale: number;
@@ -17,8 +31,19 @@ type InventoryItem = {
 };
 
 const InventoryReport = () => {
+  const {data: session} = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState("");
+  const [isNewsDialogOpen, setIsNewsDialogOpen] = useState(false);
+  const [isSubmittingNews, setIsSubmittingNews] = useState(false);
+  const [newsForm, setNewsForm] = useState({
+    title: "",
+    content: "",
+    image: "",
+    author: session?.user?.lastname + " " + session?.user?.firstname,
+    tags: "",
+  });
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const generateInventoryPdf = async (category: string) => {
     setCategory(category);
@@ -237,6 +262,109 @@ const InventoryReport = () => {
     }
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Vérifier le type de fichier
+    if (!file.type.startsWith("image/")) {
+      toast.error("Veuillez sélectionner un fichier image", {
+        style: { color: "red" },
+      });
+      return;
+    }
+
+    // Vérifier la taille (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("L'image ne doit pas dépasser 5MB", {
+        style: { color: "red" },
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setNewsForm({ ...newsForm, image: base64String });
+      setImagePreview(base64String);
+    };
+    reader.onerror = () => {
+      toast.error("Erreur lors de la lecture du fichier", {
+        style: { color: "red" },
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = () => {
+    setNewsForm({ ...newsForm, image: "" });
+    setImagePreview(null);
+  };
+
+  const handleCreateNews = async () => {
+    if (!newsForm.title || !newsForm.content) {
+      toast.error("Le titre et le contenu sont requis", {
+        style: { color: "red" },
+      });
+      return;
+    }
+
+    setIsSubmittingNews(true);
+    try {
+      const tagsArray = newsForm.tags
+        ? newsForm.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
+        : [];
+
+      const authorName = newsForm.author || 
+        (session?.user 
+          ? `${session.user.firstname || ""} ${session.user.lastname || ""}`.trim() || session.user.email 
+          : "Admin");
+
+      const response = await fetch("/api/news", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: newsForm.title,
+          content: newsForm.content,
+          image: newsForm.image || undefined,
+          author: authorName,
+          tags: tagsArray,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.errorMessage || "Erreur lors de la création de la news");
+      }
+
+      toast.success("News créée avec succès !", {
+        style: { color: "green" },
+      });
+
+      // Réinitialiser le formulaire
+      setNewsForm({
+        title: "",
+        content: "",
+        image: "",
+        author: "",
+        tags: "",
+      });
+      setImagePreview(null);
+
+      setIsNewsDialogOpen(false);
+    } catch (error: any) {
+      console.error("Erreur lors de la création de la news:", error);
+      toast.error(error.message || "Erreur lors de la création de la news", {
+        style: { color: "red" },
+      });
+    } finally {
+      setIsSubmittingNews(false);
+    }
+  };
+
   return (
     <div className="flex items-center gap-2">
       <button
@@ -264,6 +392,132 @@ const InventoryReport = () => {
             : "Inventaire bureautique"}
         </span>
       </button>
+
+      <button
+        onClick={() => setIsNewsDialogOpen(true)}
+        className="flex items-center gap-2 font-bold text-sm bg-green-600 text-white p-2 rounded-md hover:bg-green-700 transition-colors"
+      >
+        <FiFileText />
+        <span>News</span>
+      </button>
+
+      <Dialog open={isNewsDialogOpen} onOpenChange={setIsNewsDialogOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Créer une nouvelle news</DialogTitle>
+            <DialogDescription>
+              Remplissez le formulaire ci-dessous pour créer une nouvelle news.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">
+                Titre <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="title"
+                placeholder="Entrez le titre de la news"
+                value={newsForm.title}
+                onChange={(e) =>
+                  setNewsForm({ ...newsForm, title: e.target.value })
+                }
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="content">
+                Contenu <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                id="content"
+                placeholder="Entrez le contenu de la news"
+                value={newsForm.content}
+                onChange={(e) =>
+                  setNewsForm({ ...newsForm, content: e.target.value })
+                }
+                rows={6}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="image">Image</Label>
+              <Input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="cursor-pointer"
+              />
+              {imagePreview && (
+                <div className="relative mt-2">
+                  <img
+                    src={imagePreview}
+                    alt="Aperçu"
+                    className="w-full h-48 object-cover rounded-md border"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Formats acceptés: JPG, PNG, GIF (max 5MB)
+              </p>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="author">Auteur</Label>
+              <Input
+                id="author"
+                placeholder="Nom de l'auteur"
+                value={newsForm.author}
+                onChange={(e) =>
+                  setNewsForm({ ...newsForm, author: e.target.value })
+                }
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="tags">Tags (séparés par des virgules)</Label>
+              <Input
+                id="tags"
+                placeholder="tag1, tag2, tag3"
+                value={newsForm.tags}
+                onChange={(e) =>
+                  setNewsForm({ ...newsForm, tags: e.target.value })
+                }
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsNewsDialogOpen(false)}
+              disabled={isSubmittingNews}
+            >
+              Annuler
+            </Button>
+            <Button
+              onClick={handleCreateNews}
+              disabled={isSubmittingNews || !newsForm.title || !newsForm.content}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {isSubmittingNews ? "Création..." : "Créer la news"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
