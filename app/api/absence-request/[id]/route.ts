@@ -8,8 +8,6 @@ import { getServerSession } from "next-auth";
 
 import { connectDB } from "@/lib/actions/db";
 
-await connectDB();
-
 // Fonction utilitaire pour calculer les congés acquis
 function calculerCongesAcquis(hireDate: string, endDate?: string): number {
   if (!hireDate) return 0;
@@ -48,6 +46,9 @@ export async function PUT(
   const { action, commentaire } = await req.json(); // action: "approuver" ou "rejeter"
 
   try {
+    // S'assurer que la connexion est établie avant d'exécuter les requêtes
+    await connectDB();
+
     const absence = await AbsenceRequestModel.findById(id);
     if (!absence) {
       return NextResponse.json(
@@ -108,6 +109,9 @@ export async function DELETE(
   const { id } = await params;
 
   try {
+    // S'assurer que la connexion est établie avant d'exécuter les requêtes
+    await connectDB();
+
     await AbsenceRequestModel.findByIdAndDelete(id);
     revalidatePath("/dashboard/absences", "layout");
     return NextResponse.json(
@@ -130,6 +134,9 @@ export async function GET(
   const { id } = await params;
 
   try {
+    // S'assurer que la connexion est établie avant d'exécuter les requêtes
+    await connectDB();
+
     const absence = await AbsenceRequestModel.find({ userId: id });
 
     if (!absence) {

@@ -4,8 +4,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { connectDB } from "@/lib/actions/db";
 
-connectDB();
-
 export const options: NextAuthOptions = {
   pages: {
     signIn: "/pmn-signin",
@@ -28,6 +26,7 @@ export const options: NextAuthOptions = {
         credentials: Record<"email" | "password", string> | undefined
       ) {
         if (credentials) {
+          await connectDB();
           const isUserExist = await UserPMN.findOne({
             email: credentials.email,
           });

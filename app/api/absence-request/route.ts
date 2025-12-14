@@ -8,10 +8,9 @@ import {
 import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/actions/db";
 
-await connectDB();
-
 export async function POST(req: Request) {
   try {
+    await connectDB();
     const { data } = await req.json();
 
     // Déterminer les validateurs requis selon l'email de l'employé
@@ -69,6 +68,7 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
+    await connectDB();
     const { searchParams } = new URL(req.url);
     const query = searchParams.get("query") || "";
     const approved = searchParams.get("approved") || "";
@@ -140,6 +140,7 @@ export async function GET(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    await connectDB();
     await AbsenceRequestModel.deleteMany();
     revalidatePath("/dashboard/absences", "layout");
     return NextResponse.json(

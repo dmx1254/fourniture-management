@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import ArticleModel from "@/lib/actions/article";
 import { connectDB } from "@/lib/actions/db";
 
-await connectDB();
-
 export async function GET(req: Request) {
   try {
+    await connectDB();
     // Utiliser l'agrégation MongoDB pour regrouper par titre et calculer les totaux
     const inventory = await ArticleModel.aggregate([
       {

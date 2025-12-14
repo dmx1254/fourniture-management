@@ -475,6 +475,7 @@ const AbsenceRequest = () => {
                 <SelectItem value="convenance personnelle">
                   Convenance personnelle
                 </SelectItem>
+                <SelectItem value="conges">Congés</SelectItem>
                 <SelectItem value="raison administrative ou judiciaire">
                   Raison administrative ou judiciaire
                 </SelectItem>

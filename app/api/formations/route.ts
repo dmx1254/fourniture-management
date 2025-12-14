@@ -2,10 +2,9 @@ import { connectDB } from "@/lib/actions/db";
 import { NextResponse } from "next/server";
 import ArtisanFormation from "@/lib/models/formartionmarchepublic";
 
-await connectDB();
-
 export async function GET() {
   try {
+    await connectDB();
     const artisans = await ArtisanFormation.find().sort({ createdAt: -1 });
     return NextResponse.json(artisans, { status: 200 });
   } catch (error) {
@@ -19,6 +18,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    await connectDB();
     const { data } = await req.json();
 
     // Validate required fields

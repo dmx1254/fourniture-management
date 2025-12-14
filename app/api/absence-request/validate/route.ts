@@ -9,14 +9,14 @@ import { revalidatePath } from "next/cache";
 
 import { connectDB } from "@/lib/actions/db";
 
-await connectDB();
-
 export async function POST(req: Request) {
   const session = await getServerSession(options);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
+    // S'assurer que la connexion est établie avant d'exécuter les requêtes
+    await connectDB();
     const { absenceId, emailValidateur, action, commentaire } =
       await req.json();
 
@@ -161,6 +161,9 @@ export async function POST(req: Request) {
 // Récupérer les détails d'une demande d'absence pour validation
 export async function GET(req: Request) {
   try {
+    // S'assurer que la connexion est établie avant d'exécuter les requêtes
+    await connectDB();
+
     const { searchParams } = new URL(req.url);
     const absenceId = searchParams.get("absenceId");
     const emailValidateur = searchParams.get("emailValidateur");

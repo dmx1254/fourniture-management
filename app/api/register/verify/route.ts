@@ -5,10 +5,9 @@ import { connectDB } from "@/lib/actions/db";
 
 import bcrypt from "bcrypt";
 
-await connectDB();
-
 export async function POST(req: Request) {
   try {
+    await connectDB();
     const data = await req.json();
 
     // console.log("new data", data.data);

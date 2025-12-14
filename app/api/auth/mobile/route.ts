@@ -3,19 +3,27 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { connectDB } from "@/lib/actions/db";
 
-
-await connectDB();
-
 export async function POST(req: Request) {
   const { email, password } = await req.json();
 
   try {
+    await connectDB();
     const user = await UserPMN.findOne({ email });
 
     if (!user) {
       return NextResponse.json(
         { errorMessage: "Utilisateur non trouvé" },
         { status: 404 }
+      );
+    }
+
+    const isIdenticationCorrect = await UserPMN.findOne({
+      identicationcode: user.identicationcode,
+    });
+    if (!isIdenticationCorrect) {
+      return NextResponse.json(
+        { errorMessage: "Code d'accès incorrect" },
+        { status: 401 }
       );
     }
 
@@ -37,7 +45,10 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ user: userData, message: "Connexion réussie" }, { status: 200 });
+    return NextResponse.json(
+      { user: userData, message: "Connexion réussie" },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { errorMessage: "Une erreur est survenue" },
@@ -48,6 +59,7 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
+    await connectDB();
     return NextResponse.json({ message: "Connexion réussie" }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

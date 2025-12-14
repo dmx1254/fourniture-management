@@ -60,10 +60,9 @@ const accessEmails = [
   "souane.lamine@pmn.sn",
 ];
 
-await connectDB();
-
 export async function POST(req: Request) {
   try {
+    await connectDB();
     const data = await req.json();
 
     const {

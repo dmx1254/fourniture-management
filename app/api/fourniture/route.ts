@@ -3,10 +3,9 @@ import { connectDB } from "@/lib/actions/db";
 import TransactionModel from "@/lib/actions/transaction";
 import ArticleModel from "@/lib/actions/article";
 
-await connectDB();
-
 export async function POST(req: Request) {
   try {
+    await connectDB();
     const body = await req.json();
     const { userId, lastname, firstname, poste, articles } = body;
 

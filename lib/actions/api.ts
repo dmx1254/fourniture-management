@@ -11,14 +11,13 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 import bcrypt from "bcrypt";
 
-connectDB();
-
 export async function createProduct(
   title: string,
   category: string,
   quantity: number
 ) {
   try {
+    await connectDB();
     const articleCreated = await ArticleModel.create({
       title,
       category,
@@ -41,6 +40,7 @@ export async function createUserPro(
   role: string
 ) {
   try {
+    await connectDB();
     await UserPMN.create({
       lastname,
       firstname,
@@ -87,6 +87,7 @@ export async function getArticlesAndTotalPages(
   }
 
   try {
+    await connectDB();
     // Récupérer le nombre total de documents
     const totalDocuments = await ArticleModel.countDocuments(matchConditions);
 
@@ -126,6 +127,7 @@ export async function updateArticlePro(
   consome: number
 ) {
   try {
+    await connectDB();
     let rest: number = quantity - consome;
     const updateArticle = await ArticleModel.findByIdAndUpdate(
       articleId,
@@ -159,6 +161,7 @@ export async function updateUser(
   password: string
 ) {
   try {
+    await connectDB();
     const userFind = await UserPMN.findById(userId);
     const user = JSON.parse(JSON.stringify(userFind));
     const oldPassword = user.password;
@@ -203,6 +206,7 @@ export async function createTransaction(
   poste: string
 ) {
   try {
+    await connectDB();
     const articleFind = await ArticleModel.findById(articleId);
     const article = JSON.parse(JSON.stringify(articleFind));
     const qty = article.quantity;
@@ -311,6 +315,7 @@ export async function updateTransaction(
   lastcons: number
 ) {
   try {
+    await connectDB();
     const articleFind = await ArticleModel.findById(articleId);
     const article = JSON.parse(JSON.stringify(articleFind));
     const qty = article.quantity;
@@ -351,6 +356,7 @@ export async function updateTransaction(
 
 export async function deleteArticle(articleId: string) {
   try {
+    await connectDB();
     const deleteArticle = await ArticleModel.findByIdAndDelete(articleId);
     return { message: "Article supprimé avec success" };
   } catch (error) {
@@ -360,6 +366,7 @@ export async function deleteArticle(articleId: string) {
 }
 export async function deleteEntreprise(entrepriseId: string) {
   try {
+    await connectDB();
     const deleteEntreprise = await EntrepriseModel.findByIdAndDelete(
       entrepriseId
     );
@@ -371,6 +378,7 @@ export async function deleteEntreprise(entrepriseId: string) {
 }
 
 export async function getIdCatAndTitleArticle() {
+  await connectDB();
   const articlesFind = await ArticleModel.find();
 
   try {
@@ -384,6 +392,7 @@ export async function getIdCatAndTitleArticle() {
 
 export async function deleteFormation(formationId: string) {
   try {
+    await connectDB();
     const deleteFormation = await ArtisanFormation.findByIdAndDelete(
       formationId
     );
@@ -396,6 +405,7 @@ export async function deleteFormation(formationId: string) {
 
 export async function deleteUser(userId: string) {
   try {
+    await connectDB();
     const deleteArticle = await UserModel.findByIdAndDelete(userId);
     return { message: "Utilisateur supprimé avec success" };
   } catch (error) {
@@ -406,6 +416,7 @@ export async function deleteUser(userId: string) {
 
 export async function deleteTransaction(transId: string) {
   try {
+    await connectDB();
     const deleteArticle = await TransactionModel.findByIdAndDelete(transId);
     return { message: "Transaction supprimée avec success" };
   } catch (error) {
@@ -447,6 +458,7 @@ export async function getUsersAndTotalPages(
   }
 
   try {
+    await connectDB();
     // Récupérer le nombre total de documents
     const totalDocuments = await UserPMN.countDocuments(matchConditions);
 
@@ -511,6 +523,7 @@ export async function getAbsencesAndTotalPages(
   }
 
   try {
+    await connectDB();
     // Récupérer le nombre total de documents
     const totalDocuments = await AbsenceRequestModel.countDocuments(
       matchConditions
@@ -583,6 +596,7 @@ export async function getTransactionsAndTotalPages(
   }
 
   try {
+    await connectDB();
     // Récupérer le nombre total de documents
     const totalDocuments = await TransactionModel.countDocuments(
       matchConditions
@@ -718,6 +732,7 @@ export async function getTransactionsAndTotalPages(
 
 export async function getFournituresLength() {
   try {
+    await connectDB();
     const fournituresLength = await ArticleModel.countDocuments({});
     return fournituresLength;
   } catch (error) {
@@ -728,6 +743,7 @@ export async function getFournituresLength() {
 
 export async function getUsersLength() {
   try {
+    await connectDB();
     const fournituresLength = await UserModel.countDocuments({});
     return fournituresLength;
   } catch (error) {
@@ -738,6 +754,7 @@ export async function getUsersLength() {
 
 export async function getTransactionssLength() {
   try {
+    await connectDB();
     const fournituresLength = await TransactionModel.countDocuments({});
     return fournituresLength;
   } catch (error) {
@@ -748,6 +765,7 @@ export async function getTransactionssLength() {
 
 export async function getLastFiveTransactions() {
   try {
+    await connectDB();
     const transactionsFind = await TransactionModel.find()
       .sort({ createdAt: -1 })
       .limit(5);
@@ -761,6 +779,7 @@ export async function getLastFiveTransactions() {
 
 export async function getLastTenArticles() {
   try {
+    await connectDB();
     const articlesFind = await TransactionModel.find()
       .sort({ createdAt: -1 })
       .limit(10);
@@ -774,6 +793,7 @@ export async function getLastTenArticles() {
 
 export async function loginUser(email: string, password: string) {
   try {
+    await connectDB();
     const isExistingUser = await UserModel.findOne({ email: email });
     if (!isExistingUser)
       return {
@@ -808,6 +828,7 @@ export async function loginUser(email: string, password: string) {
 
 export async function businessRegister(user: Entreprise) {
   try {
+    await connectDB();
     const isEntrepriseExist = await EntrepriseModel.findOne({ cni: user.cni });
     if (isEntrepriseExist)
       await EntrepriseModel.findByIdAndDelete(isEntrepriseExist._id);
@@ -833,6 +854,7 @@ export async function businessRegister(user: Entreprise) {
 
 export async function getBusinessRegister() {
   try {
+    await connectDB();
     const businessUsers = await EntrepriseModel.find().sort({
       createdAt: -1,
     });
@@ -893,6 +915,7 @@ export async function getEntreprisesAndTotalPages(
     };
   }
   try {
+    await connectDB();
     // Récupérer le nombre total de documents
     const totalDocuments = await EntrepriseModel.countDocuments(
       matchConditions
@@ -1062,6 +1085,7 @@ export async function getFormationAndTotalPages(
   }
 
   try {
+    await connectDB();
     // Récupérer le nombre total de documents
     const totalDocuments = await ArtisanFormation.countDocuments(
       matchConditions
@@ -1104,6 +1128,7 @@ export async function getFormationAndTotalPages(
 
 export async function getAllCatFilter() {
   try {
+    await connectDB();
     const categories = await EntrepriseModel.distinct("corpsdemetiers");
 
     const cats = JSON.parse(JSON.stringify(categories));
@@ -1116,6 +1141,7 @@ export async function getAllCatFilter() {
 
 export async function getAllCatFormation() {
   try {
+    await connectDB();
     const categories = await ArtisanFormation.distinct("corpsMetiers");
 
     const cats = JSON.parse(JSON.stringify(categories));
@@ -1128,6 +1154,7 @@ export async function getAllCatFormation() {
 
 export async function getUserById(userId: string) {
   try {
+    await connectDB();
     if (!ObjectId.isValid(userId)) return null;
     const user = await EntrepriseModel.findById(userId);
     return JSON.parse(JSON.stringify(user));

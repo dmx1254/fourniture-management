@@ -4,8 +4,6 @@ import UserPMN from "@/lib/models/user";
 import AbsenceRequestModel from "@/lib/models/absence";
 import { connectDB } from "@/lib/actions/db";
 
-await connectDB();
-
 // Fonction utilitaire pour calculer les congés acquis
 function calculerCongesAcquis(hireDate: string, endDate?: string): number {
   if (!hireDate) return 0;
@@ -31,6 +29,9 @@ function calculerCongesAcquis(hireDate: string, endDate?: string): number {
 // GET - Obtenir le solde des congés d'un employé
 export async function GET(req: Request) {
   try {
+    // S'assurer que la connexion est établie avant d'exécuter les requêtes
+    await connectDB();
+
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
 
@@ -61,7 +62,7 @@ export async function GET(req: Request) {
 
     const validateAbsence = await AbsenceRequestModel.find({
       userId: userId,
-      statutValidation: "approuve",
+      statutValidation: {$ne: "rejete"},
       raison: { $ne: "repos medicale" },
     }).select("duree -_id");
 
@@ -110,6 +111,9 @@ export async function GET(req: Request) {
 // POST - Mettre à jour les congés consommés (quand une absence est approuvée)
 export async function POST(req: Request) {
   try {
+    // S'assurer que la connexion est établie avant d'exécuter les requêtes
+    await connectDB();
+
     const { userId, joursConsommes } = await req.json();
 
     if (!userId || !joursConsommes) {
