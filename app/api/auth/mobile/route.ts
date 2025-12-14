@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import { connectDB } from "@/lib/actions/db";
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json();
+  const { email, password, identificationcode } = await req.json();
 
   try {
     await connectDB();
@@ -17,9 +17,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const isIdenticationCorrect = await UserPMN.findOne({
-      identicationcode: user.identicationcode,
-    });
+    const isIdenticationCorrect = user.identicationcode === identificationcode;
     if (!isIdenticationCorrect) {
       return NextResponse.json(
         { errorMessage: "Code d'accès incorrect" },
