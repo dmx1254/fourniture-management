@@ -2,6 +2,7 @@
 
 import { FiDownload } from "react-icons/fi";
 import { FiFileText } from "react-icons/fi";
+import { FiBell } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { format } from "date-fns";
@@ -20,6 +21,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useSession } from "next-auth/react";
 
 type InventoryItem = {
@@ -31,7 +39,7 @@ type InventoryItem = {
 };
 
 const InventoryReport = () => {
-  const {data: session} = useSession();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState("");
   const [isNewsDialogOpen, setIsNewsDialogOpen] = useState(false);
@@ -44,6 +52,19 @@ const InventoryReport = () => {
     tags: "",
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isNotificationDialogOpen, setIsNotificationDialogOpen] =
+    useState(false);
+  const [isSubmittingNotification, setIsSubmittingNotification] =
+    useState(false);
+  const [users, setUsers] = useState<any[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [notificationForm, setNotificationForm] = useState({
+    content: "",
+    userId: "",
+    type: "message" as "absence" | "event" | "task" | "message",
+    urgency: "medium" as "low" | "medium" | "high",
+    isForAll: false,
+  });
 
   const generateInventoryPdf = async (category: string) => {
     setCategory(category);
@@ -301,6 +322,125 @@ const InventoryReport = () => {
     setImagePreview(null);
   };
 
+  const fetchUsers = async () => {
+    setIsLoadingUsers(true);
+    try {
+      const response = await fetch("/api/user");
+      const result = await response.json();
+      if (response.ok && result.users) {
+        setUsers(result.users);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des utilisateurs:", error);
+      toast.error("Erreur lors de la récupération des utilisateurs", {
+        style: { color: "red" },
+      });
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
+  const handleOpenNotificationDialog = () => {
+    setIsNotificationDialogOpen(true);
+    if (users.length === 0) {
+      fetchUsers();
+    }
+  };
+
+  const handleCreateNotification = async () => {
+    if (!notificationForm.content) {
+      toast.error("Le contenu de la notification est requis", {
+        style: { color: "red" },
+      });
+      return;
+    }
+
+    if (!notificationForm.isForAll && !notificationForm.userId) {
+      toast.error(
+        "Veuillez sélectionner un utilisateur ou choisir 'Tous les utilisateurs'",
+        {
+          style: { color: "red" },
+        }
+      );
+      return;
+    }
+
+    setIsSubmittingNotification(true);
+    try {
+      // Si c'est pour tous les utilisateurs, créer une notification pour chaque utilisateur
+      if (notificationForm.isForAll) {
+        const promises = users.map((user) =>
+          fetch("/api/notifications", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              content: notificationForm.content,
+              userId: user._id,
+              type: notificationForm.type,
+              urgency: notificationForm.urgency,
+              isRead: false,
+            }),
+          })
+        );
+
+        await Promise.all(promises);
+        toast.success(`${users.length} notifications créées avec succès !`, {
+          style: { color: "green" },
+        });
+      } else {
+        // Notification pour un utilisateur spécifique
+        const response = await fetch("/api/notifications", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: notificationForm.content,
+            userId: notificationForm.userId,
+            type: notificationForm.type,
+            urgency: notificationForm.urgency,
+            isRead: false,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || "Erreur lors de la création de la notification"
+          );
+        }
+
+        toast.success("Notification créée avec succès !", {
+          style: { color: "green" },
+        });
+      }
+
+      // Réinitialiser le formulaire
+      setNotificationForm({
+        content: "",
+        userId: "",
+        type: "message",
+        urgency: "medium",
+        isForAll: false,
+      });
+
+      setIsNotificationDialogOpen(false);
+    } catch (error: any) {
+      console.error("Erreur lors de la création de la notification:", error);
+      toast.error(
+        error.message || "Erreur lors de la création de la notification",
+        {
+          style: { color: "red" },
+        }
+      );
+    } finally {
+      setIsSubmittingNotification(false);
+    }
+  };
+
   const handleCreateNews = async () => {
     if (!newsForm.title || !newsForm.content) {
       toast.error("Le titre et le contenu sont requis", {
@@ -312,12 +452,18 @@ const InventoryReport = () => {
     setIsSubmittingNews(true);
     try {
       const tagsArray = newsForm.tags
-        ? newsForm.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
+        ? newsForm.tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean)
         : [];
 
-      const authorName = newsForm.author || 
-        (session?.user 
-          ? `${session.user.firstname || ""} ${session.user.lastname || ""}`.trim() || session.user.email 
+      const authorName =
+        newsForm.author ||
+        (session?.user
+          ? `${session.user.firstname || ""} ${
+              session.user.lastname || ""
+            }`.trim() || session.user.email
           : "Admin");
 
       const response = await fetch("/api/news", {
@@ -337,7 +483,9 @@ const InventoryReport = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.errorMessage || "Erreur lors de la création de la news");
+        throw new Error(
+          result.errorMessage || "Erreur lors de la création de la news"
+        );
       }
 
       toast.success("News créée avec succès !", {
@@ -366,11 +514,19 @@ const InventoryReport = () => {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
+      <button
+        onClick={handleOpenNotificationDialog}
+        className="flex items-center gap-2 font-bold text-sm bg-purple-600 text-white p-1.5 rounded-md hover:bg-purple-700 transition-colors"
+      >
+        <FiBell />
+        <span>Notifications</span>
+      </button>
+
       <button
         onClick={() => generateInventoryPdf("informatique")}
         disabled={isLoading}
-        className="flex items-center gap-2 font-bold text-sm bg-orange-600 text-white p-2 rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex items-center gap-2 font-bold text-sm bg-orange-600 text-white p-1.5 rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <FiDownload />
         <span>
@@ -383,7 +539,7 @@ const InventoryReport = () => {
       <button
         onClick={() => generateInventoryPdf("bureautique")}
         disabled={isLoading}
-        className="flex items-center gap-2 font-bold text-sm bg-cyan-600 text-white p-2 rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex items-center gap-2 font-bold text-sm bg-cyan-600 text-white p-1.5 rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <FiDownload />
         <span>
@@ -395,7 +551,7 @@ const InventoryReport = () => {
 
       <button
         onClick={() => setIsNewsDialogOpen(true)}
-        className="flex items-center gap-2 font-bold text-sm bg-green-600 text-white p-2 rounded-md hover:bg-green-700 transition-colors"
+        className="flex items-center gap-2 font-bold text-sm bg-green-600 text-white p-1.5 rounded-md hover:bg-green-700 transition-colors"
       >
         <FiFileText />
         <span>News</span>
@@ -510,10 +666,163 @@ const InventoryReport = () => {
             </Button>
             <Button
               onClick={handleCreateNews}
-              disabled={isSubmittingNews || !newsForm.title || !newsForm.content}
+              disabled={
+                isSubmittingNews || !newsForm.title || !newsForm.content
+              }
               className="bg-green-600 hover:bg-green-700"
             >
               {isSubmittingNews ? "Création..." : "Créer la news"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isNotificationDialogOpen}
+        onOpenChange={setIsNotificationDialogOpen}
+      >
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Créer une notification</DialogTitle>
+            <DialogDescription>
+              Créez une notification pour un employé spécifique ou pour tous les
+              employés.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="notification-content">
+                Contenu <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                id="notification-content"
+                placeholder="Entrez le contenu de la notification"
+                value={notificationForm.content}
+                onChange={(e) =>
+                  setNotificationForm({
+                    ...notificationForm,
+                    content: e.target.value,
+                  })
+                }
+                rows={4}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="notification-type">Type</Label>
+              <Select
+                value={notificationForm.type}
+                onValueChange={(
+                  value: "absence" | "event" | "task" | "message"
+                ) => setNotificationForm({ ...notificationForm, type: value })}
+              >
+                <SelectTrigger id="notification-type">
+                  <SelectValue placeholder="Sélectionnez un type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="message">Message</SelectItem>
+                  <SelectItem value="absence">Absence</SelectItem>
+                  <SelectItem value="event">Événement</SelectItem>
+                  <SelectItem value="task">Tâche</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="notification-urgency">Urgence</Label>
+              <Select
+                value={notificationForm.urgency}
+                onValueChange={(value: "low" | "medium" | "high") =>
+                  setNotificationForm({ ...notificationForm, urgency: value })
+                }
+              >
+                <SelectTrigger id="notification-urgency">
+                  <SelectValue placeholder="Sélectionnez le niveau d'urgence" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Faible</SelectItem>
+                  <SelectItem value="medium">Moyenne</SelectItem>
+                  <SelectItem value="high">Élevée</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid gap-2">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="notification-for-all"
+                  checked={notificationForm.isForAll}
+                  onChange={(e) =>
+                    setNotificationForm({
+                      ...notificationForm,
+                      isForAll: e.target.checked,
+                      userId: e.target.checked ? "" : notificationForm.userId,
+                    })
+                  }
+                  className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                />
+                <Label
+                  htmlFor="notification-for-all"
+                  className="cursor-pointer"
+                >
+                  Envoyer à tous les utilisateurs
+                </Label>
+              </div>
+            </div>
+
+            {!notificationForm.isForAll && (
+              <div className="grid gap-2">
+                <Label htmlFor="notification-user">
+                  Utilisateur <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={notificationForm.userId}
+                  onValueChange={(value) =>
+                    setNotificationForm({ ...notificationForm, userId: value })
+                  }
+                  disabled={isLoadingUsers}
+                >
+                  <SelectTrigger id="notification-user">
+                    <SelectValue
+                      placeholder={
+                        isLoadingUsers
+                          ? "Chargement des utilisateurs..."
+                          : "Sélectionnez un utilisateur"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users.map((user) => (
+                      <SelectItem key={user._id} value={user._id}>
+                        {user.lastname} {user.firstname} ({user.email})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsNotificationDialogOpen(false)}
+              disabled={isSubmittingNotification}
+            >
+              Annuler
+            </Button>
+            <Button
+              onClick={handleCreateNotification}
+              disabled={
+                isSubmittingNotification ||
+                !notificationForm.content ||
+                (!notificationForm.isForAll && !notificationForm.userId)
+              }
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              {isSubmittingNotification
+                ? "Création..."
+                : "Créer la notification"}
             </Button>
           </DialogFooter>
         </DialogContent>
