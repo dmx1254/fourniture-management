@@ -224,10 +224,10 @@ const AbsenceRequest = () => {
         setProofOfAbsence(null);
 
         setErrors({});
-        // await fetch("/api/user/sendsms", {
-        //   method: "POST",
-        //   body: JSON.stringify({ phones: data.validateursRequis }),
-        // });
+        await fetch("/api/user/sendsms", {
+          method: "POST",
+          body: JSON.stringify({ phones: data.validateursRequis }),
+        });
       } else {
         toast.error(data.errorMessage, {
           style: {
