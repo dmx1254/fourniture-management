@@ -3,16 +3,8 @@ export const VALIDATEURS_CONFIG = {
   // Groupe 1 : 3 validateurs requis
   GROUPE_1: {
     emails: ["papa.elamadou.gaye@pmn.sn", "faye.rose@pmn.sn"],
-    validateurs: [
-      "ba.ramatoulaye@pmn.sn",
-      "bassirou.sy@pmn.sn",
-      "tall.ibrahima@pmn.sn",
-    ],
+    validateurs: ["bassirou.sy@pmn.sn", "tall.ibrahima@pmn.sn"],
     phonesValidators: [
-      {
-        email: "ba.ramatoulaye@pmn.sn",
-        phone: "+221771424243",
-      },
       {
         email: "bassirou.sy@pmn.sn",
         phone: "+221774031305",
@@ -37,12 +29,8 @@ export const VALIDATEURS_CONFIG = {
   // Groupe 3 : 2 validateurs requis (par défaut)
   GROUPE_3: {
     emails: [], // Tous les autres
-    validateurs: ["ba.ramatoulaye@pmn.sn", "tall.ibrahima@pmn.sn"],
+    validateurs: ["tall.ibrahima@pmn.sn"],
     phonesValidators: [
-      {
-        email: "ba.ramatoulaye@pmn.sn",
-        phone: "+221771424243",
-      },
       {
         email: "tall.ibrahima@pmn.sn",
         phone: "+221772382463",

@@ -514,7 +514,7 @@ const InventoryReport = () => {
   };
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex md:flex-row max-md:grid max-md:grid-cols-2 max-md:gap-2 items-center gap-1.5">
       <button
         onClick={handleOpenNotificationDialog}
         className="flex items-center gap-2 font-bold text-sm bg-purple-600 text-white p-1.5 rounded-md hover:bg-purple-700 transition-colors"

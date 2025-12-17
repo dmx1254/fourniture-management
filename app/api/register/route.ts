@@ -2,63 +2,8 @@ import UserPMN from "@/lib/models/user";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/actions/db";
 
-const accessCodes = [
-  "pmn_JST12",
-  "pmn_DNW23",
-  "pmn_KZT45",
-  "pmn_LQW67",
-  "pmn_MZX89",
-  "pmn_NBY01",
-  "pmn_OCV23",
-  "pmn_PDX45",
-  "pmn_QAS67",
-  "pmn_RCT89",
-  "pmn_SDW01",
-  "pmn_TEZ23",
-  "pmn_UFX45",
-  "pmn_VGB67",
-  "pmn_WJY89",
-  "pmn_XKZ01",
-  "pmn_YLW23",
-  "pmn_ZMX45",
-  "pmn_ANB67",
-  "pmn_BOD89",
-  "pmn_COE01",
-  "pmn_DQF23",
-  "pmn_ERG45",
-  "pmn_FSJ67",
-  "pmn_GSH90",
-  "pmn_HTI12",
-  "pmn_IJU34",
-  "pmn_KLM56",
-  "pmn_NPO78",
-  "pmn_QRS90",
-  "pmn_TUV12",
-  "pmn_WXY34",
-  "pmn_ZAB56",
-];
-
-const accessEmails = [
-  "aminata.diouf@pmn.sn",
-  "ba.ramatoulaye@pmn.sn",
-  "bassirou.sy@pmn.sn",
-  "coumbadoudou.diatta@pmn.sn",
-  "diouf.modou@pmn.sn",
-  "fall.aminata@pmn.sn",
-  "faye.ndeyekhane@pmn.sn",
-  "faye.rose@pmn.sn",
-  "harouna.sylla@pmn.sn",
-  "mamadousy@pmn.sn",
-  "papa.elamadou.gaye@pmn.sn",
-  "sarr.mameadam@pmn.sn",
-  "tall.ibrahima@pmn.sn",
-  "oumou.gaye@pmn.sn",
-  "halima.ba@pmn.sn",
-  "ndeye.ngone.fidior@pmn.sn",
-  "toure.amadou@pmn.sn",
-  "diallo-omar.alpha@pmn.sn",
-  "souane.lamine@pmn.sn",
-];
+// const accessCodes = [""];
+// const accessEmails = [""];
 
 export async function POST(req: Request) {
   try {
@@ -75,19 +20,21 @@ export async function POST(req: Request) {
       password,
     } = data;
 
-    if (!accessCodes.includes(identicationcode)) {
-      return NextResponse.json(
-        { errorMessage: "Code d'accès invalide" },
-        { status: 500 }
-      );
-    }
+    // if (!accessCodes.includes(identicationcode)) {
+    //   return NextResponse.json(
+    //     { errorMessage: "Code d'accès invalide" },
+    //     { status: 500 }
+    //   );
+    // }
 
-    if (!accessEmails.includes(email)) {
-      return NextResponse.json(
-        { errorMessage: "Email invalide" },
-        { status: 500 }
-      );
-    }
+    return;
+
+    // if (!accessEmails.includes(email)) {
+    //   return NextResponse.json(
+    //     { errorMessage: "Email invalide" },
+    //     { status: 500 }
+    //   );
+    // }
 
     const isEmailAlreadyUsed = await UserPMN.findOne({ email });
 

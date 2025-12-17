@@ -1,5 +1,4 @@
 import UserPMN from "@/lib/models/user";
-import axios from "axios";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/actions/db";
 
@@ -9,6 +8,7 @@ export async function POST(req: Request) {
   try {
     await connectDB();
     const data = await req.json();
+    return;
 
     // console.log("new data", data.data);
     // const newPhone = data.data.phone;

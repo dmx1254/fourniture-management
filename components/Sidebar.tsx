@@ -12,7 +12,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className="h-screen w-[60px] md:w-[250px] bg-[#052e16] p-2 flex flex-col items-start justify-between"
+      className="h-screen sticky top-0 left-0 bottom-0 w-[60px] md:w-[250px] bg-[#052e16] p-2 flex flex-col items-start justify-between"
       style={{
         boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
       }}

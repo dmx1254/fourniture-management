@@ -3,17 +3,12 @@ import CongesEmployeModel from "@/lib/models/conges";
 import UserPMN from "@/lib/models/user";
 import { NextResponse } from "next/server";
 import { determinerStatutValidation } from "@/lib/utils/validationHierarchy";
-import { getServerSession } from "next-auth";
-import { options } from "../../auth/[...nextauth]/option";
 import { revalidatePath } from "next/cache";
 
 import { connectDB } from "@/lib/actions/db";
 
 export async function POST(req: Request) {
-  const session = await getServerSession(options);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  
   try {
     // S'assurer que la connexion est établie avant d'exécuter les requêtes
     await connectDB();
