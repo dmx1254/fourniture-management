@@ -108,7 +108,7 @@ const conditionsSections = [
     title: "Contact",
     icon: Mail,
     content:
-      "Pour toute question ou préoccupation concernant ces termes et conditions, veuillez nous contacter via : info@pmn.sn ou par téléphone au +221766248505.",
+      "Pour toute question ou préoccupation concernant ces termes et conditions, veuillez nous contacter via : info@pmn.sn ou par téléphone au +221778417586.",
   },
 ];
 
@@ -191,7 +191,7 @@ export default function ConditionsUtilisation() {
       }
 
       toast.success(result.message, {
-        style: { background: "#052e16", color: "#fff" },
+        style: { color: "green" },
         duration: 5000,
         position: "top-right",
       });
@@ -311,10 +311,10 @@ export default function ConditionsUtilisation() {
                           <div className="flex items-center gap-2 text-sm text-gray-700">
                             <Phone className="h-4 w-4 text-cyan-600" />
                             <a
-                              href="tel:+221766248505"
+                              href="tel:+221778417586"
                               className="text-cyan-600 hover:underline"
                             >
-                              +221 76 624 85 05
+                              +221 77 841 75 86
                             </a>
                           </div>
                         </div>
