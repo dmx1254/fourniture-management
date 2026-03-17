@@ -4,6 +4,7 @@ import { TransArt, User } from "@/lib/types";
 import { SessionData } from "@/lib/lib";
 import React, { useActionState, useEffect } from "react";
 import { CiEdit } from "react-icons/ci";
+import { Trash, Trash2 } from "lucide-react";
 import DeleteUserBtn from "./DeleteUserBtn";
 import {
   AlertDialog,
@@ -67,6 +68,23 @@ const UserUpdate = ({
       "harouna.sylla@pmn.sn",
       "mamadousy@pmn.sn",
     ].includes(session?.user?.email!);
+
+  const handleDeleteContracts = async () => {
+    if (!user?._id) return;
+    try {
+      const res = await fetch(`/api/conges/seed?userId=${user._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        toast.error(data?.error || "Erreur lors de la suppression des contrats");
+        return;
+      }
+      toast.success(data?.message || "Contrats supprimés avec succès");
+    } catch (e) {
+      toast.error("Erreur réseau lors de la suppression des contrats");
+    }
+  };
 
   return (
     <td className="flex items-center gap-2 p-3.5 font-semibold ">
@@ -226,6 +244,33 @@ const UserUpdate = ({
                 </div>
               </div>
 
+              <div className="w-full flex items-center justify-between gap-4">
+                <div className="w-full flex flex-col items-start gap-1">
+                  <label
+                    htmlFor="contractAction"
+                    className="text-white/80 text-sm"
+                  >
+                    Contrat
+                  </label>
+                  <select
+                    id="contractAction"
+                    name="contractAction"
+                    defaultValue="update_current"
+                    className="w-full placeholder:text-white/80 rounded p-2 text-white/80 bg-transparent text-sm border border-white/80 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  >
+                    <option value="no_change" className="text-black">
+                      Ne pas modifier le contrat
+                    </option>
+                    <option value="update_current" className="text-black">
+                      Mettre à jour le contrat courant
+                    </option>
+                    <option value="create_new" className="text-black">
+                      Créer un nouveau contrat (renouvellement)
+                    </option>
+                  </select>
+                </div>
+              </div>
+
               <AlertDialogFooter className="self-end mt-2">
                 <AlertDialogCancel className="bg-red-600 hover:bg-red-600 hover:text-white hover:opacity-90 text-white border-[#111b21]">
                   Cancel
@@ -242,6 +287,7 @@ const UserUpdate = ({
           </AlertDialogHeader>
         </AlertDialogContent>
       </AlertDialog>
+    
       {isAdmin && <DeleteUserBtn userId={user._id} />}
       {isAdmin && <UserTransactionDialog userId={user._id} />}
 
@@ -260,6 +306,44 @@ const UserUpdate = ({
         />
       )}
       {isAbleToViewButton && <Conges user={user} />}
+      {isAdmin && (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button
+              className="flex items-center justify-center p-0.5 rounded border border-red-600 text-red-600 transition-all duration-200 hover hover:text-red-700"
+              title="Supprimer les contrats congés"
+            >
+              <Trash size={16} />
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="bg-[#022c22] border-[#111b21] text-white">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-white/80 text-base">
+                Supprimer les contrats congés
+              </AlertDialogTitle>
+              <p className="text-white/70 text-sm">
+                Cette action vide <b>contracts</b> pour{" "}
+                <b>
+                  {user.firstname} {user.lastname}
+                </b>
+                . Cette action est irréversible.
+              </p>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="self-end mt-2">
+              <AlertDialogCancel className="bg-transparent border border-white/80 text-white hover:bg-transparent hover:text-white hover:opacity-90">
+                Annuler
+              </AlertDialogCancel>
+              <Button
+                type="button"
+                onClick={handleDeleteContracts}
+                className="bg-red-600 hover:bg-red-600 hover:opacity-90 text-white border-[#111b21]"
+              >
+                Supprimer
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </td>
   );
 };

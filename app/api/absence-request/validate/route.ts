@@ -1,6 +1,4 @@
 import AbsenceRequestModel from "@/lib/models/absence";
-import CongesEmployeModel from "@/lib/models/conges";
-import UserPMN from "@/lib/models/user";
 import { NextResponse } from "next/server";
 import { determinerStatutValidation } from "@/lib/utils/validationHierarchy";
 import { revalidatePath } from "next/cache";
@@ -74,46 +72,7 @@ export async function POST(req: Request) {
       absence.isPending = false;
       absence.isRejected = false;
       absence.dateApprobation = new Date();
-
-      // Déduire les congés de l'employé quand l'absence est approuvée
-      try {
-        // Récupérer l'utilisateur pour avoir hireDate et endDate
-        const user = await UserPMN.findOne({ _id: absence.userId });
-
-        if (user && user.hireDate) {
-          // Récupérer ou créer l'enregistrement des congés
-          let congesEmploye = await CongesEmployeModel.findOne({
-            userId: user._id,
-          });
-
-          if (!congesEmploye) {
-            congesEmploye = await CongesEmployeModel.create({
-              userId: user._id,
-              congesConsommes: 0,
-              derniereMiseAJour: new Date(),
-            });
-          }
-
-          // Mettre à jour les congés consommés
-          congesEmploye.congesConsommes += absence.duree;
-          congesEmploye.derniereMiseAJour = new Date();
-          await congesEmploye.save();
-
-          console.log(
-            `✅ Congés mis à jour pour ${user.firstname} ${user.lastname}: +${absence.duree} jours`
-          );
-          console.log(
-            `📊 Nouveau solde: ${congesEmploye.congesConsommes} jours consommés`
-          );
-        } else {
-          console.log(
-            `⚠️ Utilisateur non trouvé ou sans date d'embauche: ${absence.emailDemandeur}`
-          );
-        }
-      } catch (error) {
-        console.error("❌ Erreur lors de la mise à jour des congés:", error);
-        // Ne pas bloquer l'approbation si la mise à jour des congés échoue
-      }
+      // La déduction des congés est faite à la création de la demande (route POST absence-request)
     } else if (nouveauStatut === "rejete") {
       absence.isApproved = false;
       absence.isPending = false;

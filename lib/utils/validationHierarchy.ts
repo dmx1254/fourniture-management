@@ -3,12 +3,8 @@ export const VALIDATEURS_CONFIG = {
   // Groupe 1 : 3 validateurs requis
   GROUPE_1: {
     emails: ["papa.elamadou.gaye@pmn.sn", "faye.rose@pmn.sn"],
-    validateurs: ["bassirou.sy@pmn.sn", "tall.ibrahima@pmn.sn"],
+    validateurs: ["tall.ibrahima@pmn.sn"],
     phonesValidators: [
-      {
-        email: "bassirou.sy@pmn.sn",
-        phone: "+221774031305",
-      },
       {
         email: "tall.ibrahima@pmn.sn",
         phone: "+221772382463",
@@ -29,11 +25,15 @@ export const VALIDATEURS_CONFIG = {
   // Groupe 3 : 2 validateurs requis (par défaut)
   GROUPE_3: {
     emails: [], // Tous les autres
-    validateurs: ["tall.ibrahima@pmn.sn"],
+    validateurs: ["tall.ibrahima@pmn.sn", "papa.elamadou.gaye@pmn.sn"],
     phonesValidators: [
       {
         email: "tall.ibrahima@pmn.sn",
         phone: "+221772382463",
+      },
+      {
+        email: "papa.elamadou.gaye@pmn.sn",
+        phone: "+221774031305",
       },
     ],
   },
@@ -51,9 +51,8 @@ export const VALIDATEURS_CONFIG = {
 
 // Noms complets des validateurs
 export const NOMS_VALIDATEURS = {
-  "ba.ramatoulaye@pmn.sn": "BA Ramatoulaye",
-  "bassirou.sy@pmn.sn": "Bassirou SY",
   "tall.ibrahima@pmn.sn": "Tall Ibrahima",
+  "papa.elamadou.gaye@pmn.sn": "Papa Elamadou Gaye",
 };
 
 /**
@@ -75,7 +74,7 @@ export function getValidateursRequis(emailDemandeur: string): string[] {
  * Détermine les téléphones des validateurs requis selon l'email de l'employé
  */
 export function getTelephonesValidateursRequis(
-  emailDemandeur: string
+  emailDemandeur: string,
 ): { email: string; phone: string }[] {
   if (VALIDATEURS_CONFIG.GROUPE_1.emails.includes(emailDemandeur)) {
     return VALIDATEURS_CONFIG.GROUPE_1.phonesValidators.map((validator) => ({
@@ -110,7 +109,7 @@ export function initialiserValidations(validateursRequis: string[]) {
     dateValidation: null,
     phone:
       VALIDATEURS_CONFIG.GROUPE_1.phonesValidators.find(
-        (v) => v.email === email
+        (v) => v.email === email,
       )?.phone || "",
     fullname: NOMS_VALIDATEURS[email as keyof typeof NOMS_VALIDATEURS] || email,
     commentaire: "",
@@ -135,7 +134,7 @@ export function aEteRejetee(validations: any[]): boolean {
  * Détermine le statut global de validation
  */
 export function determinerStatutValidation(
-  validations: any[]
+  validations: any[],
 ): "en_attente" | "en_cours" | "approuve" | "rejete" {
   if (aEteRejetee(validations)) {
     return "rejete";
@@ -146,7 +145,7 @@ export function determinerStatutValidation(
   }
 
   const validationsEnCours = validations.some(
-    (v) => v.isValidate || v.isRejected
+    (v) => v.isValidate || v.isRejected,
   );
   return validationsEnCours ? "en_cours" : "en_attente";
 }

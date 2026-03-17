@@ -24,6 +24,22 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+interface MonthlyBalance {
+  year: number;
+  month: number;
+  joursAcquis: number;
+  joursConsommes?: number;
+  joursRestants?: number;
+}
+
+interface ContratSummary {
+  anneeDebut: number;
+  anneeFin: number;
+  congesAcquis: number;
+  congesConsommes: number;
+  solde: number;
+}
+
 interface CongesData {
   userId: string;
   congesAcquis: number;
@@ -32,6 +48,8 @@ interface CongesData {
   hireDate: string;
   endDate?: string;
   derniereMiseAJour: string;
+  monthlyBalances?: MonthlyBalance[];
+  derniersContrats?: ContratSummary[];
   historiqueConges?: Array<{
     date: string;
     congesConsommes: number;
@@ -43,19 +61,31 @@ const Conges = ({ user }: { user: User }) => {
   const [congesData, setCongesData] = useState<CongesData | null>(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+
+  console.log(congesData);
+  console.log(user);
   const fetchConges = async () => {
     if (!user._id) return;
 
     setLoading(true);
+    setErrorMessage(null);
     try {
-      const response = await fetch(`/api/conges?userId=${user._id}`);
+      const response = await fetch(`/api/conges?userId=${user._id}`, {
+        cache: "no-store",
+      });
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         setCongesData(data);
+      } else {
+        setCongesData(null);
+        setErrorMessage(data?.error || "Impossible de charger les congés.");
       }
     } catch (error) {
       console.error("Erreur lors de la récupération des congés:", error);
+      setCongesData(null);
+      setErrorMessage("Erreur lors de la récupération des congés.");
     } finally {
       setLoading(false);
     }
@@ -91,6 +121,49 @@ const Conges = ({ user }: { user: User }) => {
     return "bg-red-50 border-red-200";
   };
 
+  const derniersContrats = congesData?.derniersContrats ?? [];
+  const computedTotals = (() => {
+    const mb = congesData?.monthlyBalances;
+    if (mb?.length) {
+      const congesAcquis = mb.reduce((s, m) => s + (m.joursAcquis ?? 0), 0);
+      const congesConsommes = mb.reduce(
+        (s, m) => s + (m.joursConsommes ?? 0),
+        0,
+      );
+      const solde = Math.max(0, congesAcquis - congesConsommes);
+      return { congesAcquis, congesConsommes, solde };
+    }
+
+    if (derniersContrats.length) {
+      const congesAcquis = derniersContrats.reduce(
+        (s, c) => s + (c.congesAcquis ?? 0),
+        0,
+      );
+      const congesConsommes = derniersContrats.reduce(
+        (s, c) => s + (c.congesConsommes ?? 0),
+        0,
+      );
+      const solde = derniersContrats.reduce((s, c) => s + (c.solde ?? 0), 0);
+      return { congesAcquis, congesConsommes, solde };
+    }
+
+    return null;
+  })();
+  const displayAcquis =
+    congesData && congesData.congesAcquis === 0 && computedTotals?.congesAcquis
+      ? computedTotals.congesAcquis
+      : congesData?.congesAcquis ?? 0;
+  const displayConsommes =
+    congesData &&
+    congesData.congesConsommes === 0 &&
+    computedTotals?.congesConsommes
+      ? computedTotals.congesConsommes
+      : congesData?.congesConsommes ?? 0;
+  const displaySolde =
+    congesData && congesData.solde === 0 && computedTotals?.solde
+      ? computedTotals.solde
+      : congesData?.solde ?? 0;
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -119,6 +192,15 @@ const Conges = ({ user }: { user: User }) => {
               <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-cyan-400 rounded-full animate-ping"></div>
             </div>
           </div>
+        ) : errorMessage ? (
+          <div className="text-center py-12">
+            <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+            <p className="text-gray-700 font-medium">{errorMessage}</p>
+            <p className="text-gray-500 text-sm mt-2">
+              Mettez à jour les dates du contrat (embauche / fin) dans le profil
+              utilisateur pour initialiser les congés.
+            </p>
+          </div>
         ) : congesData ? (
           <div className="space-y-8">
             {/* Vue d'ensemble avec design amélioré */}
@@ -131,50 +213,123 @@ const Conges = ({ user }: { user: User }) => {
                 {/* Congés acquis */}
                 <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white text-center shadow-lg transform hover:scale-105 transition-transform duration-200">
                   <div className="text-3xl font-bold mb-2">
-                    {congesData.congesAcquis.toFixed(1)}
+                    {Number.isInteger(displayAcquis)
+                      ? displayAcquis
+                      : displayAcquis.toFixed(1)}
                   </div>
                   <div className="text-blue-100 font-medium">Congés acquis</div>
                   <div className="text-blue-200 text-sm mt-1">
                     2 jours/mois
                   </div>
+                  {derniersContrats.length > 0 && (
+                    <div className="text-blue-200/90 text-xs mt-2 pt-2 border-t border-blue-400/30">
+                      {derniersContrats
+                        .map(
+                          (c) =>
+                            `${c.anneeDebut}-${c.anneeFin}: ${c.congesAcquis} j`,
+                        )
+                        .join(" · ")}
+                    </div>
+                  )}
                 </div>
 
                 {/* Congés consommés */}
                 <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-6 text-white text-center shadow-lg transform hover:scale-105 transition-transform duration-200">
                   <div className="text-3xl font-bold mb-2">
-                    {congesData.congesConsommes.toFixed(1)}
+                    {Number.isInteger(displayConsommes)
+                      ? displayConsommes
+                      : displayConsommes.toFixed(1)}
                   </div>
                   <div className="text-orange-100 font-medium">
                     Congés consommés
                   </div>
                   <div className="text-orange-200 text-sm mt-1">Jours pris</div>
+                  {derniersContrats.length > 0 && (
+                    <div className="text-orange-200/90 text-xs mt-2 pt-2 border-t border-orange-400/30">
+                      {derniersContrats
+                        .map(
+                          (c) =>
+                            `${c.anneeDebut}-${c.anneeFin}: ${c.congesConsommes} j`,
+                        )
+                        .join(" · ")}
+                    </div>
+                  )}
                 </div>
 
                 {/* Solde actuel */}
                 <div
                   className={`rounded-xl p-6 text-center shadow-lg transform hover:scale-105 transition-transform duration-200 ${
-                    congesData.solde >= 0
+                    displaySolde >= 0
                       ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white"
                       : "bg-gradient-to-br from-red-500 to-red-600 text-white"
                   }`}
                 >
                   <div className="text-3xl font-bold mb-2 flex items-center justify-center gap-2">
-                    {getSoldeIcon(congesData.solde)}
-                    {congesData.solde.toFixed(1)}
+                    {getSoldeIcon(displaySolde)}
+                    {Number.isInteger(displaySolde)
+                      ? displaySolde
+                      : displaySolde.toFixed(1)}
                   </div>
-                  <div className="font-medium">
-                    {congesData.solde >= 0
-                      ? "Congés disponibles"
-                      : "Dette en congés"}
-                  </div>
+                  <div className="font-medium">Congés disponibles</div>
                   <div className="text-sm mt-1 opacity-90">
-                    {congesData.solde >= 0
-                      ? `${congesData.solde.toFixed(1)} jours restants`
-                      : `${Math.abs(congesData.solde).toFixed(1)} jours dus`}
+                    {`${Number.isInteger(displaySolde) ? displaySolde : displaySolde.toFixed(1)} jours restants`}
                   </div>
+                  {derniersContrats.length > 0 && (
+                    <div className="text-white/90 text-xs mt-2 pt-2 border-t border-white/30">
+                      {derniersContrats
+                        .map(
+                          (c) =>
+                            `${c.anneeDebut}-${c.anneeFin}: ${c.solde} j`,
+                        )
+                        .join(" · ")}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
+
+            {/* Détail par mois (soldes jusqu'au mois courant inclus) */}
+            {congesData.monthlyBalances &&
+              congesData.monthlyBalances.length > 0 && (
+                <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-lg">
+                  <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                    <CalendarDays className="w-6 h-6 text-cyan-500" />
+                    Congés par mois (jusqu&apos;au mois courant)
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-gray-200 text-left text-gray-600">
+                          <th className="py-3 px-2">Mois</th>
+                          <th className="py-3 px-2 text-center">Acquis</th>
+                          <th className="py-3 px-2 text-center">Restants</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {congesData.monthlyBalances.map((m, i) => (
+                          <tr
+                            key={`${m.year}-${m.month}-${i}`}
+                            className="border-b border-gray-100 hover:bg-gray-50"
+                          >
+                            <td className="py-2 px-2 font-medium">
+                              {new Date(m.year, m.month - 1, 1).toLocaleDateString(
+                                "fr-FR",
+                                { month: "long", year: "numeric" }
+                              )}
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              {m.joursAcquis ?? 0} j
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              {m.joursRestants ?? m.joursAcquis - (m.joursConsommes ?? 0)} j
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
             {/* Historique des congés pris - NOUVELLE SECTION */}
             <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-lg">

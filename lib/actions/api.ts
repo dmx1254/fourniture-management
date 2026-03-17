@@ -7,6 +7,7 @@ import { Entreprise } from "../types";
 import UserPMN from "../models/user";
 import ArtisanFormation from "../models/formartionmarchepublic";
 import AbsenceRequestModel from "../models/absence";
+import CongesEmployeModel from "../models/conges";
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 import bcrypt from "bcrypt";
@@ -14,7 +15,7 @@ import bcrypt from "bcrypt";
 export async function createProduct(
   title: string,
   category: string,
-  quantity: number
+  quantity: number,
 ) {
   try {
     await connectDB();
@@ -37,7 +38,7 @@ export async function createUserPro(
   occupation: string,
   identicationcode: string,
   hashedPassword: string,
-  role: string
+  role: string,
 ) {
   try {
     await connectDB();
@@ -61,7 +62,7 @@ export async function getArticlesAndTotalPages(
   query: string,
   currentPage: number,
   category: string,
-  year: string
+  year: string,
 ) {
   noStore();
   let itemsPerPage: number = 10;
@@ -124,7 +125,7 @@ export async function updateArticlePro(
   articleId: string,
   title: string,
   quantity: number,
-  consome: number
+  consome: number,
 ) {
   try {
     await connectDB();
@@ -139,7 +140,7 @@ export async function updateArticlePro(
       },
       {
         new: true,
-      }
+      },
     );
     return { message: "Article mis à jour avec success" };
   } catch (error) {
@@ -158,7 +159,8 @@ export async function updateUser(
   identicationcode: string,
   hireDate: string,
   endDate: string,
-  password: string
+  contractAction: "no_change" | "update_current" | "create_new",
+  password: string,
 ) {
   try {
     await connectDB();
@@ -186,8 +188,159 @@ export async function updateUser(
       },
       {
         new: true,
-      }
+      },
     );
+
+    // Mettre à jour les congés mensuels au moment de la mise à jour du user
+    const buildMonthlyBalances = (
+      startDate: Date,
+      endDateOrNow?: Date,
+      existing: any[] = [],
+    ) => {
+      let end: Date;
+      if (endDateOrNow && !isNaN(endDateOrNow.getTime())) {
+        end = new Date(endDateOrNow.getFullYear(), endDateOrNow.getMonth(), 1);
+      } else {
+        // Pas de date de fin ou invalide : au moins 12 mois à partir de start
+        end = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+        end.setFullYear(end.getFullYear() + 1);
+      }
+      const startFirst = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        1,
+      );
+      if (end < startFirst) {
+        end = new Date(startFirst.getFullYear(), startFirst.getMonth(), 1);
+        end.setFullYear(end.getFullYear() + 1);
+      }
+
+      const balancesByKey = new Map<string, any>();
+      for (const b of existing || []) {
+        balancesByKey.set(`${b.year}-${b.month}`, b);
+      }
+
+      const all: any[] = [];
+      let current = new Date(startFirst.getTime());
+
+      while (current <= end) {
+        const year = current.getFullYear();
+        const month = current.getMonth() + 1;
+        const key = `${year}-${month}`;
+        const existingBalance = balancesByKey.get(key);
+        all.push(
+          existingBalance || {
+            year,
+            month,
+            joursAcquis: 2,
+            joursConsommes: 0,
+          },
+        );
+        current.setMonth(current.getMonth() + 1);
+      }
+
+      return all;
+    };
+
+    const normalizeDate = (value?: string) => {
+      if (!value) return undefined;
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? undefined : d;
+    };
+
+    const hire = normalizeDate(hireDate);
+    const end = normalizeDate(endDate);
+
+    if (hire) {
+      let congesEmploye: any = await CongesEmployeModel.findOne({ userId });
+      if (!congesEmploye) {
+        congesEmploye = await CongesEmployeModel.create({
+          userId,
+          congesAcquis: 0,
+          congesConsommes: 0,
+          derniereMiseAJour: new Date(),
+          contracts: [],
+        });
+      }
+
+      congesEmploye.contracts = congesEmploye.contracts || [];
+
+      const setAllNotCurrent = () => {
+        congesEmploye.contracts = congesEmploye.contracts.map((c: any) => ({
+          ...c,
+          isCurrent: false,
+        }));
+      };
+
+      const computeKey = (d: Date) => `${d.getFullYear()}-${d.getMonth() + 1}`;
+
+      const filterBeyondEnd = (balances: any[], newEnd?: Date) => {
+        if (!newEnd) return balances;
+        const endKey = computeKey(
+          new Date(newEnd.getFullYear(), newEnd.getMonth(), 1),
+        );
+        return balances.filter((b) => `${b.year}-${b.month}` <= endKey);
+      };
+
+      if (contractAction === "no_change") {
+        // Ne rien faire sur les congés / contrats
+      } else if (contractAction === "create_new") {
+        setAllNotCurrent();
+        congesEmploye.contracts.push({
+          startDate: hire,
+          endDate: end,
+          isCurrent: true,
+          monthlyBalances: buildMonthlyBalances(hire, end),
+        });
+      } else {
+        // update_current
+        let currentContract = congesEmploye.contracts.find(
+          (c: any) => c.isCurrent,
+        );
+
+        if (!currentContract) {
+          currentContract = {
+            startDate: hire,
+            endDate: end,
+            isCurrent: true,
+            monthlyBalances: [],
+          };
+          congesEmploye.contracts.push(currentContract);
+        }
+
+        currentContract.startDate = currentContract.startDate || hire;
+        currentContract.endDate = end;
+
+        const existingBalances = currentContract.monthlyBalances || [];
+
+        // 1) Supprimer uniquement les mois > nouvelle endDate (si endDate raccourcie)
+        const trimmed = filterBeyondEnd(existingBalances, end);
+
+        // 2) Ajouter les mois manquants entre hireDate et endDate (ou hireDate -> endDate)
+        //    Note: si hireDate est déplacée vers l'avant, on ne supprime pas l'historique existant.
+        const rebuiltCore = buildMonthlyBalances(hire, end, trimmed);
+
+        // 3) Conserver l'historique existant AVANT hireDate si présent (pas de suppression)
+        const coreKeys = new Set(
+          rebuiltCore.map((b: any) => `${b.year}-${b.month}`),
+        );
+        const historicalBeforeStart = trimmed.filter(
+          (b: any) => !coreKeys.has(`${b.year}-${b.month}`),
+        );
+
+        currentContract.monthlyBalances = [
+          ...historicalBeforeStart,
+          ...rebuiltCore,
+        ].sort((a: any, b: any) =>
+          a.year === b.year ? a.month - b.month : a.year - b.year,
+        );
+      }
+
+      congesEmploye.derniereMiseAJour = new Date();
+
+      await congesEmploye.save();
+    }
+
     return { message: "Utilisateur mis à jour avec success" };
   } catch (error) {
     console.log(error);
@@ -203,7 +356,7 @@ export async function createTransaction(
   consome: number,
   lastname: string,
   firstname: string,
-  poste: string
+  poste: string,
 ) {
   try {
     await connectDB();
@@ -222,7 +375,7 @@ export async function createTransaction(
       },
       {
         new: true,
-      }
+      },
     );
 
     const trasanctionCreate = await TransactionModel.create({
@@ -241,8 +394,8 @@ export async function createTransaction(
         title.toLowerCase() === "carburant"
           ? `L de ${title}`
           : title.toLowerCase() === "eau"
-          ? "L d'eau"
-          : title;
+            ? "L d'eau"
+            : title;
 
       const transactionMessage = `Bonjour, ${lastname} ${firstname}, a commandé ${consome} ${newTitle} le ${new Date().toLocaleDateString(
         "fr-FR",
@@ -254,7 +407,7 @@ export async function createTransaction(
           minute: "2-digit",
           second: "2-digit",
           hour12: false,
-        }
+        },
       )}`;
       try {
         const categoriesForFirstNumber = [
@@ -280,7 +433,7 @@ export async function createTransaction(
               message: transactionMessage,
               signature: "PMN",
             }),
-          }
+          },
         );
 
         if (!sendSMS.ok) {
@@ -312,7 +465,7 @@ export async function updateTransaction(
   consome: number,
   lastname: string,
   firstname: string,
-  lastcons: number
+  lastcons: number,
 ) {
   try {
     await connectDB();
@@ -331,7 +484,7 @@ export async function updateTransaction(
       },
       {
         new: true,
-      }
+      },
     );
 
     const trasanctionUpdate = await TransactionModel.findByIdAndUpdate(
@@ -344,7 +497,7 @@ export async function updateTransaction(
       },
       {
         new: true,
-      }
+      },
     );
 
     return { message: "Transacton mis à jour avec success" };
@@ -367,9 +520,8 @@ export async function deleteArticle(articleId: string) {
 export async function deleteEntreprise(entrepriseId: string) {
   try {
     await connectDB();
-    const deleteEntreprise = await EntrepriseModel.findByIdAndDelete(
-      entrepriseId
-    );
+    const deleteEntreprise =
+      await EntrepriseModel.findByIdAndDelete(entrepriseId);
     return { message: "Entrepise supprimé avec success" };
   } catch (error) {
     console.log(error);
@@ -393,9 +545,8 @@ export async function getIdCatAndTitleArticle() {
 export async function deleteFormation(formationId: string) {
   try {
     await connectDB();
-    const deleteFormation = await ArtisanFormation.findByIdAndDelete(
-      formationId
-    );
+    const deleteFormation =
+      await ArtisanFormation.findByIdAndDelete(formationId);
     return { message: "Formation supprimée avec success" };
   } catch (error) {
     console.log(error);
@@ -429,7 +580,7 @@ export async function getUsersAndTotalPages(
   query: string,
   currentPage: number,
   category: string,
-  year: string
+  year: string,
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -496,7 +647,7 @@ export async function getAbsencesAndTotalPages(
   currentPage: number,
   approved: string,
   startDate: string,
-  endDate: string
+  endDate: string,
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -525,9 +676,8 @@ export async function getAbsencesAndTotalPages(
   try {
     await connectDB();
     // Récupérer le nombre total de documents
-    const totalDocuments = await AbsenceRequestModel.countDocuments(
-      matchConditions
-    );
+    const totalDocuments =
+      await AbsenceRequestModel.countDocuments(matchConditions);
 
     // Calculer le nombre total de pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);
@@ -562,7 +712,7 @@ export async function getTransactionsAndTotalPages(
   query: string,
   currentPage: number,
   category: string,
-  year: string
+  year: string,
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -598,9 +748,8 @@ export async function getTransactionsAndTotalPages(
   try {
     await connectDB();
     // Récupérer le nombre total de documents
-    const totalDocuments = await TransactionModel.countDocuments(
-      matchConditions
-    );
+    const totalDocuments =
+      await TransactionModel.countDocuments(matchConditions);
 
     // Calculer le nombre total de pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);
@@ -805,7 +954,7 @@ export async function loginUser(email: string, password: string) {
     // Utilisez 'await' pour la comparaison du mot de passe
     const isCorrectPassword = await bcrypt.compare(
       password,
-      isExistingUser.password
+      isExistingUser.password,
     );
     if (!isCorrectPassword) {
       return {
@@ -872,7 +1021,7 @@ export async function getEntreprisesAndTotalPages(
   type: string,
   filiere: string,
   program: string,
-  year: string
+  year: string,
 ) {
   // console.log("category: " + category, "corps de metiers :" + filiere);
   noStore();
@@ -917,9 +1066,8 @@ export async function getEntreprisesAndTotalPages(
   try {
     await connectDB();
     // Récupérer le nombre total de documents
-    const totalDocuments = await EntrepriseModel.countDocuments(
-      matchConditions
-    );
+    const totalDocuments =
+      await EntrepriseModel.countDocuments(matchConditions);
 
     // Calculer le nombre total de pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);
@@ -957,7 +1105,7 @@ export async function getEntreprises(
   type: string,
   filiere: string,
   program: string,
-  year: string
+  year: string,
 ) {
   noStore();
   let itemsPerPage = 10;
@@ -1005,9 +1153,8 @@ export async function getEntreprises(
   }
   try {
     // Récupérer le nombre total de documents
-    const totalDocuments = await EntrepriseModel.countDocuments(
-      matchConditions
-    );
+    const totalDocuments =
+      await EntrepriseModel.countDocuments(matchConditions);
 
     // Calculer le nombre total de pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);
@@ -1048,7 +1195,7 @@ export async function getFormationAndTotalPages(
   cni: string,
   currentPage: number,
   region: string,
-  corpsMetiers: string
+  corpsMetiers: string,
 ) {
   noStore();
   let itemsPerPage = 20;
@@ -1087,9 +1234,8 @@ export async function getFormationAndTotalPages(
   try {
     await connectDB();
     // Récupérer le nombre total de documents
-    const totalDocuments = await ArtisanFormation.countDocuments(
-      matchConditions
-    );
+    const totalDocuments =
+      await ArtisanFormation.countDocuments(matchConditions);
 
     // Calculer le nombre total de pages
     const totalPages = Math.ceil(totalDocuments / itemsPerPage);

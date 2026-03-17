@@ -188,6 +188,11 @@ const UserSchema = z.object({
         "La date de fin de contrat doit être une chaîne de caractères",
     })
     .optional(),
+  contractAction: z
+    .enum(["no_change", "update_current", "create_new"])
+    .optional()
+    .default("update_current"),
+  password: z.string().optional(),
   // password: z.string({
   //   required_error: "Le mot de passe est requis",
   //   invalid_type_error: "Le mot de passe doit être une chaîne de caractères",
@@ -301,9 +306,9 @@ const TransDeleteSchema = z.object({
 
 export async function createArticle(
   prevState: ArticleErrorState,
-  formData: FormData
+  formData: FormData,
 ) {
-  let sessions = {};
+  let sessions: Record<string, any> = {};
 
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
@@ -333,9 +338,9 @@ export async function createArticle(
 
 export async function updateArticle(
   prevState: ArticleUpdateState,
-  formData: FormData
+  formData: FormData,
 ) {
-  let sessions = {};
+  let sessions: Record<string, any> = {};
 
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
@@ -355,7 +360,7 @@ export async function updateArticle(
       articleId,
       title,
       quantity,
-      consome
+      consome,
     );
     await revalidatePath("/dashboard/fournitures-informatiques");
     return response;
@@ -364,9 +369,9 @@ export async function updateArticle(
 
 export async function deleteArticlePro(
   prevState: ArticleDeleteState,
-  formData: FormData
+  formData: FormData,
 ) {
-  let sessions = {};
+  let sessions: Record<string, any> = {};
 
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
@@ -385,17 +390,16 @@ export async function deleteArticlePro(
 
 export async function deleteEntreprisePro(
   prevState: EntrepriseDeleteState,
-  formData: FormData
+  formData: FormData,
 ) {
-  let sessions = {};
+  let sessions: Record<string, any> = {};
 
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
   }
 
-  const isEntrepriseIdCorrect = await EntrepriseDeleteSchema.safeParse(
-    sessions
-  );
+  const isEntrepriseIdCorrect =
+    await EntrepriseDeleteSchema.safeParse(sessions);
   if (!isEntrepriseIdCorrect.success) {
     console.log(isEntrepriseIdCorrect.error);
   } else {
@@ -408,9 +412,9 @@ export async function deleteEntreprisePro(
 
 export async function deleteFormationPro(
   prevState: FormationDeleteState,
-  formData: FormData
+  formData: FormData,
 ) {
-  let sessions = {};
+  let sessions: Record<string, any> = {};
 
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
@@ -429,9 +433,9 @@ export async function deleteFormationPro(
 
 export async function deleteUserPro(
   prevState: UserDeleteState,
-  formData: FormData
+  formData: FormData,
 ) {
-  let sessions = {};
+  let sessions: Record<string, any> = {};
 
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
@@ -450,9 +454,9 @@ export async function deleteUserPro(
 
 export async function deleteTransationPro(
   prevState: TransDeleteState,
-  formData: FormData
+  formData: FormData,
 ) {
-  let sessions = {};
+  let sessions: Record<string, any> = {};
 
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
@@ -473,9 +477,9 @@ export async function deleteTransationPro(
 
 export async function createNewUser(
   prevState: UserErrorState,
-  formData: FormData
+  formData: FormData,
 ) {
-  let sessions = {};
+  let sessions: Record<string, any> = {};
 
   for (const [name, value] of formData.entries()) {
     if (name === "isAdmin") {
@@ -510,7 +514,7 @@ export async function createNewUser(
       occupation,
       identicationcode,
       hashedPassword,
-      role || "user"
+      role || "user",
     );
     await revalidatePath("/dashboard/utilisateurs");
     return response;
@@ -519,10 +523,10 @@ export async function createNewUser(
 }
 
 export async function updateUserPro(
-  prevState: UpdateUserErrorState,
-  formData: FormData
+  prevState: UpdateUserErrorState | undefined,
+  formData: FormData,
 ) {
-  const sessions = {};
+  const sessions: Record<string, any> = {};
 
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
@@ -544,6 +548,7 @@ export async function updateUserPro(
     const occupation = isUserCorrect.data.occupation;
     const hireDate = isUserCorrect.data.hireDate;
     const endDate = isUserCorrect.data.endDate;
+    const contractAction = isUserCorrect.data.contractAction;
     const password = isUserCorrect.data.password;
     if (userId !== undefined) {
       const response = await updateUser(
@@ -556,19 +561,21 @@ export async function updateUserPro(
         identicationcode,
         hireDate || "",
         endDate || "",
-        password || ""
+        (contractAction || "update_current") as any,
+        password || "",
       );
       await revalidatePath("/dashboard/utilisateurs");
       return response;
     }
   }
+  return prevState || { errors: {}, message: "" };
 }
 
 export async function addUserFournitures(
   prevState: TransactionErrorState,
-  formData: FormData
+  formData: FormData,
 ) {
-  const sessions = {};
+  const sessions: Record<string, any> = {};
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
   }
@@ -605,7 +612,7 @@ export async function addUserFournitures(
         consome,
         lastname || "",
         firstname || "",
-        poste || ""
+        poste || "",
       );
       await revalidatePath("/dashboard/utilisateurs");
       return response;
@@ -615,9 +622,9 @@ export async function addUserFournitures(
 
 export async function updateUserFournitures(
   prevState: TransactionErrorState,
-  formData: FormData
+  formData: FormData,
 ) {
-  const sessions = {};
+  const sessions: Record<string, any> = {};
   for (const [name, value] of formData.entries()) {
     sessions[name] = value;
   }
@@ -630,7 +637,7 @@ export async function updateUserFournitures(
   } else {
     if (
       isCheckFourniture.data.consome >
-      isCheckFourniture.data.rest + isCheckFourniture.data.lastcons
+      isCheckFourniture.data.rest + (isCheckFourniture.data.lastcons || 0)
     ) {
       return {
         errors: {
@@ -660,7 +667,7 @@ export async function updateUserFournitures(
           consome,
           lastname,
           firstname,
-          lastcons
+          lastcons,
         );
         await revalidatePath("/dashboard/historique");
         return response;
@@ -670,7 +677,11 @@ export async function updateUserFournitures(
 }
 
 export async function getSession() {
-  const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+  const cookieStore = await cookies();
+  const session = await getIronSession<SessionData>(
+    cookieStore,
+    sessionOptions,
+  );
   return session;
 }
 

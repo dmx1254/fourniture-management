@@ -1,35 +1,16 @@
 import { NextResponse } from "next/server";
 import CongesEmployeModel from "@/lib/models/conges";
 import UserPMN from "@/lib/models/user";
-import AbsenceRequestModel from "@/lib/models/absence";
 import { connectDB } from "@/lib/actions/db";
 
-// Fonction utilitaire pour calculer les congés acquis
-function calculerCongesAcquis(hireDate: string, endDate?: string): number {
-  if (!hireDate) return 0;
-
-  const dateEmbauche = new Date(hireDate);
-  const dateFin = endDate ? new Date(endDate) : new Date();
-
-  // Si la date de fin est dans le passé, calculer jusqu'à cette date
-  if (dateFin < new Date()) {
-    dateFin.setTime(dateFin.getTime());
-  }
-
-  // Calculer la différence en mois
-  const moisDiff =
-    (dateFin.getFullYear() - dateEmbauche.getFullYear()) * 12 +
-    (dateFin.getMonth() - dateEmbauche.getMonth()) +
-    1; // +1 pour inclure le mois de début
-
-  // 2.5 jours par mois
-  return Math.max(0, moisDiff * 2);
+// Mois 1 = janvier, 12 = décembre
+function monthKey(year: number, month: number) {
+  return `${year}-${String(month).padStart(2, "0")}`;
 }
 
-// GET - Obtenir le solde des congés d'un employé
+// GET - Solde des congés : source unique = contracts[].monthlyBalances, limité au mois actuel
 export async function GET(req: Request) {
   try {
-    // S'assurer que la connexion est établie avant d'exécuter les requêtes
     await connectDB();
 
     const { searchParams } = new URL(req.url);
@@ -39,79 +20,174 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "userId est requis" }, { status: 400 });
     }
 
-    // Récupérer l'utilisateur pour avoir hireDate et endDate
     const user = await UserPMN.findById(userId);
     if (!user) {
       return NextResponse.json(
         { error: "Utilisateur non trouvé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
-    // Récupérer ou créer l'enregistrement des congés
-    let congesEmploye = await CongesEmployeModel.findOne({ userId });
+    const congesEmploye: any = await CongesEmployeModel.findOne({
+      userId,
+    }).lean();
 
     if (!congesEmploye) {
-      // Créer un nouvel enregistrement si l'employé n'en a pas
-      congesEmploye = await CongesEmployeModel.create({
-        userId,
-        congesConsommes: 0,
-        derniereMiseAJour: new Date(),
-      });
+      return NextResponse.json(
+        {
+          error:
+            "Solde congés non initialisé: mettez à jour les dates du contrat dans le profil utilisateur.",
+        },
+        { status: 400 },
+      );
     }
 
-    const validateAbsence = await AbsenceRequestModel.find({
-      userId: userId,
-      statutValidation: {$ne: "rejete"},
-      raison: { $ne: "repos medicale" },
-    }).select("duree -_id");
+    const now = new Date();
+    const currentKey = monthKey(now.getFullYear(), now.getMonth() + 1);
 
-    const congesConsommes = validateAbsence.reduce(
-      (acc, absence) => acc + absence.duree,
-      0
+    // Source unique : contracts[] (triés ancien → récent). Concaténer les monthlyBalances.
+    const rawContracts = congesEmploye.contracts;
+    const contractsList = Array.isArray(rawContracts)
+      ? [...rawContracts].sort(
+          (a: any, b: any) =>
+            new Date(a.startDate || 0).getTime() -
+            new Date(b.startDate || 0).getTime(),
+        )
+      : [];
+    const allMonths = contractsList.flatMap((c: any) =>
+      Array.isArray(c.monthlyBalances) ? c.monthlyBalances : [],
+    );
+    const sortedBalances = [...allMonths].sort((a, b) => {
+      if (a.year !== b.year) return a.year - b.year;
+      return a.month - b.month;
+    });
+
+    // Dédupliquer les mois (year+month) si la donnée contient des doublons.
+    // Fusion "safe" (max) pour éviter de perdre une conso déjà écrite.
+    const uniqueSortedBalances = Array.from(
+      sortedBalances.reduce((acc: Map<string, any>, m: any) => {
+        const key = monthKey(m.year, m.month);
+        const prev = acc.get(key);
+        if (!prev) {
+          acc.set(key, { ...m });
+          return acc;
+        }
+        acc.set(key, {
+          ...prev,
+          joursAcquis: Math.max(prev.joursAcquis ?? 0, m.joursAcquis ?? 0),
+          joursConsommes: Math.max(
+            prev.joursConsommes ?? 0,
+            m.joursConsommes ?? 0,
+          ),
+        });
+        return acc;
+      }, new Map<string, any>()),
+    ).sort((a: any, b: any) => {
+      if (a.year !== b.year) return a.year - b.year;
+      return a.month - b.month;
+    });
+
+    // Limiter au mois actuel (inclus)
+    const upToCurrent = uniqueSortedBalances.filter(
+      (m) => monthKey(m.year, m.month) <= currentKey,
     );
 
-    congesEmploye.congesConsommes = congesConsommes;
-    await congesEmploye.save();
+    const congesAcquis = upToCurrent.reduce(
+      (sum, m) => sum + (m.joursAcquis ?? 0),
+      0,
+    );
+    const congesConsommes = upToCurrent.reduce(
+      (sum, m) => sum + (m.joursConsommes ?? 0),
+      0,
+    );
+    const solde = Math.max(0, congesAcquis - congesConsommes);
 
-    // Calculer les congés acquis
-    const congesAcquis = calculerCongesAcquis(user.hireDate, user.endDate);
-    const solde = congesAcquis - congesConsommes;
+    const monthlyBalancesVisible = upToCurrent.map((m) => ({
+      year: m.year,
+      month: m.month,
+      joursAcquis: m.joursAcquis ?? 0,
+      joursConsommes: m.joursConsommes ?? 0,
+      joursRestants: (m.joursAcquis ?? 0) - (m.joursConsommes ?? 0),
+    }));
+
+    // Résumé par contrat (période 2025-2026) : dernier 1 ou 2 contrats, mois ≤ mois actuel
+    const derniersContrats: Array<{
+      anneeDebut: number;
+      anneeFin: number;
+      congesAcquis: number;
+      congesConsommes: number;
+      solde: number;
+    }> = [];
+    for (const c of contractsList) {
+      const mb = Array.isArray(c.monthlyBalances) ? c.monthlyBalances : [];
+      const upToCurrentContract = mb.filter(
+        (m: any) => monthKey(m.year, m.month) <= currentKey,
+      );
+      if (upToCurrentContract.length === 0) continue;
+      const start = new Date(c.startDate);
+      const end = new Date(c.endDate);
+      const anneeDebut = start.getFullYear();
+      const anneeFin = end.getFullYear();
+      const congesAcquis = upToCurrentContract.reduce(
+        (s: number, m: any) => s + (m.joursAcquis ?? 0),
+        0,
+      );
+      const congesConsommes = upToCurrentContract.reduce(
+        (s: number, m: any) => s + (m.joursConsommes ?? 0),
+        0,
+      );
+      const solde = Math.max(0, congesAcquis - congesConsommes);
+      derniersContrats.push({
+        anneeDebut,
+        anneeFin,
+        congesAcquis,
+        congesConsommes,
+        solde,
+      });
+    }
+    const derniersContratsVisible = derniersContrats.slice(-2);
+
     const historiqueConges = await CongesEmployeModel.find({ userId }).populate(
       "userId",
-      "firstname lastname hireDate endDate"
+      "firstname lastname hireDate endDate",
     );
 
     return NextResponse.json(
       {
         userId,
         congesAcquis,
-        congesConsommes: congesConsommes,
+        congesConsommes,
         solde,
         hireDate: user.hireDate,
         endDate: user.endDate,
         derniereMiseAJour: congesEmploye.derniereMiseAJour,
+        monthlyBalances: monthlyBalancesVisible,
+        derniersContrats: derniersContratsVisible,
         historiqueConges: historiqueConges.map((conge) => ({
           date: conge.createdAt,
           congesConsommes: conge.congesConsommes,
           fullname: conge.userId.lastname + " " + conge.userId.firstname,
         })),
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      },
     );
   } catch (error) {
     console.error("Erreur lors de la récupération des congés:", error);
     return NextResponse.json(
       { error: "Erreur lors de la récupération des congés" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
-// POST - Mettre à jour les congés consommés (quand une absence est approuvée)
+// POST - Mettre à jour les congés consommés globalement (compatibilité)
 export async function POST(req: Request) {
   try {
-    // S'assurer que la connexion est établie avant d'exécuter les requêtes
     await connectDB();
 
     const { userId, joursConsommes } = await req.json();
@@ -119,22 +195,21 @@ export async function POST(req: Request) {
     if (!userId || !joursConsommes) {
       return NextResponse.json(
         { error: "userId et joursConsommes sont requis" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Récupérer ou créer l'enregistrement des congés
-    let congesEmploye = await CongesEmployeModel.findOne({ userId });
+    let congesEmploye: any = await CongesEmployeModel.findOne({ userId });
 
     if (!congesEmploye) {
       congesEmploye = await CongesEmployeModel.create({
         userId,
         congesConsommes: 0,
         derniereMiseAJour: new Date(),
+        contracts: [],
       });
     }
 
-    // Mettre à jour les congés consommés
     congesEmploye.congesConsommes += joursConsommes;
     congesEmploye.derniereMiseAJour = new Date();
     await congesEmploye.save();
@@ -145,13 +220,13 @@ export async function POST(req: Request) {
         congesConsommes: congesEmploye.congesConsommes,
         derniereMiseAJour: congesEmploye.derniereMiseAJour,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Erreur lors de la mise à jour des congés:", error);
     return NextResponse.json(
       { error: "Erreur lors de la mise à jour des congés" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
