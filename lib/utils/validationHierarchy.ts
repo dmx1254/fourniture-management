@@ -33,7 +33,7 @@ export const VALIDATEURS_CONFIG = {
       },
       {
         email: "papa.elamadou.gaye@pmn.sn",
-        phone: "+221774031305",
+        phone: "+221773023577",
       },
     ],
   },

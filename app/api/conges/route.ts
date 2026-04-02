@@ -81,7 +81,8 @@ export async function GET(req: Request) {
           ),
         });
         return acc;
-      }, new Map<string, any>()),
+      }, new Map<string, any>())
+        .values(),
     ).sort((a: any, b: any) => {
       if (a.year !== b.year) return a.year - b.year;
       return a.month - b.month;
@@ -110,7 +111,32 @@ export async function GET(req: Request) {
       joursRestants: (m.joursAcquis ?? 0) - (m.joursConsommes ?? 0),
     }));
 
-    // Résumé par contrat (période 2025-2026) : dernier 1 ou 2 contrats, mois ≤ mois actuel
+    // Résumé par contrat : derniers 1–2 contrats.
+    // - isCurrent === false : totaux sur **toute** la période du contrat (tous les mois enregistrés).
+    // - isCurrent === true : comme le reste de l’API, uniquement les mois ≤ mois actuel.
+    const dedupeContractMonths = (months: any[]) =>
+      Array.from(
+        months
+          .reduce((acc: Map<string, any>, m: any) => {
+            const k = monthKey(m.year, m.month);
+            const prev = acc.get(k);
+            if (!prev) {
+              acc.set(k, { ...m });
+              return acc;
+            }
+            acc.set(k, {
+              ...prev,
+              joursAcquis: Math.max(prev.joursAcquis ?? 0, m.joursAcquis ?? 0),
+              joursConsommes: Math.max(
+                prev.joursConsommes ?? 0,
+                m.joursConsommes ?? 0,
+              ),
+            });
+            return acc;
+          }, new Map<string, any>())
+          .values(),
+      );
+
     const derniersContrats: Array<{
       anneeDebut: number;
       anneeFin: number;
@@ -120,29 +146,31 @@ export async function GET(req: Request) {
     }> = [];
     for (const c of contractsList) {
       const mb = Array.isArray(c.monthlyBalances) ? c.monthlyBalances : [];
-      const upToCurrentContract = mb.filter(
-        (m: any) => monthKey(m.year, m.month) <= currentKey,
-      );
-      if (upToCurrentContract.length === 0) continue;
+      const isCurrent = !!c.isCurrent;
+      const rawForSummary = isCurrent
+        ? mb.filter((m: any) => monthKey(m.year, m.month) <= currentKey)
+        : mb;
+      const monthsForSummary = dedupeContractMonths(rawForSummary);
+      if (monthsForSummary.length === 0) continue;
       const start = new Date(c.startDate);
       const end = new Date(c.endDate);
       const anneeDebut = start.getFullYear();
       const anneeFin = end.getFullYear();
-      const congesAcquis = upToCurrentContract.reduce(
+      const congesAcquisC = monthsForSummary.reduce(
         (s: number, m: any) => s + (m.joursAcquis ?? 0),
         0,
       );
-      const congesConsommes = upToCurrentContract.reduce(
+      const congesConsommesC = monthsForSummary.reduce(
         (s: number, m: any) => s + (m.joursConsommes ?? 0),
         0,
       );
-      const solde = Math.max(0, congesAcquis - congesConsommes);
+      const soldeC = Math.max(0, congesAcquisC - congesConsommesC);
       derniersContrats.push({
         anneeDebut,
         anneeFin,
-        congesAcquis,
-        congesConsommes,
-        solde,
+        congesAcquis: congesAcquisC,
+        congesConsommes: congesConsommesC,
+        solde: soldeC,
       });
     }
     const derniersContratsVisible = derniersContrats.slice(-2);
